@@ -1,0 +1,21 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icon Mask">
+<g id="Magic | Image | Create Image | Wand" clip-path="url(#clip0_0_204)">
+<g id="image" clip-path="url(#clip1_0_204)">
+<path id="Rectangle 15268" d="M15.5 8V4.5C15.5 2.29086 13.7091 0.5 11.5 0.5H4.5C2.29086 0.5 0.5 2.29086 0.5 4.5V11.5C0.5 13.7091 2.29086 15.5 4.5 15.5H8" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Shape" d="M12.9991 4.50029C12.9956 4.89686 12.8366 5.27621 12.5562 5.55669C12.2759 5.83717 11.8966 5.99636 11.5 6C10.6819 6 10.0009 5.31842 10.0009 4.50029C10.0009 3.68216 10.6819 3 11.5 3C12.3175 3 12.9991 3.68216 12.9991 4.50029Z" fill="var(--fill-0, white)"/>
+<path id="Vector 181" d="M15.5 15.5L10.5 10.5" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Star 35" d="M8.47488 8.47487L10.6869 9.29043L12.5387 7.83123L12.4466 10.187L14.4067 11.4973L12.1377 12.1377L11.4973 14.4067L10.187 12.4466L7.83123 12.5387L9.29043 10.6869L8.47488 8.47487Z" fill="var(--fill-0, white)"/>
+<path id="Vector 182" d="M0.5 7L4.5 3L8.5 6.42857" stroke="var(--stroke-0, white)" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_204">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+<clipPath id="clip1_0_204">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>

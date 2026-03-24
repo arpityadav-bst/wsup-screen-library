@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icon Mask">
+<g id="User Profile Icon">
+<path id="Shape" d="M12 1.75C17.6609 1.75 22.25 6.33908 22.25 12C22.25 17.6609 17.6609 22.25 12 22.25C6.33908 22.25 1.75 17.6609 1.75 12C1.75 6.33908 6.33908 1.75 12 1.75Z" stroke="var(--stroke-0, black)" stroke-width="1.5" stroke-miterlimit="10"/>
+<path id="Shape_2" d="M19 19C17.3846 17.3125 14.8826 16 12 16C9.11741 16 6.61538 17.3125 5 19" stroke="var(--stroke-0, black)" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"/>
+<circle id="Shape_3" cx="12" cy="9" r="5" fill="var(--fill-0, black)"/>
+</g>
+</g>
+</svg>
