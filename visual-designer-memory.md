@@ -1,5 +1,37 @@
 # Visual Designer Memory
-Last updated: 2026-03-24 (token audit pass — undocumented tokens, CSS utilities, and badge patterns reconciled against tailwind.config.ts + globals.css)
+Last updated: 2026-03-25 (style guide overhaul, text-xxs token, placeholder icons, Coachmark extraction, Blogs CTA removal)
+
+## Session Log — 2026-03-25
+
+### Style Guide Overhaul
+- Restructured from flat nav into 3 tabs: Tokens, Components, Patterns
+- Added IntersectionObserver scroll sync — sidebar nav highlights on scroll
+- Tab switch resets scroll to top
+- Renamed "Components" sub-section → "Tags & Cards" (avoided name collision with tab)
+- Added standalone Coachmark section in Components tab (preview + anatomy)
+- Added Chat Right Sidebar visual preview (was anatomy-only)
+- Fixed all stale anatomy tables: Chat Header (coachmark tokens, font-medium), Sidebar (tokens not hardcoded px), Chat Messages (9 waveform bars, hover states), Chat Bar (proper icon structure)
+- All decorative SVG icons in previews → bg-white-10 rounded-sm placeholders (prevents icon drift, focuses on structure)
+- Color-meaningful elements kept: accent bg, warm gradient, accent-light
+
+### Font Size Token: text-xxs (10px)
+- Added `text-xxs: ['10px', { lineHeight: '1.4' }]` to tailwind.config.ts
+- Eliminated all 67 arbitrary text-[Npx] across entire codebase
+- text-[10px]→text-xxs, text-[9px]→text-xxs, text-[11px]→text-xxs, text-[12px]→text-xs, text-[13px]→text-sm, text-[16px]→text-base
+- Zero `text-[Npx]` remaining in src/
+- Added Text Size Scale section to style guide Typography (xxs through 5xl)
+
+### Component Changes
+- Extracted Coachmark into standalone `Coachmark.tsx` (was inline in ChatHeader)
+- Removed Blogs CTA from Header component and all style guide references
+- Fixed Chat Header preview: added Game button + badge, fixed back arrow rgba(0.9), gallery icon var(--white-90), character name font-medium
+- Updated Sidebar: tokens for spacing, close button, Blogs footer, group badge gap
+
+### CSS / Config
+- globals.css: added --white-70, --white-90, --black-70, --black-80 vars; label-xs uses raw `font-size: 10px` (not @apply text-xxs — incompatible with @layer components)
+- tailwind.config.ts: fontSize.xxs tuple format required `['10px', { lineHeight: '1.4' }]` — plain string caused fallback to 16px
+
+---
 
 ## Global Rules (apply to all screens)
 
