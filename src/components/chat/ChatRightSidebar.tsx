@@ -29,8 +29,8 @@ function StatPill({ icon, value, label }: { icon: React.ReactNode; value: string
   return (
     <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[2px] pl-[6px] pr-[8px] py-[4px] rounded-[20px]">
       <div className="w-[18px] flex items-center justify-center shrink-0">{icon}</div>
-      <span className="text-[10px] text-white-70 tracking-[0.2px] whitespace-nowrap">{value}</span>
-      <span className="text-[10px] text-white-70 tracking-[0.2px] whitespace-nowrap">{label}</span>
+      <span className="text-xxs text-white-70 tracking-[0.2px] whitespace-nowrap">{value}</span>
+      <span className="text-xxs text-white-70 tracking-[0.2px] whitespace-nowrap">{label}</span>
     </div>
   )
 }
@@ -112,7 +112,7 @@ export default function ChatRightSidebar() {
         <div className="relative z-10 flex flex-col items-center gap-[10px] px-[24px] pt-[24px] pb-[40px]">
           {/* Name */}
           <h2
-            className="text-[16px] font-medium text-white text-center"
+            className="text-base font-medium text-white text-center"
             style={{ textShadow: '0 0 2px var(--black-70)' }}
           >
             {character.name}
@@ -129,7 +129,7 @@ export default function ChatRightSidebar() {
             {character.tags.map(tag => (
               <span
                 key={tag}
-                className="text-[10px] font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10"
+                className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10"
               >
                 {tag}
               </span>

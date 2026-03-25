@@ -1,47 +1,92 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import CharacterCard from '@/components/shared/CharacterCard'
 
-const NAV = ['Colors', 'Typography', 'Spacing', 'Radius', 'Shadows', 'Blur', 'Buttons', 'Forms', 'Components', 'Utilities', 'Character Card', 'Header', 'Sidebar', 'Widgets', 'Category Tabs', 'Explore Description', 'FAQ Accordion', 'What is wsup.ai', 'Footer', 'Bottom Nav', 'Mobile Footer', 'Chat Header', 'Chat Messages', 'Chat Bar', 'Chat Right Sidebar']
+const TABS = ['Tokens', 'Components', 'Patterns'] as const
+type Tab = typeof TABS[number]
+
+const NAV: Record<Tab, string[]> = {
+  Tokens:     ['Colors', 'Typography', 'Spacing', 'Radius', 'Shadows', 'Blur', 'Utilities'],
+  Components: ['Buttons', 'Forms', 'Tags & Cards', 'Coachmark', 'Character Card', 'Widgets', 'Category Tabs', 'Bottom Nav'],
+  Patterns:   ['Header', 'Sidebar', 'Explore Description', 'FAQ Accordion', 'What is wsup.ai', 'Footer', 'Mobile Footer', 'Chat Header', 'Chat Messages', 'Chat Bar', 'Chat Right Sidebar'],
+}
+
+const TAB_DEFAULTS: Record<Tab, string> = {
+  Tokens: 'Colors',
+  Components: 'Buttons',
+  Patterns: 'Header',
+}
 
 export default function StyleGuide() {
+  const [activeTab, setActiveTab] = useState<Tab>('Tokens')
   const [active, setActive] = useState('Colors')
   const [mounted, setMounted] = useState(false)
+  const mainRef = useRef<HTMLElement>(null)
+  const onSectionVisible = useCallback((id: string) => setActive(id), [])
   useEffect(() => { setMounted(true) }, [])
   if (!mounted) return <div className="h-screen bg-page-bg" />
+
+  const switchTab = (tab: Tab) => {
+    setActiveTab(tab)
+    setActive(TAB_DEFAULTS[tab])
+    mainRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+  }
 
   return (
     <div className="h-screen bg-page-bg font-sans flex overflow-hidden">
 
       {/* ── Sticky sidebar nav ─────────────────────────────── */}
-      <aside className="h-full w-[200px] shrink-0 border-r border-white-10 flex flex-col pt-10 px-5 gap-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <p className="label-xs mb-4 px-2">Style Guide</p>
-        {NAV.map(item => (
-          <button
-            key={item}
-            onClick={() => {
-              setActive(item)
-              document.getElementById(item)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }}
-            className={`text-left text-sm px-3 py-2 rounded-pill transition-colors ${
-              active === item
-                ? 'bg-white-10 text-text-title font-medium'
-                : 'text-text-small hover:bg-white-05 hover:text-text-body font-normal'
-            }`}
-          >
-            {item}
-          </button>
-        ))}
+      <aside className="h-full w-[200px] shrink-0 border-r border-white-10 flex flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
-        <div className="mt-auto pb-8">
-          <p className="text-text-xxsmall text-[10px] px-2 leading-relaxed">
+        {/* Tab switcher */}
+        <div className="shrink-0 pt-8 px-s pb-s border-b border-white-10">
+          <p className="label-xs mb-s px-xxs">Style Guide</p>
+          <div className="flex flex-col gap-xxs">
+            {TABS.map(tab => (
+              <button
+                key={tab}
+                onClick={() => switchTab(tab)}
+                className={`text-left text-xs px-xs py-xxs rounded-button transition-colors font-medium ${
+                  activeTab === tab
+                    ? 'bg-accent text-white'
+                    : 'text-text-small hover:bg-white-05 hover:text-text-body'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Section nav */}
+        <div className="flex-1 pt-s px-s flex flex-col gap-xxs">
+          {NAV[activeTab].map(item => (
+            <button
+              key={item}
+              onClick={() => {
+                setActive(item)
+                document.getElementById(item)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }}
+              className={`text-left text-sm px-xs py-xxs rounded-pill transition-colors ${
+                active === item
+                  ? 'bg-white-10 text-text-title font-medium'
+                  : 'text-text-small hover:bg-white-05 hover:text-text-body font-normal'
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+
+        <div className="shrink-0 pb-8 px-s">
+          <p className="text-text-xxsmall text-xxs px-xxs leading-relaxed">
             wsup.ai<br />Design tokens
           </p>
         </div>
       </aside>
 
       {/* ── Main content ───────────────────────────────────── */}
-      <main className="flex-1 overflow-y-auto px-12 py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <main ref={mainRef} className="flex-1 overflow-y-auto px-12 py-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
         {/* Hero */}
         <div className="mb-14">
@@ -59,8 +104,11 @@ export default function StyleGuide() {
           <p className="text-text-body text-sm">Living reference for all design tokens and utility classes. Updated every session.</p>
         </div>
 
+        {/* ══ TOKENS ══════════════════════════════════════ */}
+        {activeTab === 'Tokens' && <>
+
         {/* ── Colors ─────────────────────────────────────── */}
-        <Section id="Colors" title="Colors" onVisible={setActive}>
+        <Section id="Colors" title="Colors" onVisible={onSectionVisible}>
 
           <ColorGrid label="Accent" swatches={[
             { name: 'accent', hex: '#4a3ec6' },
@@ -94,11 +142,11 @@ export default function StyleGuide() {
             <div className="flex flex-col gap-2">
               <div className="flex flex-col gap-1">
                 <div className="w-24 h-10 rounded-button" style={{ background: 'linear-gradient(90deg, var(--color-gradient-purple), var(--color-gradient-blue))' }} />
-                <span className="text-text-xsmall text-[10px]">cool</span>
+                <span className="text-text-xsmall text-xxs">cool</span>
               </div>
               <div className="flex flex-col gap-1">
                 <div className="w-24 h-10 rounded-button" style={{ background: 'linear-gradient(135deg, var(--color-gradient-warm-light), var(--color-gradient-warm-dark))' }} />
-                <span className="text-text-xsmall text-[10px]">warm</span>
+                <span className="text-text-xsmall text-xxs">warm</span>
               </div>
             </div>
           } />
@@ -110,7 +158,7 @@ export default function StyleGuide() {
           ]} extra={
             <div className="flex flex-col gap-1">
               <div className="w-24 h-10 rounded-button" style={{ background: 'linear-gradient(135deg, var(--credit-gold), var(--credit-orange))' }} />
-              <span className="text-text-xsmall text-[10px]">border gradient</span>
+              <span className="text-text-xsmall text-xxs">border gradient</span>
             </div>
           } />
 
@@ -173,6 +221,10 @@ export default function StyleGuide() {
             { name: 'forms-disabled-bg', hex: '#888888' },
           ]} />
 
+          <ColorGrid label="Coachmark" swatches={[
+            { name: 'coachmark-bg', hex: '#1e1d2e' },
+          ]} />
+
           <ColorGrid label="Chat" swatches={[
             { name: 'chat-ai-bubble', hex: '#393535' },
             { name: 'chat-ai-active', hex: '#2a2727' },
@@ -208,7 +260,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Typography ─────────────────────────────────── */}
-        <Section id="Typography" title="Typography" onVisible={setActive}>
+        <Section id="Typography" title="Typography" onVisible={onSectionVisible}>
 
           <div>
             <SubLabel>Font — Rubik</SubLabel>
@@ -224,6 +276,45 @@ export default function StyleGuide() {
                   <span style={{ fontWeight: w }} className="text-white text-4xl leading-none">Aa</span>
                   <span className="text-text-small text-xs">{label}</span>
                   <Tag>{w}</Tag>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <SubLabel>Text Size Scale</SubLabel>
+            <div className="flex flex-col gap-3 bg-white-05 border border-white-10 rounded-card p-5">
+              {[
+                ['text-xxs',  '10px', 'The quick brown fox jumps over the lazy dog'],
+                ['text-xs',   '12px', 'The quick brown fox jumps over the lazy dog'],
+                ['text-sm',   '14px', 'The quick brown fox jumps over the lazy dog'],
+                ['text-base', '16px', 'The quick brown fox jumps over the lazy dog'],
+                ['text-lg',   '18px', 'The quick brown fox jumps over the lazy dog'],
+                ['text-xl',   '20px', 'The quick brown fox jumps over the lazy dog'],
+                ['text-2xl',  '24px', 'The quick brown fox jumps'],
+                ['text-3xl',  '30px', 'The quick brown fox'],
+                ['text-4xl',  '36px', 'The quick brown fox'],
+                ['text-5xl',  '48px', 'Quick brown fox'],
+              ].map(([cls, px, sample]) => (
+                <div key={cls} className="flex items-center gap-4">
+                  <span className={`text-white ${cls}`} style={{ minWidth: 340 }}>{sample}</span>
+                  <Tag>{cls}</Tag>
+                  <span className="text-text-xsmall text-xxs">{px}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-s flex flex-col gap-xs text-xs text-text-body bg-white-05 border border-white-10 rounded-card p-m max-w-md">
+              {[
+                ['text-xxs (10px)', 'Custom token — labels, copyright, tags, badges'],
+                ['text-xs (12px)', 'Tailwind default — nav items, metadata, secondary text'],
+                ['text-sm (14px)', 'Tailwind default — primary body, buttons, inputs'],
+                ['text-base (16px)', 'Tailwind default — FAQ, about section, footer headings'],
+                ['text-lg–xl (18–20px)', 'Section headings, landing page subheadings'],
+                ['text-2xl–5xl (24–48px)', 'Page titles, hero text, landing pages'],
+              ].map(([token, usage]) => (
+                <div key={token} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
+                  <TokenCell value={token} />
+                  <span className="text-text-xxsmall text-right shrink-0 max-w-[55%]">{usage}</span>
                 </div>
               ))}
             </div>
@@ -263,7 +354,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Spacing ────────────────────────────────────── */}
-        <Section id="Spacing" title="Spacing" onVisible={setActive}>
+        <Section id="Spacing" title="Spacing" onVisible={onSectionVisible}>
           <div>
             <SubLabel>Scale</SubLabel>
             <div className="flex flex-col gap-3">
@@ -291,7 +382,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Border Radius ──────────────────────────────── */}
-        <Section id="Radius" title="Border Radius" onVisible={setActive}>
+        <Section id="Radius" title="Border Radius" onVisible={onSectionVisible}>
           <div className="flex flex-wrap gap-8 items-end">
             {[
               ['button', '8px'],
@@ -305,14 +396,14 @@ export default function StyleGuide() {
                   style={{ borderRadius: val }}
                 />
                 <Tag>{name}</Tag>
-                <span className="text-text-xsmall text-[10px]">{val}</span>
+                <span className="text-text-xsmall text-xxs">{val}</span>
               </div>
             ))}
           </div>
         </Section>
 
         {/* ── Shadows ────────────────────────────────────── */}
-        <Section id="Shadows" title="Shadows" onVisible={setActive}>
+        <Section id="Shadows" title="Shadows" onVisible={onSectionVisible}>
           <div className="flex flex-wrap gap-10 items-end">
             {[
               ['small',  '0 1px 4px rgba(0,0,0,0.3)'],
@@ -333,7 +424,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Backdrop Blur ──────────────────────────────── */}
-        <Section id="Blur" title="Backdrop Blur" onVisible={setActive}>
+        <Section id="Blur" title="Backdrop Blur" onVisible={onSectionVisible}>
           <div className="flex flex-wrap gap-8">
             {[
               ['bg',    '12px',  'backdrop-blur-bg'],
@@ -353,8 +444,13 @@ export default function StyleGuide() {
           </div>
         </Section>
 
+        </> /* end Tokens */}
+
+        {/* ══ COMPONENTS ══════════════════════════════════ */}
+        {activeTab === 'Components' && <>
+
         {/* ── Buttons ────────────────────────────────────── */}
-        <Section id="Buttons" title="Buttons" onVisible={setActive}>
+        <Section id="Buttons" title="Buttons" onVisible={onSectionVisible}>
 
           <div>
             <SubLabel>Primary</SubLabel>
@@ -417,6 +513,35 @@ export default function StyleGuide() {
           </div>
 
           <div>
+            <SubLabel>Feature Row — Exception (non-pill)</SubLabel>
+            <p className="text-text-xsmall text-xs mb-3">Used in coachmarks / feature callouts. Icon bg flush left/top/bottom, text padded right. Exception to the pill-only button rule.</p>
+            <div className="flex flex-wrap gap-6 items-start">
+              <div className="flex flex-col items-start gap-2">
+                <PreviewBox>
+                  <button className="flex items-center gap-xs bg-white-10 rounded-button pr-xs overflow-hidden transition-colors w-[160px]">
+                    <div className="px-xs py-xs flex items-center justify-center shrink-0 bg-accent self-stretch" style={{borderRadius: 'var(--radius-button) 0 0 var(--radius-button)'}}>
+                      <div className="w-[18px] h-[18px] rounded-sm bg-white-20" />
+                    </div>
+                    <span className="text-sm font-medium text-text-title leading-tight py-xs">Feature Name</span>
+                  </button>
+                </PreviewBox>
+                <StateLabel>Default</StateLabel>
+              </div>
+              <div className="flex flex-col items-start gap-2">
+                <PreviewBox>
+                  <button className="flex items-center gap-xs bg-white-20 rounded-button pr-xs overflow-hidden transition-colors w-[160px]">
+                    <div className="px-xs py-xs flex items-center justify-center shrink-0 bg-accent self-stretch" style={{borderRadius: 'var(--radius-button) 0 0 var(--radius-button)'}}>
+                      <div className="w-[18px] h-[18px] rounded-sm bg-white-20" />
+                    </div>
+                    <span className="text-sm font-medium text-text-title leading-tight py-xs">Feature Name</span>
+                  </button>
+                </PreviewBox>
+                <StateLabel>Hover</StateLabel>
+              </div>
+            </div>
+          </div>
+
+          <div>
             <SubLabel>Sizes</SubLabel>
             <div className="flex flex-wrap gap-6 items-start">
               {([
@@ -436,60 +561,13 @@ export default function StyleGuide() {
           </div>
 
           <div>
-            <SubLabel>Header Pill CTA</SubLabel>
-            <p className="text-text-xsmall text-xs mb-4 max-w-sm">Icon + label pill used in the header bar for contextual actions (e.g. Blogs). Uses semantic header tokens, not generic border tokens.</p>
-            <div className="flex flex-wrap gap-6 items-start">
-              <div className="flex flex-col items-start gap-2">
-                <PreviewBox>
-                  <button className="flex items-center gap-xs border border-header-icon-border rounded-pill px-m h-[34px] text-white-50 text-sm hover:bg-header-icon-hover-bg transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="18" height="18" fill="rgba(255,255,255,0.5)">
-                      <path d="M26,2.21H12.61c-2.702,0-4.9,2.198-4.9,4.9V17.6H6c-2.702,0-4.9,2.198-4.9,4.9v3.09c0,2.314,1.88,4.196,4.196,4.2c0.001,0,0.002,0.001,0.003,0.001h21.4c2.315,0,4.2-1.884,4.2-4.2V7.11C30.9,4.408,28.702,2.21,26,2.21z M2.9,25.59V22.5c0-1.709,1.391-3.1,3.1-3.1h1.71v6.171c0,0.006-0.003,0.011-0.003,0.017c0,1.325-1.078,2.403-2.407,2.403C3.977,27.99,2.9,26.914,2.9,25.59z M29.1,25.59c0,1.324-1.076,2.4-2.399,2.4H8.753c0.478-0.681,0.757-1.569,0.757-2.4V7.11c0-1.709,1.391-3.1,3.1-3.1H26c1.709,0,3.1,1.391,3.1,3.1V25.59z"/>
-                      <path d="M24.916 10.475H13.694c-.497 0-.9.403-.9.9s.403.9.9.9h11.222c.497 0 .9-.403.9-.9S25.413 10.475 24.916 10.475zM24.916 15.1H13.694c-.497 0-.9.403-.9.9s.403.9.9.9h11.222c.497 0 .9-.403.9-.9S25.413 15.1 24.916 15.1zM19.305 19.725h-5.611c-.497 0-.9.403-.9.9s.403.9.9.9h5.611c.497 0 .9-.403.9-.9S19.802 19.725 19.305 19.725z"/>
-                    </svg>
-                    Blogs
-                  </button>
-                </PreviewBox>
-                <StateLabel>Default</StateLabel>
-              </div>
-              <div className="flex flex-col items-start gap-2">
-                <PreviewBox>
-                  <button className="flex items-center gap-xs border border-header-icon-border rounded-pill px-m h-[34px] text-white-50 text-sm bg-header-icon-hover-bg transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="18" height="18" fill="rgba(255,255,255,0.5)">
-                      <path d="M26,2.21H12.61c-2.702,0-4.9,2.198-4.9,4.9V17.6H6c-2.702,0-4.9,2.198-4.9,4.9v3.09c0,2.314,1.88,4.196,4.196,4.2c0.001,0,0.002,0.001,0.003,0.001h21.4c2.315,0,4.2-1.884,4.2-4.2V7.11C30.9,4.408,28.702,2.21,26,2.21z M2.9,25.59V22.5c0-1.709,1.391-3.1,3.1-3.1h1.71v6.171c0,0.006-0.003,0.011-0.003,0.017c0,1.325-1.078,2.403-2.407,2.403C3.977,27.99,2.9,26.914,2.9,25.59z M29.1,25.59c0,1.324-1.076,2.4-2.399,2.4H8.753c0.478-0.681,0.757-1.569,0.757-2.4V7.11c0-1.709,1.391-3.1,3.1-3.1H26c1.709,0,3.1,1.391,3.1,3.1V25.59z"/>
-                      <path d="M24.916 10.475H13.694c-.497 0-.9.403-.9.9s.403.9.9.9h11.222c.497 0 .9-.403.9-.9S25.413 10.475 24.916 10.475zM24.916 15.1H13.694c-.497 0-.9.403-.9.9s.403.9.9.9h11.222c.497 0 .9-.403.9-.9S25.413 15.1 24.916 15.1zM19.305 19.725h-5.611c-.497 0-.9.403-.9.9s.403.9.9.9h5.611c.497 0 .9-.403.9-.9S19.802 19.725 19.305 19.725z"/>
-                    </svg>
-                    Blogs
-                  </button>
-                </PreviewBox>
-                <StateLabel>Hover</StateLabel>
-              </div>
-            </div>
-            <div className="mt-4 flex flex-col gap-s text-xs text-text-body bg-white-05 border border-white-10 rounded-card p-m max-w-sm">
-              {[
-                ['h-[34px] / rounded-pill', 'Height + shape'],
-                ['border-header-icon-border', 'Border (#ffffff1a)'],
-                ['hover:bg-header-icon-hover-bg', 'Hover bg (#ffffff0d)'],
-                ['text-white-50 / text-sm', 'Label color + size'],
-                ['gap-xs / px-m', 'Icon gap + padding'],
-              ].map(([cls, label]) => (
-                <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
-                  <TokenCell value={cls} />
-                  <span className="text-text-xxsmall text-right shrink-0 max-w-[45%]">{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
             <SubLabel>Header Icon Button</SubLabel>
             <p className="text-text-xsmall text-xs mb-4 max-w-sm">Icon-only circular button for utility actions in the header (notification, trophy, avatar). Same semantic tokens as Header Pill CTA.</p>
             <div className="flex flex-wrap gap-6 items-start">
               <div className="flex flex-col items-start gap-2">
                 <PreviewBox>
                   <button className="w-8 h-8 flex items-center justify-center border border-header-icon-border rounded-full hover:bg-header-icon-hover-bg transition-colors">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-accent-light)">
-                      <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11a6 6 0 0 0-5-5.91V4a1 1 0 0 0-2 0v1.09A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2z"/>
-                    </svg>
+                    <div className="w-[18px] h-[18px] rounded-sm bg-accent-light" />
                   </button>
                 </PreviewBox>
                 <StateLabel>Default</StateLabel>
@@ -497,9 +575,7 @@ export default function StyleGuide() {
               <div className="flex flex-col items-start gap-2">
                 <PreviewBox>
                   <button className="w-8 h-8 flex items-center justify-center border border-header-icon-border rounded-full bg-header-icon-hover-bg transition-colors">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-accent-light)">
-                      <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11a6 6 0 0 0-5-5.91V4a1 1 0 0 0-2 0v1.09A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2z"/>
-                    </svg>
+                    <div className="w-[18px] h-[18px] rounded-sm bg-accent-light" />
                   </button>
                 </PreviewBox>
                 <StateLabel>Hover</StateLabel>
@@ -510,7 +586,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Forms ──────────────────────────────────────── */}
-        <Section id="Forms" title="Forms" onVisible={setActive}>
+        <Section id="Forms" title="Forms" onVisible={onSectionVisible}>
 
           <div>
             <SubLabel>Text Input</SubLabel>
@@ -556,8 +632,8 @@ export default function StyleGuide() {
               ].map(([token, hex, label]) => (
                 <div key={token} className="flex flex-col gap-1">
                   <div className="w-10 h-8 rounded-button border border-white-10" style={{ background: hex }} />
-                  <span className="text-[9px] font-mono text-text-xsmall max-w-[80px] leading-tight">{token}</span>
-                  <span className="text-[9px] text-text-xxsmall">{label}</span>
+                  <span className="text-xxs font-mono text-text-xsmall max-w-[80px] leading-tight">{token}</span>
+                  <span className="text-xxs text-text-xxsmall">{label}</span>
                 </div>
               ))}
             </div>
@@ -565,26 +641,26 @@ export default function StyleGuide() {
 
         </Section>
 
-        {/* ── Components ─────────────────────────────────── */}
-        <Section id="Components" title="Components" onVisible={setActive}>
+        {/* ── Tags & Cards ─────────────────────────────────── */}
+        <Section id="Tags & Cards" title="Tags & Cards" onVisible={onSectionVisible}>
 
           <div>
             <SubLabel>Tags / Pills</SubLabel>
             <div className="flex flex-wrap gap-3 items-center">
               <div className="flex flex-col items-start gap-2">
-                <span className="text-[10px] font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10">
+                <span className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10">
                   Default
                 </span>
                 <Tag>Default</Tag>
               </div>
               <div className="flex flex-col items-start gap-2">
-                <span className="text-[10px] font-normal px-xs py-[3px] rounded-pill bg-status-alert text-white">
+                <span className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-status-alert text-white">
                   Alert
                 </span>
                 <Tag>Status alert</Tag>
               </div>
               <div className="flex flex-col items-start gap-2">
-                <span className="text-[10px] font-normal px-xs py-[3px] rounded-pill bg-accent/20 backdrop-blur-bg text-accent-light border border-accent/30">
+                <span className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-accent/20 backdrop-blur-bg text-accent-light border border-accent/30">
                   Category
                 </span>
                 <Tag>Accent tint</Tag>
@@ -600,7 +676,7 @@ export default function StyleGuide() {
                   <div className="absolute inset-0 bg-white-05" />
                   <div className="absolute bottom-0 left-0 right-0 p-xs">
                     <p className="text-text-title text-xs font-semibold truncate">Character Name</p>
-                    <p className="text-text-body text-[10px] truncate">Description text here</p>
+                    <p className="text-text-body text-xxs truncate">Description text here</p>
                   </div>
                 </div>
                 <Tag>card-bg / card-border</Tag>
@@ -610,7 +686,7 @@ export default function StyleGuide() {
                   <div className="absolute inset-0 bg-white-05" />
                   <div className="absolute bottom-0 left-0 right-0 p-xs">
                     <p className="text-text-title text-xs font-semibold truncate">Character Name</p>
-                    <p className="text-text-body text-[10px] truncate">Description text here</p>
+                    <p className="text-text-body text-xxs truncate">Description text here</p>
                   </div>
                 </div>
                 <Tag>Hover state</Tag>
@@ -621,10 +697,10 @@ export default function StyleGuide() {
           <div>
             <SubLabel>Chat Bubbles</SubLabel>
             <div className="flex flex-col gap-3 max-w-[300px]">
-              <div className="self-end bg-chat-user-bubble text-white text-sm px-m py-xs rounded-[18px] rounded-br-sm max-w-[80%]">
+              <div className="self-end bg-chat-user-bubble text-white text-sm px-m py-xs rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl max-w-[80%]">
                 Hey, what's up?
               </div>
-              <div className="self-start bg-chat-ai-bubble text-text-body text-sm px-m py-xs rounded-[18px] rounded-bl-sm max-w-[80%]">
+              <div className="self-start bg-chat-ai-bubble text-text-body text-sm px-m py-xs rounded-tl-2xl rounded-tr-2xl rounded-br-2xl max-w-[80%]">
                 Not much, just here to chat!
               </div>
             </div>
@@ -633,12 +709,12 @@ export default function StyleGuide() {
           <div>
             <SubLabel>Navigation Item</SubLabel>
             <div className="flex flex-col gap-1 w-[240px] bg-white-05 rounded-card p-2">
-              <div className="flex items-center gap-2 px-4 py-3 rounded-card text-text-title text-xs font-normal" style={{ backgroundImage: 'linear-gradient(90deg, rgba(114,233,241,0.1) 0%, rgba(113,146,229,0.1) 50%, rgba(98,87,215,0.1) 100%), linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) 100%)' }}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 0C3.94 1.68 5.32 3.06 7 3C5.32 2.94 3.94 4.32 4 6C4.06 4.32 2.68 2.94 1 3C2.68 3.06 4.06 1.68 4 0Z" fill="white"/><path d="M10 2C9.9 4.8 12.2 7.1 15 7C12.2 6.9 9.9 9.2 10 12C10.1 9.2 7.8 6.9 5 7C7.8 7.1 10.1 4.8 10 2Z" fill="white"/></svg>
+              <div className="flex items-center gap-xs px-xl py-m rounded-card text-text-title text-xs font-normal" style={{ backgroundImage: 'linear-gradient(90deg, rgba(114,233,241,0.1) 0%, rgba(113,146,229,0.1) 50%, rgba(98,87,215,0.1) 100%), linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) 100%)' }}>
+                <div className="w-4 h-4 rounded-sm bg-white-20 shrink-0" />
                 Explore
               </div>
-              <div className="flex items-center gap-2 px-4 py-3 rounded-card text-white-70 text-xs font-normal hover:bg-white-05">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path fillRule="evenodd" clipRule="evenodd" d="M8.1 0C3.64 0 0 3.53 0 7.92C0 12.3 3.64 15.83 8.1 15.83C12.56 15.83 16.2 12.3 16.2 7.92C16.2 6.72 15.93 5.59 15.45 4.58C15.33 4.33 15.03 4.22 14.78 4.34C14.53 4.46 14.43 4.76 14.54 5.01C14.96 5.89 15.2 6.88 15.2 7.92C15.2 11.72 12.03 14.83 8.1 14.83C4.17 14.83 1 11.72 1 7.92C1 4.11 4.17 1 8.1 1C8.82 1 9.51 1.1 10.16 1.29C10.42 1.37 10.7 1.22 10.78 0.96C10.86 0.69 10.71 0.41 10.44 0.34C9.7 0.12 8.91 0 8.1 0Z" fill="rgba(255,255,255,0.8)"/></svg>
+              <div className="flex items-center gap-xs px-xl py-m rounded-card text-white-70 text-xs font-normal hover:bg-white-05">
+                <div className="w-4 h-4 rounded-sm bg-white-10 shrink-0" />
                 Stories
               </div>
             </div>
@@ -651,7 +727,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Utilities ──────────────────────────────────── */}
-        <Section id="Utilities" title="Utilities" onVisible={setActive}>
+        <Section id="Utilities" title="Utilities" onVisible={onSectionVisible}>
 
           <div>
             <SubLabel>CSS Utility Classes</SubLabel>
@@ -679,7 +755,7 @@ export default function StyleGuide() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <div className="w-[60px] h-[60px] placeholder-icon flex items-center justify-center">
-                    <span className="text-text-xxsmall text-[10px] text-center leading-tight font-mono">.placeholder-icon</span>
+                    <span className="text-text-xxsmall text-xxs text-center leading-tight font-mono">.placeholder-icon</span>
                   </div>
                   <span className="text-text-xxsmall text-xs">white 10% fill + stroke</span>
                 </div>
@@ -710,8 +786,72 @@ export default function StyleGuide() {
 
         </Section>
 
+        {/* ── Coachmark ──────────────────────────────────── */}
+        <Section id="Coachmark" title="Coachmark" onVisible={onSectionVisible}>
+
+          <div className="min-w-[440px] flex-1">
+            <SubLabel>Preview</SubLabel>
+            <PreviewBox>
+              <div className="relative w-[220px] bg-coachmark-bg border border-accent rounded-card shadow-button">
+                {/* Caret */}
+                <div className="absolute -top-[10px] right-[17px]" style={{ width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderBottom: '10px solid var(--accent)' }} />
+                <div className="absolute -top-[8px] right-[18px]" style={{ width: 0, height: 0, borderLeft: '9px solid transparent', borderRight: '9px solid transparent', borderBottom: '9px solid var(--coachmark-bg)' }} />
+
+                <div className="p-s">
+                  {/* Label + dismiss */}
+                  <div className="flex items-center justify-between mb-xs">
+                    <span className="label-xs text-white">New Feature</span>
+                    <button className="p-xs flex items-center justify-center rounded-pill hover:bg-white-10 transition-colors shrink-0" aria-label="Dismiss">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M2 2l8 8M10 2L2 10" stroke="var(--popup-close-icon)" strokeWidth="1.5" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Feature row button */}
+                  <button className="flex items-center gap-xs mb-xs bg-white-10 rounded-button pr-xs overflow-hidden hover:bg-white-20 transition-colors w-full">
+                    <div className="px-xs flex items-center justify-center shrink-0 bg-accent self-stretch" style={{ borderRadius: 'var(--radius-button) 0 0 var(--radius-button)' }}>
+                      <svg width="18" height="18" viewBox="0 0 512 512" fill="white"><path d="M350.18 221.99c-.24 0-.48 0-.72 0-15.49.4-27.73 13.3-27.33 28.84.41 15.23 12.88 27.32 28.02 27.32.26 0 .52 0 .78-.01 15.5-.4 27.73-13.3 27.34-28.8-.39-15.26-12.9-27.35-28.08-27.35zM396.91 147.2c-.25 0-.5 0-.75 0-15.5.42-27.73 13.3-27.34 28.83.41 15.23 12.9 27.32 28.03 27.32.26 0 .53 0 .8-.01 15.49-.39 27.74-13.3 27.34-28.79-.41-15.26-12.89-27.35-28.08-27.35z"/><path d="M511.97,363.87c-1.2-66.8-9.09-134.35-22.03-202.53-10.54-47.37-48.46-89.56-109.05-92.65-1.56-.06-3.08-.1-4.56-.1-40.44,0-50.39,23.26-98.08,23.26-.47,0-.94,0-1.42,0-6.91-.04-13.82-.06-20.73-.06s-13.93,.02-20.9,.06c-.48,0-.95,0-1.42,0-47.69,0-57.68-23.25-98.08-23.25-1.48,0-3,.03-4.56,.1-60.6,3.09-99.7,45.17-109.09,92.65C9.09,229.53,1.2,297.06,0,363.86c-.29,46.51,45.63,77.45,75.93,79.57,1.23,.09,2.45,.14,3.67,.14,56.81,0,102.1-98.93,136.79-98.94,13.23,.08,26.47,.12,39.7,.12s26.35-.04,39.52-.12c34.69,0,79.96,98.95,136.8,98.95,1.22,0,2.44-.05,3.67-.14,30.29-2.12,77.4-33.27,75.89-79.57Z"/><path d="M190.01,193.68h-28.34v-28.34c0-10.49-8.51-19-19-19s-19,8.51-19,19v28.34h-28.34c-10.49,0-19,8.51-19,19s8.51,19,19,19h28.34v28.34c0,10.49,8.51,19,19,19s19-8.51,19-19v-28.34h28.34c10.49,0,19-8.51,19-19s-8.51-19-19-19Z"/></svg>
+                    </div>
+                    <p className="text-xs font-medium text-text-title leading-tight py-xs">Play Games</p>
+                  </button>
+
+                  {/* Description */}
+                  <p className="text-sm text-white-50">A whole new way to connect with character!</p>
+                </div>
+              </div>
+            </PreviewBox>
+          </div>
+
+          <div className="min-w-[440px] flex-1">
+            <SubLabel>Anatomy</SubLabel>
+            <div className="flex flex-col gap-s text-xs text-text-body bg-white-05 border border-white-10 rounded-card p-m w-full">
+              {[
+                ['w-[220px] bg-coachmark-bg border border-accent rounded-card shadow-button z-50', 'Container — coachmark-bg (#1e1d2e) + accent border + accent shadow'],
+                ['absolute top-full right-0 mt-xs', 'Position — anchored below parent game button'],
+                ['CSS border triangle (10px) — accent outer, coachmark-bg inner', 'Caret — two zero-size divs, not rotated'],
+                ['p-s', 'Inner padding — spacing token s (12px)'],
+                ['label-xs text-white', '"New Feature" label'],
+                ['p-xs rounded-pill hover:bg-white-10', 'Close button — unified hitbox with sidebar close'],
+                ['12×12 stroke var(--popup-close-icon) strokeWidth 1.5', 'Close icon — X mark'],
+                ['bg-white-10 rounded-button pr-xs overflow-hidden hover:bg-white-20 w-full', 'Feature row button container'],
+                ['px-xs bg-accent self-stretch borderRadius: var(--radius-button) 0 0 var(--radius-button)', 'Icon bg — flush left/top/bottom, partial radius via CSS var'],
+                ['text-xs font-medium text-text-title py-xs', 'Feature row label — "Play Games"'],
+                ['mb-xs (between label→row, row→description)', 'Vertical spacing between sections'],
+                ['text-sm text-white-50', 'Description text'],
+              ].map(([cls, label]) => (
+                <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
+                  <TokenCell value={cls} />
+                  <span className="text-text-xxsmall text-right shrink-0 max-w-[45%]">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </Section>
+
         {/* ── Character Card ──────────────────────────────── */}
-        <Section id="Character Card" title="Character Card" onVisible={setActive}>
+        <Section id="Character Card" title="Character Card" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Variants</SubLabel>
@@ -740,7 +880,7 @@ export default function StyleGuide() {
                 ['from-accent/20 to-transparent opacity-0 group-hover:opacity-100', 'Hover tint layer'],
                 ['text-text-title font-semibold text-sm leading-tight truncate min-w-0', 'Name — no shrink-0 or flex-1'],
                 ['text-text-body text-xs leading-snug mb-[6px] line-clamp-2', 'Description — text-body not text-small'],
-                ['text-[10px] font-normal px-xs py-[3px] rounded-pill bg-white-10 text-white-80 border border-white-10', 'Tag pill'],
+                ['text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 text-white-80 border border-white-10', 'Tag pill'],
                 ['bg-accent hover:bg-accent-hover px-m py-xs rounded-pill', 'Chat CTA button'],
                 ['opacity-0 translate-y-[6px] group-hover:opacity-100 group-hover:translate-y-0', 'Chat CTA slide-up animation'],
               ].map(([cls, label]) => (
@@ -754,8 +894,13 @@ export default function StyleGuide() {
 
         </Section>
 
+        </> /* end Components */}
+
+        {/* ══ PATTERNS ════════════════════════════════════ */}
+        {activeTab === 'Patterns' && <>
+
         {/* ── Header ──────────────────────────────────────── */}
-        <Section id="Header" title="Header" onVisible={setActive}>
+        <Section id="Header" title="Header" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Preview</SubLabel>
@@ -777,10 +922,8 @@ export default function StyleGuide() {
                 </div>
                 {/* Right */}
                 <div className="flex items-center gap-s ml-auto shrink-0 relative z-10">
-                  <button className="flex items-center gap-xs border border-header-icon-border rounded-pill px-m h-[34px] text-white-50 text-sm">Blogs</button>
-                  <div className="w-px h-5 bg-white-10" />
                   <button className="w-8 h-8 flex items-center justify-center border border-header-icon-border rounded-full">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-accent-light)"><path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11a6 6 0 0 0-5-5.91V4a1 1 0 0 0-2 0v1.09A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                    <div className="w-[18px] h-[18px] rounded-sm bg-white-10" />
                   </button>
                 </div>
               </div>
@@ -799,7 +942,6 @@ export default function StyleGuide() {
                 ['gradient-purple → gradient-blue', 'Animated keyword gradient'],
                 ['border-header-icon-border / hover:bg-header-icon-hover-bg', 'All icon button tokens'],
                 ['w-8 h-8 rounded-full', 'Icon buttons: bell, trophy, avatar'],
-                ['h-[34px] rounded-pill px-m', 'Blogs CTA pill'],
               ].map(([cls, label]) => (
                 <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
                   <TokenCell value={cls} />
@@ -815,7 +957,7 @@ export default function StyleGuide() {
 
               {/* Credits pill */}
               <div>
-                <p className="text-text-xsmall text-[10px] uppercase tracking-[0.5px] mb-xs">Credits Pill</p>
+                <p className="text-text-xsmall text-xxs uppercase tracking-[0.5px] mb-xs">Credits Pill</p>
                 <div className="flex items-center gap-m mb-xs">
                   <button className="relative flex items-center hover:opacity-90 transition-opacity" style={{ height: '32px' }}>
                     <div className="flex items-center rounded-full h-[28px]"
@@ -832,7 +974,7 @@ export default function StyleGuide() {
                     </div>
                     <div className="absolute left-0 w-7 h-7 rounded-full bg-secondary-surface flex items-center justify-center"
                       style={{ top: '50%', transform: 'translateY(-50%) translateX(-20%)' }}>
-                      <span className="text-[10px]">🪙</span>
+                      <div className="w-4 h-4 rounded-full bg-white-20" />
                     </div>
                   </button>
                 </div>
@@ -854,18 +996,18 @@ export default function StyleGuide() {
 
               {/* SPICY toggle */}
               <div>
-                <p className="text-text-xsmall text-[10px] uppercase tracking-[0.5px] mb-xs">SPICY Toggle</p>
+                <p className="text-text-xsmall text-xxs uppercase tracking-[0.5px] mb-xs">SPICY Toggle</p>
                 <div className="flex items-center gap-m mb-xs">
                   {/* off */}
                   <div className="flex flex-col items-center gap-[2px]">
-                    <span className="text-[10px] font-medium tracking-widest text-white-50">SPICY</span>
+                    <span className="text-xxs font-medium tracking-widest text-white-50">SPICY</span>
                     <div className="w-[36px] h-[14px] border border-white-50 rounded-full relative">
                       <div className="absolute top-[2px] left-[2px] w-[8px] h-[8px] rounded-full bg-white-50"/>
                     </div>
                   </div>
                   {/* on */}
                   <div className="flex flex-col items-center gap-[2px]">
-                    <span className="text-[10px] font-medium tracking-widest text-status-alert">SPICY</span>
+                    <span className="text-xxs font-medium tracking-widest text-status-alert">SPICY</span>
                     <div className="w-[36px] h-[14px] border border-status-alert bg-status-alert rounded-full relative">
                       <div className="absolute top-[2px] right-[2px] w-[8px] h-[8px] rounded-full bg-white"/>
                     </div>
@@ -878,7 +1020,7 @@ export default function StyleGuide() {
                     ['on: bg-status-alert border-status-alert', 'On state track'],
                     ['w-[8px] h-[8px] rounded-full top-[2px]', 'Thumb size + vertical center'],
                     ['off: left-[2px] bg-white-50 · on: right-[2px] bg-white', 'Thumb position + color by state'],
-                    ['text-[10px] tracking-widest uppercase', 'Label style'],
+                    ['text-xxs tracking-widest uppercase', 'Label style'],
                   ].map(([cls, label]) => (
                     <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
                       <TokenCell value={cls} />
@@ -890,20 +1032,18 @@ export default function StyleGuide() {
 
               {/* Notification badge */}
               <div>
-                <p className="text-text-xsmall text-[10px] uppercase tracking-[0.5px] mb-xs">Notification Badge</p>
+                <p className="text-text-xsmall text-xxs uppercase tracking-[0.5px] mb-xs">Notification Badge</p>
                 <div className="flex items-center gap-m mb-xs">
                   <div className="relative w-8 h-8 flex items-center justify-center border border-header-icon-border rounded-full">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-accent-light)">
-                      <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11a6 6 0 0 0-5-5.91V4a1 1 0 0 0-2 0v1.09A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2z"/>
-                    </svg>
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-status-alert rounded-full text-[11px] font-bold text-white flex items-center justify-center ring-2 ring-page-bg">7</span>
+                    <div className="w-[18px] h-[18px] rounded-sm bg-accent-light" />
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-status-alert rounded-full text-xs font-bold text-white flex items-center justify-center ring-2 ring-page-bg">7</span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-s text-xs text-text-body bg-white-05 border border-white-10 rounded-card p-m w-full">
                   {[
                     ['absolute -top-1 -right-1', 'Dot position: top-right corner'],
                     ['w-4 h-4 rounded-full bg-status-alert', 'Dot size + color'],
-                    ['text-[11px] font-bold text-white', 'Count text'],
+                    ['text-xs font-bold text-white', 'Count text'],
                     ['ring-2 ring-page-bg', 'Separation ring matches page bg'],
                   ].map(([cls, label]) => (
                     <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
@@ -920,34 +1060,50 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Sidebar ─────────────────────────────────────── */}
-        <Section id="Sidebar" title="Sidebar" onVisible={setActive}>
+        <Section id="Sidebar" title="Sidebar" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Preview</SubLabel>
             <div className="bg-page-bg border border-white-10 rounded-card overflow-hidden w-[280px]">
-              <div className="flex items-center justify-between px-6 py-3 border-b border-white-10">
+              <div className="flex items-center justify-between px-xl py-s border-b border-white-10">
                 <span className="label-xs">Recent Chats</span>
-                <button className="text-secondary text-[10px] font-semibold tracking-[0.2px]">+ GROUP CHAT</button>
+                <button className="text-secondary text-xxs font-semibold tracking-[0.2px] flex items-center gap-xxs">
+                  <svg width="11" height="11" viewBox="0 0 14 14" fill="none" className="shrink-0 relative -top-[1px]">
+                    <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  <span className="leading-none">GROUP CHAT</span>
+                </button>
               </div>
               {[
                 { name: 'Sarah', preview: 'How about now?', time: '5m' },
                 { name: 'Elle', preview: 'What about it?', time: '1h' },
                 { name: 'Makima', preview: 'would you like to eat keema?', time: 'Yesterday' },
               ].map((chat, i) => (
-                <div key={chat.name} className="relative">
-                  <div className="flex items-center gap-3 px-6 py-3 hover:bg-white-05 cursor-pointer">
-                    <div className="w-8 h-8 rounded-full bg-white-10 ring-1 ring-white-20 shrink-0" />
-                    <div className="flex-1 min-w-0">
+                <div key={chat.name} className="relative group">
+                  <div className="flex items-center gap-s px-xl py-m hover:bg-white-05 cursor-pointer">
+                    <div className="w-9 h-9 rounded-pill bg-white-10 ring-1 ring-white-20 shrink-0" />
+                    <div className="flex-1 min-w-0 flex flex-col gap-xxs">
                       <p className="text-white-70 text-sm font-medium leading-[1.45]">{chat.name}</p>
-                      <div className="flex items-center gap-1 text-[12px]">
+                      <div className="flex items-center gap-xxs text-xs font-normal leading-[1.3]">
                         <p className="text-text-dim truncate min-w-0">{chat.preview}</p>
                         <span className="text-text-dim shrink-0">· {chat.time}</span>
                       </div>
                     </div>
                   </div>
-                  {i < 2 && <div className="absolute bottom-0 left-6 right-6 border-t border-white-10" />}
+                  {/* Close on hover */}
+                  <button aria-label="Remove chat" className="absolute top-s right-m opacity-0 group-hover:opacity-100 transition-opacity p-xs rounded-pill hover:bg-white-10">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 2l8 8M10 2L2 10" stroke="var(--popup-close-icon)" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                  {i < 2 && <div className="absolute bottom-0 left-xl right-xl border-t border-white-10" />}
                 </div>
               ))}
+              {/* Footer */}
+              <div className="border-t border-white-10 px-xl py-s flex items-center justify-between gap-xs">
+                <a href="#" className="text-xxs font-normal text-text-small underline">Blogs</a>
+                <p className="text-xxs font-normal text-text-xxsmall whitespace-nowrap">© 2026 now.gg</p>
+              </div>
             </div>
           </div>
 
@@ -957,14 +1113,18 @@ export default function StyleGuide() {
               {[
                 ['w-[365px] fixed top-[60px] left-0 bottom-0', 'Dimensions + position'],
                 ['bg-page-bg border-r border-white-10', 'Surface + right border'],
-                ['flex flex-col', 'Three zones: CTA → nav → recent chats'],
-                ['flex items-center gap-2 px-6 py-4 text-[12px] font-normal', 'Nav item row'],
+                ['flex flex-col', 'Four zones: CTA → nav → recent chats → footer'],
+                ['flex items-center gap-xs px-xl py-m text-xs font-normal', 'Nav item row'],
                 ['active: gradient bg + text-text-title', 'Active nav state via usePathname()'],
                 ['inactive: text-white-70 hover:bg-white-05', 'Inactive nav state'],
                 ['label-xs', '"Recent Chats" section header'],
+                ['flex items-center gap-s px-xl py-m', 'Chat row layout'],
+                ['w-9 h-9 rounded-pill ring-1 ring-white-20', 'Avatar circle + ring'],
                 ['text-white-70 text-sm font-medium', 'Chat name'],
-                ['text-text-dim text-[12px] truncate', 'Chat preview + time'],
-                ['ring-1 ring-white-20 rounded-full', 'Avatar ring'],
+                ['flex flex-col gap-xxs', 'Name + preview vertical gap'],
+                ['text-text-dim text-xs truncate', 'Chat preview + time'],
+                ['p-xs rounded-pill hover:bg-white-10 (close on hover)', 'Close button — unified with coachmark close'],
+                ['px-xl py-s border-t border-white-10', 'Footer — Blogs link + copyright'],
                 ['2px thumb — custom JS scrollbar', 'Native scrollbar hidden; JS thumb fades in on scroll'],
               ].map(([cls, label]) => (
                 <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
@@ -980,7 +1140,7 @@ export default function StyleGuide() {
             <div className="flex items-center gap-m mb-xs">
               <div className="relative w-[52px] h-[52px]">
                 <div className="w-[52px] h-[52px] rounded-full bg-white-10 ring-1 ring-white-20" />
-                <div className="absolute -bottom-2 -right-2 bg-secondary-surface rounded-full w-[24px] h-[24px] flex items-center justify-center text-[11px] font-medium text-white-60 leading-none"
+                <div className="absolute -bottom-2 -right-2 bg-secondary-surface rounded-full w-[24px] h-[24px] flex items-center justify-center text-xs font-medium text-white-60 leading-none"
                   style={{ boxShadow: '0 0 0 2px var(--page-bg)' }}>
                   <span>+3</span>
                 </div>
@@ -991,7 +1151,7 @@ export default function StyleGuide() {
                 ['absolute -bottom-2 -right-2', 'Position: bottom-right of avatar'],
                 ['w-[24px] h-[24px] rounded-full', 'Badge size'],
                 ['bg-secondary-surface', 'Fill (#252535)'],
-                ['text-[11px] font-medium text-white-60', 'Count text'],
+                ['text-xs font-medium text-white-60', 'Count text'],
                 ['boxShadow: 0 0 0 2px var(--page-bg)', 'Separation ring via CSS var'],
               ].map(([cls, label]) => (
                 <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
@@ -1005,7 +1165,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Widgets ─────────────────────────────────────── */}
-        <Section id="Widgets" title="Widgets" onVisible={setActive}>
+        <Section id="Widgets" title="Widgets" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Generate Images</SubLabel>
@@ -1059,7 +1219,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Category Tabs ───────────────────────────────── */}
-        <Section id="Category Tabs" title="Category Tabs" onVisible={setActive}>
+        <Section id="Category Tabs" title="Category Tabs" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>States</SubLabel>
@@ -1108,7 +1268,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Explore Description ─────────────────────────── */}
-        <Section id="Explore Description" title="Explore Description" onVisible={setActive}>
+        <Section id="Explore Description" title="Explore Description" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Preview</SubLabel>
@@ -1148,7 +1308,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── FAQ Accordion ───────────────────────────────── */}
-        <Section id="FAQ Accordion" title="FAQ Accordion" onVisible={setActive}>
+        <Section id="FAQ Accordion" title="FAQ Accordion" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Preview</SubLabel>
@@ -1205,7 +1365,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── What is wsup.ai ─────────────────────────────── */}
-        <Section id="What is wsup.ai" title="What is wsup.ai" onVisible={setActive}>
+        <Section id="What is wsup.ai" title="What is wsup.ai" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Preview</SubLabel>
@@ -1261,7 +1421,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Footer ──────────────────────────────────────── */}
-        <Section id="Footer" title="Footer" onVisible={setActive}>
+        <Section id="Footer" title="Footer" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Columns</SubLabel>
@@ -1272,7 +1432,7 @@ export default function StyleGuide() {
                 { heading: 'SUPPORT', links: ['AI Companion', 'Blog'] },
               ].map(col => (
                 <div key={col.heading}>
-                  <p className="text-text-dim text-[10px] font-semibold tracking-widest uppercase mb-m">{col.heading}</p>
+                  <p className="text-text-dim text-xxs font-semibold tracking-widest uppercase mb-m">{col.heading}</p>
                   <ul className="flex flex-col gap-s">
                     {col.links.map(l => (
                       <li key={l} className="text-text-body text-sm">{l}</li>
@@ -1281,7 +1441,7 @@ export default function StyleGuide() {
                 </div>
               ))}
               <div>
-                <p className="text-text-dim text-[10px] font-semibold tracking-widest uppercase mb-m">FOLLOW US</p>
+                <p className="text-text-dim text-xxs font-semibold tracking-widest uppercase mb-m">FOLLOW US</p>
                 <ul className="flex flex-col gap-s">
                   {['Discord', 'Instagram', 'Reddit'].map(s => (
                     <li key={s} className="text-text-body text-sm">{s}</li>
@@ -1305,9 +1465,9 @@ export default function StyleGuide() {
               {[
                 ['bg-footer-bg', 'Footer bg token — #111111, darker than page-bg'],
                 ['border-t border-white-10', 'Top divider'],
-                ['text-text-dim text-[10px] tracking-widest uppercase', 'Column headings (CATEGORIES, COMPANY…)'],
+                ['text-text-dim text-xxs tracking-widest uppercase', 'Column headings (CATEGORIES, COMPANY…)'],
                 ['text-text-body text-sm hover:text-text-title', 'Link items'],
-                ['text-text-dim text-[10px] tracking-widest uppercase', 'POLICIES label'],
+                ['text-text-dim text-xxs tracking-widest uppercase', 'POLICIES label'],
                 ['text-text-dim text-xs hover:text-text-small', 'Policy links'],
                 ['text-text-xxsmall text-xs', 'Copyright — © 2026 wsup.ai'],
                 ['text-text-xxsmall text-xs underline + group-hover:text-white-50', 'Your Privacy Choices (with privacy-choices.png image)'],
@@ -1323,7 +1483,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Bottom Nav ──────────────────────────────────── */}
-        <Section id="Bottom Nav" title="Bottom Nav" onVisible={setActive}>
+        <Section id="Bottom Nav" title="Bottom Nav" onVisible={onSectionVisible}>
 
           <div className="min-w-[360px] flex-1 max-w-[500px]">
             <SubLabel>Preview</SubLabel>
@@ -1347,7 +1507,7 @@ export default function StyleGuide() {
                         style={active ? { backgroundImage: activeGrad } : undefined}
                       >
                         <div className="w-5 h-5 rounded-sm bg-white-20" />
-                        <span className={`text-[12px] font-normal leading-none ${active ? 'text-text-title' : 'text-white-50'}`}>
+                        <span className={`text-xs font-normal leading-none ${active ? 'text-text-title' : 'text-white-50'}`}>
                           {label}
                         </span>
                       </div>
@@ -1371,7 +1531,7 @@ export default function StyleGuide() {
                 ['flex items-center', 'Bar layout — 5 items fill full width'],
                 ['flex-1 min-w-0', 'Each item takes equal width'],
                 ['flex flex-col items-center gap-[6px] py-[12px]', 'Item layout — icon + label, 12px vertical padding'],
-                ['text-[12px] font-normal leading-none', 'Label typography'],
+                ['text-xs font-normal leading-none', 'Label typography'],
                 ['text-text-title (active) / text-white-50 (inactive)', 'Label color states'],
                 ['white (active) / rgba(255,255,255,0.5) (inactive)', 'Icon fill/bg color states'],
                 ['backgroundImage: activeGradient (inline style)', 'Active bg — full column width gradient, no pill'],
@@ -1390,7 +1550,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Mobile Footer ────────────────────────────────── */}
-        <Section id="Mobile Footer" title="Mobile Footer" onVisible={setActive}>
+        <Section id="Mobile Footer" title="Mobile Footer" onVisible={onSectionVisible}>
 
           <div className="min-w-[360px] flex-1 max-w-[500px]">
             <SubLabel>Preview</SubLabel>
@@ -1400,9 +1560,9 @@ export default function StyleGuide() {
                 <div className="flex items-center justify-between px-l py-l border-t border-white-10">
                   <span className="text-text-body text-sm font-bold">wsup.ai</span>
                   <div className="flex items-center gap-l text-text-subtitle">
-                    <span className="text-text-xsmall text-[10px]">Discord</span>
-                    <span className="text-text-xsmall text-[10px]">Instagram</span>
-                    <span className="text-text-xsmall text-[10px]">Reddit</span>
+                    <span className="text-text-xsmall text-xxs">Discord</span>
+                    <span className="text-text-xsmall text-xxs">Instagram</span>
+                    <span className="text-text-xsmall text-xxs">Reddit</span>
                   </div>
                 </div>
                 {/* Accordion row (open) */}
@@ -1452,7 +1612,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Chat Header ──────────────────────────────────── */}
-        <Section id="Chat Header" title="Chat Header" onVisible={setActive}>
+        <Section id="Chat Header" title="Chat Header" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Preview</SubLabel>
@@ -1461,7 +1621,7 @@ export default function StyleGuide() {
                 {/* Back */}
                 <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors shrink-0">
                   <svg width="20" height="20" viewBox="0 0 16.8333 13.5" fill="none">
-                    <path d="M6.97727 0.5L0.5 6.75M0.5 6.75L6.97727 13M0.5 6.75H16.3333" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M6.97727 0.5L0.5 6.75M0.5 6.75L6.97727 13M0.5 6.75H16.3333" stroke="rgba(255,255,255,0.9)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
                 {/* Avatar */}
@@ -1473,7 +1633,7 @@ export default function StyleGuide() {
                 </div>
                 {/* Name */}
                 <div className="flex flex-col gap-[2px] flex-1 min-w-0">
-                  <span className="text-text-title font-bold text-sm leading-tight">Billie Eilish</span>
+                  <span className="text-text-title font-medium text-sm leading-tight">Billie Eilish</span>
                   <div className="flex items-center gap-[4px]">
                     <span className="text-xs text-text-body leading-tight">by</span>
                     <span className="text-xs text-white underline leading-tight">Honeybadger</span>
@@ -1482,14 +1642,22 @@ export default function StyleGuide() {
                 </div>
                 {/* Actions */}
                 <div className="flex items-center shrink-0">
+                  {/* Call — warm gradient placeholder */}
                   <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
-                    <div style={{ width: 20, height: 20, backgroundImage: 'linear-gradient(146.75deg, rgb(244,218,92) 14.649%, rgb(228,137,73) 54.497%, rgb(198,87,32) 97.483%)', maskImage: "url('/icons/icon-call.svg')", maskSize: '20px 20px', maskRepeat: 'no-repeat', maskPosition: '0 0', WebkitMaskImage: "url('/icons/icon-call.svg')", WebkitMaskSize: '20px 20px', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: '0 0' }} />
+                    <div className="w-5 h-5 rounded-sm" style={{ background: 'var(--icon-gradient-warm)' }} />
                   </button>
+                  {/* Gallery */}
                   <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
-                    <div style={{ width: 20, height: 20, backgroundColor: 'rgba(255,255,255,0.7)', maskImage: "url('/icons/icon-gallery.svg')", maskSize: '20px 20px', maskRepeat: 'no-repeat', maskPosition: '0 0', WebkitMaskImage: "url('/icons/icon-gallery.svg')", WebkitMaskSize: '20px 20px', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: '0 0' }} />
+                    <div className="w-5 h-5 rounded-sm bg-white-10" />
                   </button>
+                  {/* Game — dot badge */}
+                  <button className="relative p-[10px] rounded-full hover:bg-white-10 transition-colors">
+                    <div className="w-[22px] h-[22px] rounded-sm bg-white-10" />
+                    <span className="absolute top-[6px] right-[6px] w-[8px] h-[8px] rounded-full bg-status-alert animate-pulse" />
+                  </button>
+                  {/* Dots */}
                   <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="rgba(255,255,255,0.7)"><circle cx="10" cy="4.5" r="1.5" /><circle cx="10" cy="10" r="1.5" /><circle cx="10" cy="15.5" r="1.5" /></svg>
+                    <div className="w-5 h-5 rounded-sm bg-white-10" />
                   </button>
                 </div>
               </div>
@@ -1504,15 +1672,14 @@ export default function StyleGuide() {
                 ['p-[10px] rounded-full hover:bg-white-10', 'Back button — hit area'],
                 ['w-10 h-10 rounded-full ring-1 ring-white-10 / mr-m', 'Avatar circle + right margin'],
                 ['-bottom-1 -right-2 w-[22px] h-[22px] bg-accent border-2 border-page-bg rounded-full', '+ group badge — border-page-bg cutout trick'],
-                ['text-text-title font-bold text-sm', 'Character name'],
+                ['text-text-title font-medium text-sm', 'Character name'],
                 ['text-xs text-white underline', 'Creator link'],
-                ['CSS mask + warm gradient (backgroundImage)', 'Call icon — color matches accent gradient'],
-                ['CSS mask + var(--white-90)', 'Gallery icon — 90% white (var(--white-90))'],
-                ['bg-gradient-to-b from-black to-transparent (mobile)', 'Mobile header gradient — fades into character bg'],
-                ['bg-chat-ai-active border border-accent rounded-[16px]', 'Coachmark container — accent border + active bg'],
-                ['bg-white-10 rounded-[10px] px-[8px] py-[6px]', 'Coachmark feature row container'],
-                ['w-[32px] h-[32px] rounded-[10px] bg-accent', 'Coachmark icon background — accent fill'],
+                ['CSS mask + var(--icon-gradient-warm)', 'Call icon — warm gradient via backgroundImage'],
+                ['CSS mask + var(--white-90)', 'Gallery icon — 90% white'],
+                ['relative isolate (game button wrapper)', 'Stacking context — coachmark renders inside'],
                 ['bg-status-alert animate-pulse (notification dot)', 'New-feature badge on game icon'],
+                ['bg-gradient-to-b from-black to-transparent (mobile)', 'Mobile header gradient — fades into character bg'],
+                ['See Coachmark component in Components tab', 'Coachmark — standalone component (Coachmark.tsx)'],
               ].map(([cls, label]) => (
                 <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
                   <TokenCell value={cls} />
@@ -1525,7 +1692,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Chat Messages ────────────────────────────────── */}
-        <Section id="Chat Messages" title="Chat Messages" onVisible={setActive}>
+        <Section id="Chat Messages" title="Chat Messages" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Bubbles</SubLabel>
@@ -1549,31 +1716,32 @@ export default function StyleGuide() {
                       <div className="flex items-center gap-[4px]">
                         <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[4px] h-[32px] pl-[8px] pr-[6px] rounded-[24px] shrink-0">
                           <div className="flex items-center gap-[2px]">
-                            {[3, 7, 10, 8, 5].map((h, i) => <div key={i} className="w-[1.5px] bg-white-70 rounded-full" style={{ height: `${h}px` }} />)}
+                            {[3, 7, 10, 8, 5, 8, 10, 7, 3].map((h, i) => <div key={i} className="w-[1.5px] bg-white-70 rounded-full" style={{ height: `${h}px` }} />)}
                           </div>
                           <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center shrink-0 ml-[2px]">
                             <svg width="6" height="7" viewBox="0 0 6 7" fill="none"><path d="M1.5 1l3.5 2.5L1.5 6V1Z" fill="#171717" /></svg>
                           </div>
                         </div>
-                        <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10"><div style={{ width: 16, height: 16, backgroundColor: 'white', maskImage: "url('/icons/icon-like.svg')", maskSize: '16px 16px', maskRepeat: 'no-repeat', maskPosition: '0 0', WebkitMaskImage: "url('/icons/icon-like.svg')", WebkitMaskSize: '16px 16px', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: '0 0' }} /></button>
-                        <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10"><div style={{ width: 16, height: 16, backgroundColor: 'white', maskImage: "url('/icons/icon-dislike.svg')", maskSize: '16px 16px', maskRepeat: 'no-repeat', maskPosition: '0 0', WebkitMaskImage: "url('/icons/icon-dislike.svg')", WebkitMaskSize: '16px 16px', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: '0 0' }} /></button>
+                        <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors"><div className="w-4 h-4 rounded-sm bg-white-10" /></button>
+                        <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors"><div className="w-4 h-4 rounded-sm bg-white-10" /></button>
                       </div>
                       <div className="flex-1" />
                       <div className="flex items-center gap-[4px]">
+                        {/* Generate image — warm gradient placeholder */}
                         <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors shrink-0">
-                          <div style={{ width: 16, height: 16, backgroundImage: 'var(--icon-gradient-warm)', maskImage: "url('/icons/icon-generate-image.svg')", maskSize: '16px 16px', maskRepeat: 'no-repeat', maskPosition: '0 0', WebkitMaskImage: "url('/icons/icon-generate-image.svg')", WebkitMaskSize: '16px 16px', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: '0 0' }} />
+                          <div className="w-4 h-4 rounded-sm" style={{ background: 'var(--icon-gradient-warm)' }} />
                         </button>
-                        <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10">
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="white"><circle cx="8" cy="3" r="1.3" /><circle cx="8" cy="8" r="1.3" /><circle cx="8" cy="13" r="1.3" /></svg>
+                        <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors">
+                          <div className="w-4 h-4 rounded-sm bg-white-10" />
                         </button>
                       </div>
                     </div>
                   </div>
                   <div className="self-stretch flex flex-col items-center justify-center gap-[4px] shrink-0">
-                    <button className="w-[32px] h-[32px] flex items-center justify-center backdrop-blur-[32px] bg-black-70 rounded-full">
-                      <div style={{ width: 16, height: 16, backgroundColor: 'white', maskImage: "url('/icons/icon-regenerate.svg')", maskSize: '16px 16px', maskRepeat: 'no-repeat', maskPosition: '0 0', WebkitMaskImage: "url('/icons/icon-regenerate.svg')", WebkitMaskSize: '16px 16px', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: '0 0' }} />
+                    <button className="w-[32px] h-[32px] flex items-center justify-center backdrop-blur-[32px] bg-black-70 rounded-full hover:bg-white-10 transition-colors">
+                      <div className="w-4 h-4 rounded-sm bg-white-10" />
                     </button>
-                    <span className="text-[10px] font-semibold text-white tracking-[0.2px]">0/3</span>
+                    <span className="text-xxs font-semibold text-white tracking-[0.2px]">0/3</span>
                   </div>
                 </div>
                 {/* Typing indicator */}
@@ -1617,7 +1785,7 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Chat Bar ─────────────────────────────────────── */}
-        <Section id="Chat Bar" title="Chat Bar" onVisible={setActive}>
+        <Section id="Chat Bar" title="Chat Bar" onVisible={onSectionVisible}>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Preview</SubLabel>
@@ -1625,16 +1793,18 @@ export default function StyleGuide() {
               <div className="bg-gradient-to-b from-transparent to-black-40 px-[16px] py-[12px]">
                 <div className="bg-chat-ai-bubble rounded-[20px] p-[10px] flex items-center gap-s">
                   <div className="flex items-center gap-s flex-1 min-w-0">
-                    <button className="w-5 h-5 rounded-full bg-white-10 flex items-center justify-center shrink-0">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1.5a3 3 0 0 1 2 5.2V8a.5.5 0 0 1-.5.5h-3A.5.5 0 0 1 4 8V6.7A3 3 0 0 1 6 1.5Z" stroke="rgba(255,255,255,0.7)" strokeWidth="1" strokeLinejoin="round" /><path d="M4.5 9.5h3M5 10.5h2" stroke="rgba(255,255,255,0.7)" strokeWidth="1" strokeLinecap="round" /></svg>
+                    <button className="w-5 h-5 rounded-full bg-white-10 flex items-center justify-center shrink-0 hover:bg-white-20 transition-colors">
+                      <div className="w-3 h-3 rounded-sm bg-white-20" />
                     </button>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2c0 0 .6 4 2.2 5.8C13.8 9.6 18 10 18 10s-4.2.4-5.8 2.2C10.6 14 10 18 10 18s-.6-4-2.2-5.8C6.2 10.4 2 10 2 10s4.2-.4 5.8-2.2C9.4 6 10 2 10 2Z" fill="rgba(255,255,255,0.7)" /></svg>
+                    <button className="shrink-0 hover:opacity-80 transition-opacity">
+                      <div className="w-5 h-5 rounded-sm bg-white-10" />
+                    </button>
                     <span className="text-sm text-white-50">Message</span>
                   </div>
                   <div className="flex items-center gap-[16px] shrink-0">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4.5" width="16" height="11" rx="2" stroke="rgba(255,255,255,0.5)" strokeWidth="1.3" /><circle cx="7" cy="9" r="1.5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" /></svg>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="7" y="2" width="6" height="9" rx="3" stroke="rgba(255,255,255,0.5)" strokeWidth="1.3" /></svg>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="8" width="16" height="2" rx="1" stroke="rgba(255,255,255,0.5)" strokeWidth="1.3" /></svg>
+                    <button className="hover:opacity-80 transition-opacity"><div className="w-4 h-4 rounded-sm bg-white-10" /></button>
+                    <button className="hover:opacity-80 transition-opacity"><div className="w-5 h-5 rounded-sm bg-white-10" /></button>
+                    <button className="hover:opacity-80 transition-opacity"><div className="w-5 h-5 rounded-sm bg-white-10" /></button>
                   </div>
                 </div>
               </div>
@@ -1645,13 +1815,15 @@ export default function StyleGuide() {
             <SubLabel>Anatomy</SubLabel>
             <div className="flex flex-col gap-s text-xs text-text-body bg-white-05 border border-white-10 rounded-card p-m w-full">
               {[
+                ['px-[16px] md:px-[48px] py-[12px]', 'Outer padding — tighter on mobile, wider on desktop'],
                 ['md:bg-gradient-to-b md:from-transparent md:to-black-40', 'Desktop scrim — fades messages into chatbar (desktop only)'],
-                ['absolute bottom-0 h-[160px] gradient(#000000 → black-80 → transparent)', 'Mobile scrim — 160px gradient behind chatbar, above character image'],
                 ['bg-chat-ai-bubble rounded-[20px] p-[10px]', 'Inner bar surface — same token as AI bubble'],
-                ['w-5 h-5 rounded-full bg-white-10 (bulb)', 'Auto-suggest bulb — tiny circle button'],
+                ['w-5 h-5 rounded-full bg-white-10 hover:bg-white-20 (bulb)', 'Auto-suggest bulb — tiny circle button'],
+                ['<img> icon-sparkle.svg 20×20', 'Sparkle icon — uses <img> not inline SVG'],
                 ['flex-1 bg-transparent text-sm text-white placeholder:text-white-50 outline-none min-w-0', 'Input field'],
                 ['gap-[16px] (right icons)', 'More spacing between media action icons than gap-s'],
-                ['rgba(255,255,255,0.5) stroke (media icons)', 'Dimmer than left icons — secondary affordance'],
+                ['<img> icon-image.svg, CSS mask icon-mic.svg, <img> icon-gift.svg', 'Right icons — image + mic + gift'],
+                ['hover:opacity-80 transition-opacity', 'Right icon hover state'],
               ].map(([cls, label]) => (
                 <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
                   <TokenCell value={cls} />
@@ -1664,7 +1836,67 @@ export default function StyleGuide() {
         </Section>
 
         {/* ── Chat Right Sidebar ───────────────────────────── */}
-        <Section id="Chat Right Sidebar" title="Chat Right Sidebar" onVisible={setActive}>
+        <Section id="Chat Right Sidebar" title="Chat Right Sidebar" onVisible={onSectionVisible}>
+
+          <div className="min-w-[300px] max-w-[365px] flex-1">
+            <SubLabel>Preview</SubLabel>
+            <PreviewBox className="p-0 overflow-hidden">
+              <div className="relative w-full flex flex-col justify-end overflow-hidden bg-white-05" style={{ aspectRatio: '9/14' }}>
+                {/* Placeholder character image area */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white-05 from-[20%] to-page-bg to-[65%]" />
+                {/* Decorative glows */}
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 0% 100%, rgba(123,76,255,0.10) 0%, transparent 55%), radial-gradient(ellipse at 100% 30%, rgba(255,89,236,0.10) 0%, transparent 55%)' }} />
+                {/* Info overlay */}
+                <div className="relative z-10 flex flex-col items-center gap-[10px] px-xl pt-xl pb-xxxl">
+                  <h2 className="text-base font-medium text-white text-center">Character Name</h2>
+                  {/* Stats */}
+                  <div className="flex items-center gap-[10px]">
+                    <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[2px] pl-[6px] pr-[8px] py-[4px] rounded-[20px]">
+                      <div className="w-4 h-4 rounded-sm bg-white-10 shrink-0" />
+                      <span className="text-xxs text-white-70 tracking-[0.2px]">3K Chats</span>
+                    </div>
+                    <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[2px] pl-[6px] pr-[8px] py-[4px] rounded-[20px]">
+                      <div className="w-4 h-4 rounded-sm bg-white-10 shrink-0" />
+                      <span className="text-xxs text-white-70 tracking-[0.2px]">#219 Rank</span>
+                    </div>
+                  </div>
+                  {/* Tags */}
+                  <div className="flex flex-wrap items-center justify-center gap-[8px]">
+                    {['Neon', 'Music', 'Girl'].map(tag => (
+                      <span key={tag} className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10">{tag}</span>
+                    ))}
+                  </div>
+                  {/* Description */}
+                  <p className="text-sm text-white text-center leading-normal">Cyberpunk DJ who grew up in a musical family.</p>
+                  {/* CTA */}
+                  <button className="w-[140px] bg-accent hover:bg-accent-hover rounded-pill py-[10px] text-sm font-semibold text-white transition-colors">Chat</button>
+                  {/* Creator */}
+                  <div className="flex items-center gap-[4px]">
+                    <span className="text-xs text-white">by</span>
+                    <span className="text-xs text-white underline">Creator</span>
+                    <svg width="5" height="8" viewBox="0 0 5 8" fill="none"><path d="M1 1l3 3-3 3" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </div>
+                </div>
+              </div>
+              {/* You May Also Like */}
+              <div className="bg-page-bg">
+                <p className="label-xs px-xl pt-xl pb-s">You May Also Like</p>
+                <div className="grid grid-cols-2 gap-s px-xl pb-xl">
+                  {['Elle', 'Rinne', 'Makima', 'Sunshine'].map(name => (
+                    <div key={name} className="flex flex-col gap-xs cursor-pointer group">
+                      <div className="relative rounded-card overflow-hidden w-full bg-white-10" style={{ aspectRatio: '9/16' }}>
+                        <div className="absolute inset-0 bg-gradient-to-b from-white-05 to-white-10" />
+                      </div>
+                      <div className="flex flex-col gap-xxs">
+                        <p className="text-sm font-semibold text-text-title leading-tight">{name}</p>
+                        <p className="text-xs text-text-body leading-snug line-clamp-2">A character description here...</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </PreviewBox>
+          </div>
 
           <div className="min-w-[440px] flex-1">
             <SubLabel>Anatomy</SubLabel>
@@ -1675,8 +1907,8 @@ export default function StyleGuide() {
                 ['bg-gradient-to-b from-transparent from-[44%] to-black-80 to-[72%]', 'Scrim — clears above 44%, full dark by 72% (bg-black-80 token)'],
                 ['radial-gradient ellipse 10% opacity (purple/pink/warm)', 'Decorative glows — not structural, pure aesthetic'],
                 ['backdrop-blur-[32px] bg-black-70 rounded-[20px] (stat pills)', 'Stats pill container — bg-black-70 token'],
-                ['text-[10px] text-white-70 tracking-[0.2px] whitespace-nowrap', 'Stat value + label text'],
-                ['backdrop-blur-[32px] bg-white-10 border border-white-10 rounded-[24px] px-[10px] py-[2px] text-[10px]', 'Tag pill'],
+                ['text-xxs text-white-70 tracking-[0.2px] whitespace-nowrap', 'Stat value + label text'],
+                ['backdrop-blur-[32px] bg-white-10 border border-white-10 rounded-[24px] px-[10px] py-[2px] text-xxs', 'Tag pill'],
                 ['w-[140px] bg-accent rounded-pill py-[10px] text-sm font-semibold', 'Chat CTA — fixed 140px width, centered'],
                 ['grid grid-cols-2 gap-[12px] px-[24px] pb-[24px]', '"You May Also Like" grid'],
                 ['style={{ aspectRatio: "9/16" }} rounded-[12px] overflow-hidden', 'Related character card — 9:16 portrait'],
@@ -1693,6 +1925,8 @@ export default function StyleGuide() {
 
         </Section>
 
+        </> /* end Patterns */}
+
       </main>
     </div>
   )
@@ -1708,11 +1942,24 @@ function Section({
   children: React.ReactNode
   onVisible: (id: string) => void
 }) {
+  const ref = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) onVisible(id) },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [id, onVisible])
+
   return (
     <section
+      ref={ref}
       id={id}
       className="mb-16 scroll-mt-8"
-      onMouseEnter={() => onVisible(id)}
     >
       <div className="flex items-center gap-4 mb-8">
         <h2 className="text-white text-lg font-semibold shrink-0">{title}</h2>
@@ -1748,8 +1995,8 @@ function Swatch({ name, hex }: { name: string; hex: string; dark?: boolean }) {
         className="w-16 h-12 rounded-card border border-white-10 transition-transform group-hover:scale-105"
         style={{ background: hex }}
       />
-      <span className="text-text-xsmall text-[10px] leading-tight max-w-[64px]">{name}</span>
-      <span className="text-text-xxsmall text-[9px] leading-tight max-w-[64px] font-mono opacity-70">
+      <span className="text-text-xsmall text-xxs leading-tight max-w-[64px]">{name}</span>
+      <span className="text-text-xxsmall text-xxs leading-tight max-w-[64px] font-mono opacity-70">
         {hex.length > 10 ? hex.slice(0, 10) + '…' : hex}
       </span>
     </div>
@@ -1765,14 +2012,14 @@ function AlphaSwatch({ name, color, onLight }: { name: string; color: string; on
       >
         <div className="absolute inset-0 rounded-button" style={{ background: color }} />
       </div>
-      <span className="text-text-xxsmall text-[9px] font-mono">{name.split('-')[1]}</span>
+      <span className="text-text-xxsmall text-xxs font-mono">{name.split('-')[1]}</span>
     </div>
   )
 }
 
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-block bg-white-05 border border-white-10 rounded px-2 py-0.5 text-[10px] font-mono text-text-xsmall whitespace-nowrap">
+    <span className="inline-block bg-white-05 border border-white-10 rounded px-2 py-0.5 text-xxs font-mono text-text-xsmall whitespace-nowrap">
       {children}
     </span>
   )
@@ -1783,7 +2030,7 @@ function StateLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-[6px]">
       <div className="w-[2px] h-3 rounded-full bg-accent-light opacity-60 shrink-0" />
-      <span className="text-[10px] text-text-xxsmall uppercase tracking-wider">{children}</span>
+      <span className="text-xxs text-text-xxsmall uppercase tracking-wider">{children}</span>
     </div>
   )
 }
@@ -1842,7 +2089,9 @@ const KNOWN_TOKEN_IDS = new Set<string>([
   // Forms
   'token-forms-bg','token-forms-border','token-forms-focus-border','token-forms-error-border','token-forms-active-bg','token-forms-disabled-bg',
   // Chat
-  'token-chat-ai-bubble','token-chat-ai-active','token-chat-user-bubble',
+  'token-chat-ai-bubble','token-chat-ai-active','token-chat-user-bubble','token-chat-premium-border','token-chat-badge','token-chat-scrim-bottom',
+  // Coachmark
+  'token-coachmark-bg',
   // Header
   'token-header-icon-border','token-header-icon-hover-bg',
   // White / Black alpha
@@ -1910,7 +2159,7 @@ function scrollToToken(tokenId: string) {
 function TokenCell({ value }: { value: string }) {
   const parts = value.split(/(\s+)/)
   return (
-    <span className="font-mono text-[10px] min-w-0 break-all leading-relaxed">
+    <span className="font-mono text-xxs min-w-0 break-all leading-relaxed">
       {parts.map((part, i) => {
         const trimmed = part.trim()
         if (!trimmed) return <span key={i}>{part}</span>
@@ -1920,7 +2169,7 @@ function TokenCell({ value }: { value: string }) {
             <button
               key={i}
               onClick={() => scrollToToken(tokenId)}
-              className="text-secondary underline decoration-dotted underline-offset-2 hover:text-secondary-hover transition-colors cursor-pointer font-mono text-[10px]"
+              className="text-secondary underline decoration-dotted underline-offset-2 hover:text-secondary-hover transition-colors cursor-pointer font-mono text-xxs"
             >
               {part}
             </button>

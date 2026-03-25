@@ -17,8 +17,20 @@
     --color-gradient-warm-mid: #ffaf75;
     --color-gradient-warm-dark: #ff7a38;
     --icon-gradient-warm: linear-gradient(146.75deg, #f4da5c 14.649%, #e48949 54.497%, #c65720 97.483%);
+    /* Brand / component CSS vars for use in inline styles */
+    --accent: #4a3ec6;
+    --coachmark-bg: #1e1d2e;
+    /* Radius tokens for use in inline styles */
+    --radius-button: 8px;
+    --radius-card: 12px;
+    --radius-popup: 24px;
+    /* Component CSS vars */
+    --popup-close-icon: rgba(255,255,255,0.8);
     /* White/black alpha CSS vars for use in inline styles and SVG attributes */
+    --white-20: rgba(255,255,255,0.2);
+    --white-40: rgba(255,255,255,0.4);
     --white-50: rgba(255,255,255,0.5);
+    --white-80: rgba(255,255,255,0.8);
     --white-70: rgba(255,255,255,0.7);
     --white-90: rgba(255,255,255,0.9);
     --black-70: rgba(0,0,0,0.7);
@@ -48,7 +60,8 @@
 @layer components {
   /* Small uppercase section label — 10px / medium / white-60 / tracked */
   .label-xs {
-    @apply text-[10px] font-medium text-text-small tracking-[0.5px] uppercase;
+    font-size: 10px;
+    @apply font-medium text-text-small tracking-[0.5px] uppercase;
   }
 
   /* Category tabs scroll container — native scrollbar hidden, custom JS scrollbar used */

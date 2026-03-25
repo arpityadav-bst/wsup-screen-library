@@ -6,7 +6,7 @@ import { useRef, useEffect } from 'react'
 function Disclaimer() {
   return (
     <div className="self-center backdrop-blur-[60px] bg-black-40 px-[12px] py-[8px] rounded-[16px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.12)]">
-      <p className="text-[10px] text-white-90">
+      <p className="text-xxs text-white-90">
         <span className="font-medium">Remember: </span>
         <span>Everything here is AI generated</span>
       </p>
@@ -126,7 +126,7 @@ function AIBubble({ emotion, text }: { emotion?: string; text: string }) {
         <button className="w-[32px] h-[32px] flex items-center justify-center backdrop-blur-[32px] bg-black-70 rounded-full hover:bg-white-10 transition-colors">
           <div style={maskStyle('icon-regenerate.svg')} />
         </button>
-        <span className="text-[10px] font-semibold text-white tracking-[0.2px]">0/3</span>
+        <span className="text-xxs font-semibold text-white tracking-[0.2px]">0/3</span>
       </div>
     </div>
   )

@@ -19,18 +19,6 @@ export default function Header() {
 
       {/* Right actions */}
       <div className="flex items-center gap-s ml-auto shrink-0 relative z-10">
-        {/* Blogs */}
-        <button className="hidden md:flex items-center gap-xs border border-header-icon-border rounded-pill px-m h-[34px] text-white-50 text-sm hover:bg-header-icon-hover-bg transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 32 32" viewBox="0 0 32 32" width="18" height="18" fill="rgba(255,255,255,0.5)">
-            <path d="M26,2.21H12.61c-2.702,0-4.9,2.198-4.9,4.9V17.6H6c-2.702,0-4.9,2.198-4.9,4.9v3.09c0,2.314,1.88,4.196,4.196,4.2c0.001,0,0.002,0.001,0.003,0.001h21.4c2.315,0,4.2-1.884,4.2-4.2V7.11C30.9,4.408,28.702,2.21,26,2.21z M2.9,25.59V22.5c0-1.709,1.391-3.1,3.1-3.1h1.71v6.171c0,0.006-0.003,0.011-0.003,0.017c0,1.325-1.078,2.403-2.407,2.403C3.977,27.99,2.9,26.914,2.9,25.59z M29.1,25.59c0,1.324-1.076,2.4-2.399,2.4H8.753c0.478-0.681,0.757-1.569,0.757-2.4V7.11c0-1.709,1.391-3.1,3.1-3.1H26c1.709,0,3.1,1.391,3.1,3.1V25.59z"/>
-            <path d="M24.916 10.475H13.694c-.497 0-.9.403-.9.9s.403.9.9.9h11.222c.497 0 .9-.403.9-.9S25.413 10.475 24.916 10.475zM24.916 15.1H13.694c-.497 0-.9.403-.9.9s.403.9.9.9h11.222c.497 0 .9-.403.9-.9S25.413 15.1 24.916 15.1zM19.305 19.725h-5.611c-.497 0-.9.403-.9.9s.403.9.9.9h5.611c.497 0 .9-.403.9-.9S19.802 19.725 19.305 19.725z"/>
-          </svg>
-          Blogs
-        </button>
-
-        {/* Divider */}
-        <div className="hidden md:block w-px h-5 bg-white-10" />
-
         {/* SPICY toggle */}
         <SpicyToggle spicy={spicy} onToggle={() => setSpicy(s => !s)} className="hidden md:flex" />
 
@@ -42,7 +30,7 @@ export default function Header() {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-accent-light)">
             <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11a6 6 0 0 0-5-5.91V4a1 1 0 0 0-2 0v1.09A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2z"/>
           </svg>
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-status-alert rounded-full text-[11px] font-bold text-white flex items-center justify-center ring-2 ring-page-bg">7</span>
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-status-alert rounded-full text-xxs font-bold text-white flex items-center justify-center ring-2 ring-page-bg">7</span>
         </button>
 
         {/* Trophy */}

@@ -1,5 +1,5 @@
 # Visual Designer Memory
-Last updated: 2026-03-24 (chat screen mobile/desktop — surface-raised + chat-scrim-bottom tokens, CSS alpha vars, coachmark, gradient-border button, mobile bg image + scrim)
+Last updated: 2026-03-24 (token audit pass — undocumented tokens, CSS utilities, and badge patterns reconciled against tailwind.config.ts + globals.css)
 
 ## Global Rules (apply to all screens)
 
@@ -98,6 +98,32 @@ Last updated: 2026-03-24 (chat screen mobile/desktop — surface-raised + chat-s
 [global] search keyword gradient: use token values `gradient.purple` (#9d76ff) → `gradient.blue` (#1ec8e8) — defined in tailwind.config.ts. Never hardcode gradient hex. Values were bumped brighter from original (#7b4cff → #0ea4c5) because the original was too subtle against the dark input background.
 
 [global] header search bar: w-[384px], absolutely positioned with `absolute left-1/2 -translate-x-1/2` for true center (not flex center between logo and actions). Right actions need `relative z-10` so they render above the absolute search bar.
+
+[global] token groups — full reference (use these, never guess hex):
+- `nav.*`: `nav-bg` (transparent), `nav-border` (#ffffff0d), `nav-hover-bg` (#ffffff1a), `nav-active-bg` (#ffffff1a), `nav-icon` (#ffffffcc), `nav-active-icon` (#ffffff), `nav-active-title` (#ffffff). Use for sidebar and bottom nav states.
+- `popup.*`: `popup-bg` (#ffffff1a), `popup-close-icon` (#ffffffcc), `popup-border` (transparent), `popup-divider` (#ffffff1a). Use for modal overlays and dialogs.
+- `forms.*`: `forms-bg` (#ffffff0d), `forms-border` (#ffffff1a), `forms-text` (#ffffff80), `forms-focus-border` (#82a1ff), `forms-error-border` (#de5a48), `forms-active-bg` (#222132), `forms-disabled-bg` (#888888). Use for all input fields, selects, textareas.
+- `tabs.*`: `tabs-bg` (transparent), `tabs-hover-bg` (#ffffff33), `tabs-active-bg` (#ffffff4d), `tabs-active-bar` (#82a1ff), `tabs-border` (#ffffff0d). Note: the CategoryTabs component uses `secondary` border for active state — check Figma per screen, `tabs-active-bar` is for underline-style tabs.
+- `card.*`: `card-bg` (transparent), `card-border` (#ffffff0d), `card-hover-bg` (#ffffff1a), `card-hover-border` (#4a3ec6). Use for generic card hover patterns outside of character cards.
+- `page.*`: `page-bg` (#171717), `page-footer` (#000000cc), `page-divider` (#ffffff1a), `page-icon` (#ffffff), `page-overlay` (#000000b2). Use `page-divider` for section separators; `page-overlay` for full-screen dimmer overlays.
+- `brand.*`: `brand-yellow` (#ffc163), `brand-purple` (#ab37f0), `brand-blue` (#0a92ff). Marketing accent colors — not for UI chrome.
+- `text.dim` (#ffffff66): between `text-text-xsmall` (50%) and `text-text-small` (60%) — use for de-emphasized metadata that needs to exist but not compete. `text.label` (#ffffffb2): alias for `text-text-body` — use either, they resolve identically.
+- `accent.ultra-light` (#e7ebff): very pale lavender, for large tinted backgrounds or empty-state illustrations.
+- `secondary.ultra-dark` (#222132): deep navy, used as `forms-active-bg` — background of an active/focused input field.
+
+[global] shadow scale — full set: `shadow-small` (0 1px 4px rgba(0,0,0,0.3)), `shadow-normal` (0 4px 12px rgba(0,0,0,0.4)), `shadow-big` (0 8px 32px rgba(0,0,0,0.6)), `shadow-button` (0 2px 8px rgba(74,62,198,0.4)), `shadow-dark` (0 4px 16px rgba(0,0,0,0.8)). Default elevation for cards = `shadow-normal`. Floating panels/dropdowns = `shadow-big`. Accent CTA buttons = `shadow-button`. `shadow-dark` for heavy-depth surfaces.
+
+[global] border-radius full set: `rounded-pill` (9999px) for buttons/tags, `rounded-card` (12px) for cards/widgets, `rounded-button` (8px) for rectangular UI elements (inputs, dropdowns), `rounded-popup` (24px) for modals, drawers, and bottom sheets.
+
+[global] custom breakpoints: `mobile` = 414px, `desktop` = 1440px. These are in addition to Tailwind defaults (`sm`=640, `md`=768, `lg`=1024, `xl`=1280, `2xl`=1536). Most responsive logic in WSUP uses `md:` (768px) as the mobile↔desktop threshold. `mobile:` and `desktop:` are available but used sparingly for precise viewport targeting.
+
+[global] backdrop-blur scale: `backdrop-blur-bg` (12px) for standard glass elements (tags, pills), `backdrop-blur-heavy` (120px) for heavy frosted-glass surfaces. Never use arbitrary values like `backdrop-blur-[12px]` — use the named tokens.
+
+[global] CSS utility classes (globals.css): `.placeholder-icon` — `bg-white-10 border border-white-10 rounded` — for icon/image placeholders during loading or when asset is absent. `.char-overlay` — `linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 60%)` — shorthand gradient overlay for character images where the full card scrim isn't needed. `.glass` — `bg-white-10 backdrop-blur-bg border border-white-10` — standard glassmorphism surface. `.token-highlight` — pulse animation for style guide token click interaction (do not repurpose outside style guide).
+
+[global] notification badge (header bell): `absolute -top-1 -right-1 w-4 h-4 bg-status-alert rounded-full text-[11px] font-bold text-white flex items-center justify-center ring-2 ring-page-bg`. Uses Tailwind `ring-2 ring-page-bg` for the cutout ring — NOT the CSS `box-shadow` trick. The group-chat participant count badge uses `box-shadow: 0 0 0 2px var(--page-bg)` (inline CSS) because it is rendered inside a `<div>` where Tailwind ring may conflict with other ring utilities. Use Tailwind `ring` for simple absolute badges, CSS `box-shadow` for badges on top of ring-bearing parent containers.
+
+[global] header background: the actual header uses `bg-page-bg` (solid `#171717`) — NOT the `header-bg` token (`#ffffff00` transparent). The `header-bg` token exists for cases where the header floats over content (e.g. chat screen mobile). Always check whether the header is opaque or transparent per screen design.
 
 ## Screen-Specific Rules
 
@@ -245,4 +271,23 @@ Last updated: 2026-03-24 (chat screen mobile/desktop — surface-raised + chat-s
 - `surface-raised` token removed: was only needed for the GenerateImageBtn gradient-border inner fill; with that pattern gone, the token had zero usages and was cleaned up from `tailwind.config.ts`, `globals.css`, and the style guide swatch grid
 - `rgba(0,0,0,0.8)` stop in the chat page mobile scrim gradient (`linear-gradient` inline style) replaced with `var(--black-80)` CSS var
 - Style guide Chat Bar preview `to-black/40` corrected to `to-black-40` (slash syntax → named alpha token, consistent with codebase convention)
-- New tokens added this session: `chat-scrim-bottom` (#000000), `surface-raised` (#1a1a1a), plus CSS vars `--white-50`, `--white-70`, `--white-90`, `--black-70`, `--black-80`, `--surface-raised`
+- New tokens added this session: `chat-scrim-bottom` (#000000), `surface-raised` (#1a1a1a), plus CSS vars `--white-50`, `--white-70`, `--white-90`, `--black-70`, `--black-80`
+
+### 2026-03-24 — Token Audit Pass (tailwind.config.ts + globals.css reconciliation)
+
+**What was audited:**
+- Compared all token groups in `tailwind.config.ts` against documented VDA memory rules
+- Compared `globals.css` utility classes against documented rules
+- Compared `Header.tsx` notification badge against memory badge rule
+
+**New rules added:**
+- Full `nav.*`, `popup.*`, `forms.*`, `tabs.*`, `card.*`, `page.*`, `brand.*` token group references
+- `text.dim` and `text.label` clarified in text scale
+- `accent.ultra-light` and `secondary.ultra-dark` documented
+- Full shadow scale (`shadow-small`, `shadow-big`, `shadow-button`, `shadow-dark`)
+- `rounded-popup` (24px) added to border-radius reference
+- Custom breakpoints `mobile: 414px` / `desktop: 1440px` documented
+- `backdrop-blur-heavy` (120px) documented
+- `.placeholder-icon`, `.char-overlay`, `.glass`, `.token-highlight` CSS utilities documented
+- Notification badge ring pattern (Tailwind `ring-2 ring-page-bg`) vs group-chat badge (CSS `box-shadow`) distinction clarified
+- Header background clarified: uses `bg-page-bg` (opaque), not `header-bg` token (transparent), `--surface-raised`

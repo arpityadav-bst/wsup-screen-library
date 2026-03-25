@@ -113,7 +113,7 @@ export default function BottomNav() {
             style={active ? { backgroundImage: activeGradient } : undefined}
           >
             <Icon active={active} />
-            <span className={`text-[12px] font-normal leading-none truncate ${active ? 'text-text-title' : 'text-white-50'}`}>
+            <span className={`text-xs font-normal leading-none truncate ${active ? 'text-text-title' : 'text-white-50'}`}>
               {label}
             </span>
           </Link>

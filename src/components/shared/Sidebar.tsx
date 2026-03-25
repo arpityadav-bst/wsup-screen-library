@@ -142,7 +142,7 @@ export default function Sidebar() {
     <aside className="fixed top-[60px] left-0 bottom-0 w-[365px] bg-page-bg border-r border-white-10 flex flex-col z-40">
 
       {/* Generate Images card */}
-      <div className="px-3 pt-3 pb-1 shrink-0">
+      <div className="px-s pt-s pb-xxs shrink-0">
         <GenerateImagesCard uid="sidebar" />
       </div>
 
@@ -155,7 +155,7 @@ export default function Sidebar() {
               key={label}
               href={href}
               aria-current={active ? 'page' : undefined}
-              className={`flex items-center gap-2 px-6 py-4 text-[12px] font-normal transition-colors hover:bg-white-05 ${active ? 'text-text-title' : 'text-white-70'}`}
+              className={`flex items-center gap-xs px-xl py-m text-xs font-normal transition-colors hover:bg-white-05 ${active ? 'text-text-title' : 'text-white-70'}`}
               style={active ? { backgroundImage: activeNavGradient } : undefined}
             >
               <Icon active={active} />
@@ -172,18 +172,18 @@ export default function Sidebar() {
       <div className="flex-1 min-h-0 relative">
         {/* Custom scrollbar thumb */}
         <div
-          className="absolute right-0 w-[2px] rounded-full pointer-events-none z-50 transition-opacity duration-300"
+          className="absolute right-0 w-[2px] rounded-pill pointer-events-none z-50 transition-opacity duration-300"
           style={{
             top: thumbTop,
             height: thumbHeight,
-            backgroundColor: 'rgba(255,255,255,0.2)',
+            backgroundColor: 'var(--white-20)',
             opacity: scrollVisible ? 1 : 0,
           }}
         />
       <div ref={scrollRef} className="h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="flex items-center justify-between px-6 py-3">
+        <div className="flex items-center justify-between px-xl py-s">
           <span className="label-xs">Recent Chats</span>
-          <button className="text-secondary text-[10px] font-semibold tracking-[0.2px] flex items-center justify-center gap-[3px]">
+          <button className="text-secondary text-xxs font-semibold tracking-[0.2px] flex items-center justify-center gap-xxs">
             <svg width="11" height="11" viewBox="0 0 14 14" fill="none" className="shrink-0 relative -top-[1px]">
               <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
@@ -194,25 +194,25 @@ export default function Sidebar() {
         <div className="flex flex-col">
           {recentChats.map((chat, i) => (
             <div key={chat.name} className="relative group">
-              <div className="flex items-center gap-3 px-6 py-4 hover:bg-white-05 cursor-pointer transition-colors">
+              <div className="flex items-center gap-s px-xl py-m hover:bg-white-05 cursor-pointer transition-colors">
 
                 {/* Avatar */}
                 <div className="relative shrink-0 w-9 h-9">
-                  <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-white-20">
+                  <div className="w-9 h-9 rounded-pill overflow-hidden ring-1 ring-white-20">
                     <Image src={chat.avatar} alt={chat.name} width={72} height={72} className="object-cover w-full h-full" unoptimized />
                   </div>
                   {/* Group participant count badge — bottom center */}
                   {chat.isGroup && (
-                    <div className="absolute -bottom-2 -right-2 bg-secondary-surface rounded-full w-[24px] h-[24px] flex items-center justify-center text-[11px] font-medium text-white-60 leading-none" style={{ boxShadow: '0 0 0 2px var(--page-bg)' }}>
+                    <div className="absolute -bottom-2 -right-2 bg-secondary-surface rounded-pill w-[24px] h-[24px] flex items-center justify-center text-xxs font-medium text-white-60 leading-none" style={{ boxShadow: '0 0 0 2px var(--page-bg)' }}>
                       <span className="relative top-[0px] -left-[1px]">+{chat.participants}</span>
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 flex flex-col gap-xxs">
                   <p className="text-white-70 text-sm font-medium leading-[1.45]">{chat.name}</p>
-                  <div className="flex items-center gap-1 text-[12px] font-normal leading-[1.3]">
+                  <div className="flex items-center gap-xxs text-xs font-normal leading-[1.3]">
                     <p className="text-text-dim truncate min-w-0">
                       {chat.isGroup && chat.sender && (
                         <span className="text-white-70">{chat.sender}: </span>
@@ -225,14 +225,14 @@ export default function Sidebar() {
               </div>
 
               {/* Close button on hover */}
-              <button aria-label="Remove chat" className="absolute top-3 right-4 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity p-1 rounded-full hover:bg-white-20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white-20">
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                  <path d="M1 1l8 8M9 1L1 9" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
+              <button aria-label="Remove chat" className="absolute top-s right-m opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity p-xs rounded-pill hover:bg-white-10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white-20">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M2 2l8 8M10 2L2 10" stroke="var(--popup-close-icon)" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
               </button>
 
               {i < recentChats.length - 1 && (
-                <div className="absolute bottom-0 left-6 right-6 border-t border-white-10" />
+                <div className="absolute bottom-0 left-xl right-xl border-t border-white-10" />
               )}
             </div>
           ))}
@@ -241,8 +241,9 @@ export default function Sidebar() {
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 border-t border-white-10 px-6 py-3">
-        <p className="text-[10px] font-normal text-text-xxsmall">© 2026 now.gg. All rights reserved.</p>
+      <div className="shrink-0 border-t border-white-10 px-xl py-s flex items-center justify-between gap-xs flex-wrap">
+        <a href="#" className="text-xxs font-normal text-text-small underline hover:text-white transition-colors whitespace-nowrap">Blogs</a>
+        <p className="text-xxs font-normal text-text-xxsmall whitespace-nowrap">© 2026 now.gg. All rights reserved.</p>
       </div>
     </aside>
   )

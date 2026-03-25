@@ -14,6 +14,11 @@ const config: Config = {
         sans: ['Rubik', 'sans-serif'],
       },
 
+      // ─── Font Size ───────────────────────────────────────────
+      fontSize: {
+        'xxs': ['10px', { lineHeight: '1.4' }],
+      },
+
       // ─── Spacing (Base DS tokens) ──────────────────────────
       spacing: {
         'xxxs': '2px',
@@ -132,6 +137,9 @@ const config: Config = {
           'close-icon': '#ffffffcc',
           border:     '#ffffff00',
           divider:    '#ffffff1a',
+        },
+        coachmark: {
+          bg:         '#1e1d2e',
         },
         forms: {
           bg:         '#ffffff0d',

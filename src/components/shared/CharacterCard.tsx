@@ -59,7 +59,7 @@ export default function CharacterCard({
           {tags.map((tag, i) => (
             <span
               key={tag.label}
-              className={`text-[10px] font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10${i >= 3 ? ' hidden md:inline-block' : ''}`}
+              className={`text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10${i >= 3 ? ' hidden md:inline-block' : ''}`}
             >
               {tag.label}
             </span>
@@ -68,7 +68,7 @@ export default function CharacterCard({
 
         {/* Stats + CTA */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-xs md:gap-m text-text-xsmall text-[11px] min-w-0 shrink overflow-hidden">
+          <div className="flex items-center gap-xs md:gap-m text-text-xsmall text-xxs min-w-0 shrink overflow-hidden">
             <span className="shrink-0"><span className="text-text-subtitle font-semibold">{formatRank(rank)}</span> rank</span>
             <span className="shrink-0"><span className="text-text-subtitle font-semibold">{formatCount(chats)}</span> chats</span>
           </div>

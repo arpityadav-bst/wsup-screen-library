@@ -88,7 +88,7 @@ export default function Footer() {
           <div className="flex flex-1 gap-xl">
             {columns.map((col) => (
               <div key={col.heading} className="flex-1">
-                <p className="text-text-dim text-[10px] font-semibold tracking-widest uppercase mb-m">{col.heading}</p>
+                <p className="text-text-dim text-xxs font-semibold tracking-widest uppercase mb-m">{col.heading}</p>
                 <ul className="flex flex-col gap-s">
                   {col.links.map((link, i) => (
                     <li key={i}>
@@ -103,7 +103,7 @@ export default function Footer() {
 
             {/* Follow Us */}
             <div className="flex-1">
-              <p className="text-text-dim text-[10px] font-semibold tracking-widest uppercase mb-m">FOLLOW US</p>
+              <p className="text-text-dim text-xxs font-semibold tracking-widest uppercase mb-m">FOLLOW US</p>
               <ul className="flex flex-col gap-s">
                 {socialLinks.map((s) => (
                   <li key={s.label}>
@@ -120,7 +120,7 @@ export default function Footer() {
 
         {/* Policies row */}
         <div className="border-t border-white-10 pt-m mb-s">
-          <p className="text-text-dim text-[10px] font-semibold tracking-widest uppercase mb-s">POLICIES</p>
+          <p className="text-text-dim text-xxs font-semibold tracking-widest uppercase mb-s">POLICIES</p>
           <div className="flex flex-wrap gap-x-l gap-y-xs">
             {policies.map((p) => (
               <Link key={p} href="#" className="text-text-dim text-xs hover:text-text-small transition-colors">
