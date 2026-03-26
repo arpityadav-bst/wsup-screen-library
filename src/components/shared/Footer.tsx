@@ -69,7 +69,19 @@ const policies = [
   'Safety & Crisis',
   'Terms of Use',
   'Privacy Policy',
+  'Refund Policy',
+  'Appeals Policy',
+  'Cancellation Policy',
+  'Contact Us',
+  'Complaints Policy',
 ]
+
+const ExternalLinkIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className="ml-1 shrink-0">
+    <path d="M5.25 3H10.5C10.78 3 11 3.22 11 3.5V8.75" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.3" strokeLinecap="round"/>
+    <path d="M3 11L10.5 3.5" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.3" strokeLinecap="round"/>
+  </svg>
+)
 
 export default function Footer() {
   return (
@@ -123,8 +135,9 @@ export default function Footer() {
           <p className="text-text-dim text-xxs font-semibold tracking-widest uppercase mb-s">POLICIES</p>
           <div className="flex flex-wrap gap-x-l gap-y-xs">
             {policies.map((p) => (
-              <Link key={p} href="#" className="text-text-dim text-xs hover:text-text-small transition-colors">
+              <Link key={p} href="#" className="text-text-dim text-xs hover:text-text-small transition-colors inline-flex items-center">
                 {p}
+                <ExternalLinkIcon />
               </Link>
             ))}
           </div>
@@ -133,7 +146,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="pt-m flex items-center justify-between">
           <p className="text-text-xxsmall text-xs">© 2026 wsup.ai. All rights reserved.</p>
-          <button className="flex items-center gap-2 group cursor-pointer">
+          <button className="flex items-center gap-xs group cursor-pointer">
             <img src="/privacy-choices.png" alt="" width={34} height={16} className="object-contain opacity-30 group-hover:opacity-50 transition-opacity" />
             <span className="text-text-xxsmall text-xs underline group-hover:text-white-50 transition-colors">Your Privacy Choices</span>
           </button>

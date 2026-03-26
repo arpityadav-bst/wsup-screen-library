@@ -23,10 +23,10 @@ const ChevronUp = () => (
   </svg>
 )
 
-const ExternalLinkIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <path d="M10 4H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" />
-    <path d="M13 3h4v4M17 3l-7 7" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+const ExternalLinkIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 14 14" fill="none" className="ml-1 shrink-0">
+    <path d="M5.25 3H10.5C10.78 3 11 3.22 11 3.5V8.75" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.3" strokeLinecap="round"/>
+    <path d="M3 11L10.5 3.5" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.3" strokeLinecap="round"/>
   </svg>
 )
 
@@ -54,7 +54,7 @@ const RedditIcon = () => (
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
-type AccordionKey = 'categories' | 'policies'
+type AccordionKey = 'categories'
 
 const categoryLinks = ['Recommended', 'Anime', 'Romantic', 'AI Games']
 
@@ -64,9 +64,14 @@ const policyLinks = [
   'Cookies',
   'DMCA & IP',
   'NCII',
-  'Safety & Crises',
+  'Safety & Crisis',
   'Terms of Use',
   'Privacy Policy',
+  'Refund Policy',
+  'Appeals Policy',
+  'Cancellation Policy',
+  'Contact Us',
+  'Complaints Policy',
 ]
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -106,7 +111,7 @@ function NavRow({ label, external = false }: { label: string; external?: boolean
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function FooterMobile() {
-  const [open, setOpen] = useState<AccordionKey | null>('policies')
+  const [open, setOpen] = useState<AccordionKey | null>(null)
 
   const toggle = (key: AccordionKey) => setOpen(prev => (prev === key ? null : key))
 
@@ -142,17 +147,18 @@ export default function FooterMobile() {
         <NavRow label="Blog" external />
 
         {/* Policies */}
-        <AccordionRow label="Policies" isOpen={open === 'policies'} onToggle={() => toggle('policies')} />
-        {open === 'policies' && (
-          <div className="border-t border-b border-white-10 flex flex-col px-l py-s">
+        <div className="border-t border-white-10 px-l pt-m pb-m">
+          <p className="text-text-dim text-xxs font-semibold tracking-widest uppercase mb-m">POLICIES</p>
+          <div className="flex flex-wrap gap-x-m gap-y-s">
             {policyLinks.map(link => (
-              <Link key={link} href="#" className="py-s text-text-xsmall text-base hover:text-text-body transition-colors">
+              <Link key={link} href="#" className="text-text-dim text-xs hover:text-text-small transition-colors inline-flex items-center">
                 {link}
+                <ExternalLinkIcon size={14} />
               </Link>
             ))}
           </div>
-        )}
-        {open !== 'policies' && <div className="border-b border-white-10" />}
+        </div>
+        <div className="border-b border-white-10" />
       </div>
 
       {/* Copyright */}
