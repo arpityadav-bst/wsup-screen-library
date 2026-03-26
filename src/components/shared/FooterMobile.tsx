@@ -163,7 +163,7 @@ export default function FooterMobile() {
 
       {/* Copyright */}
       <div className="flex flex-wrap items-center gap-l px-l pt-l pb-[calc(80px+env(safe-area-inset-bottom,0px))]">
-        <p className="text-text-xxsmall text-xs">© 2025 wsup.ai. All rights reserved.</p>
+        <p className="text-text-xxsmall text-xs">© 2026 wsup.ai. All rights reserved.</p>
         <button className="flex items-center gap-xs">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/privacy-choices.png" alt="" width={34} height={16} className="object-contain opacity-30" />
