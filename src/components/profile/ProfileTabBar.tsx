@@ -8,7 +8,7 @@ interface ProfileTabBarProps {
 
 export default function ProfileTabBar({ tabs, active, onChange }: ProfileTabBarProps) {
   return (
-    <div className="flex w-full mt-m border-b border-white-10 shrink-0 sticky top-0 z-[5] bg-page-bg">
+    <div className="flex w-full mt-m md:mt-0 border-b border-white-10 shrink-0 sticky top-0 z-[5] bg-page-bg">
       {tabs.map((tab) => {
         const isActive = tab.label === active
         return (

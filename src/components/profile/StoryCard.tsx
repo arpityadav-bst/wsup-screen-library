@@ -9,15 +9,16 @@ interface StoryCardProps {
   comments: number
   date: string
   time: string
+  aspectRatio?: string
 }
 
-export default function StoryCard({ character, caption, likes, comments, date, time }: StoryCardProps) {
+export default function StoryCard({ character, caption, likes, comments, date, time, aspectRatio = '1/1' }: StoryCardProps) {
   const [liked, setLiked] = useState(false)
 
   return (
     <div className="bg-profile-sheet-bg rounded-card border border-white-10 overflow-hidden mb-s">
       {/* Image + header */}
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: '4/3' }}>
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={character.img} alt="" className="w-full h-full object-cover object-top" />
         <div className="absolute inset-0 pointer-events-none"

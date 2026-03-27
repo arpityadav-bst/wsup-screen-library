@@ -1,5 +1,6 @@
 'use client'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import SearchBar from '@/components/shared/SearchBar'
 import SpicyToggle from '@/components/shared/SpicyToggle'
@@ -39,13 +40,13 @@ export default function Header() {
         </button>
 
         {/* User avatar */}
-        <button className="hidden md:flex w-8 h-8 items-center justify-center border border-header-icon-border rounded-full hover:bg-header-icon-hover-bg transition-colors">
+        <Link href="/profile" className="hidden md:flex w-8 h-8 items-center justify-center border border-header-icon-border rounded-full hover:bg-header-icon-hover-bg transition-colors">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ borderRadius: '50%', overflow: 'hidden' }}>
             <circle cx="16" cy="16" r="16" fill="transparent"/>
             <circle cx="16" cy="12" r="5.5" fill="var(--avatar-fill)"/>
             <ellipse cx="16" cy="30" rx="11.5" ry="8" fill="rgba(255,255,255,0.1)"/>
           </svg>
-        </button>
+        </Link>
 
         {/* Credits */}
         <button className="relative flex items-center hover:opacity-90 transition-opacity" style={{ height: '32px' }}>

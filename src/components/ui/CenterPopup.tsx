@@ -2,17 +2,16 @@
 
 import { useEffect } from 'react'
 
-interface BottomSheetProps {
+interface CenterPopupProps {
   open: boolean
   onClose: () => void
   title?: string
   subtitle?: string
-  maxHeight?: string
-  fillHeight?: boolean
+  maxWidth?: string
   children: React.ReactNode
 }
 
-export default function BottomSheet({ open, onClose, title, subtitle, maxHeight = '82%', fillHeight = false, children }: BottomSheetProps) {
+export default function CenterPopup({ open, onClose, title, subtitle, maxWidth = '420px', children }: CenterPopupProps) {
   useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -23,27 +22,22 @@ export default function BottomSheet({ open, onClose, title, subtitle, maxHeight 
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[60] md:hidden">
+    <div className="fixed inset-0 z-50 hidden md:flex items-center justify-center">
       {/* Backdrop */}
       <div
         onClick={onClose}
         className="absolute inset-0 bg-black-55"
         style={{ animation: 'fade-in 0.2s ease-out' }}
       />
-      {/* Sheet */}
+      {/* Card */}
       <div
-        className="absolute bottom-0 left-0 right-0 bg-profile-sheet-bg rounded-t-popup border-t border-white-10 flex flex-col overflow-hidden shadow-big"
-        style={{ maxHeight, height: fillHeight ? maxHeight : undefined, animation: 'slide-up 0.28s cubic-bezier(0.32,0.72,0,1)' }}
+        className="relative bg-profile-sheet-bg rounded-popup border border-white-10 shadow-popup flex flex-col overflow-hidden w-full"
+        style={{ maxWidth, maxHeight: '80vh', animation: 'slide-up 0.24s cubic-bezier(0.32,0.72,0,1)' }}
       >
-        {/* Drag handle */}
-        <div className="flex justify-center pt-s pb-0 shrink-0">
-          <div className="w-[36px] h-[4px] rounded-pill bg-white-30" />
-        </div>
-
         {/* Header */}
         {title && (
           <div className="flex items-center justify-between px-l py-s border-b border-white-10 shrink-0">
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="font-semibold text-base text-text-title">{title}</p>
               {subtitle && <p className="text-xs text-text-dim mt-xxs">{subtitle}</p>}
             </div>
@@ -59,7 +53,7 @@ export default function BottomSheet({ open, onClose, title, subtitle, maxHeight 
         )}
 
         {/* Content */}
-        {children}
+        <div className="overflow-y-auto">{children}</div>
       </div>
     </div>
   )

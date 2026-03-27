@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import useVerticalScrollbar from '@/hooks/useVerticalScrollbar'
 import Header from '@/components/shared/Header'
 import Sidebar from '@/components/shared/Sidebar'
 import BottomNav from '@/components/shared/BottomNav'
@@ -14,12 +15,12 @@ import ProfileTabBar from '@/components/profile/ProfileTabBar'
 import ContentGrid from '@/components/profile/ContentGrid'
 import BioSheet from '@/components/profile/BioSheet'
 import BadgesSheet from '@/components/profile/BadgesSheet'
-import MenuSheet from '@/components/profile/MenuSheet'
+import MenuSheet, { MenuPopoverItems } from '@/components/profile/MenuSheet'
+import Popover from '@/components/ui/Popover'
 import CharacterMenuSheet from '@/components/profile/CharacterMenuSheet'
 import LogoutConfirmSheet from '@/components/profile/LogoutConfirmSheet'
 import SocialView from '@/components/profile/SocialView'
 import MyCardsView from '@/components/profile/MyCardsView'
-import AvatarRing from '@/components/ui/AvatarRing'
 import ProfileRightSidebar from '@/components/profile/ProfileRightSidebar'
 
 // ── Mock Data ────────────────────────────────────────────────────────────────
@@ -134,6 +135,7 @@ export default function ProfilePage() {
   const [myCardsOpen, setMyCardsOpen] = useState(false)
   const [charMenuOpen, setCharMenuOpen] = useState(false)
   const [charMenuChar, setCharMenuChar] = useState<string | null>(null)
+  const { scrollRef, thumbProps } = useVerticalScrollbar()
 
   const tabs = [
     { label: 'Characters', count: CHARACTERS.length },
@@ -145,100 +147,135 @@ export default function ProfilePage() {
       <Header />
       <div className="hidden md:block"><Sidebar /></div>
 
-      {/* Main content area */}
-      <main className="md:ml-[365px] pt-[60px] min-h-screen relative overflow-hidden">
-        <div className="md:flex">
-          {/* Center content */}
-          <div className="flex-1 min-w-0">
+      {/* Main content area — matches chat screen layout */}
+      <main className="md:ml-[365px] pt-[60px] md:pt-0 md:mt-[60px] min-h-screen md:min-h-0 md:h-[calc(100vh-60px)] md:flex md:overflow-hidden">
+
+        {/* Center content */}
+        <div className="flex-1 min-w-0 md:border-r md:border-white-10 md:h-full md:flex md:flex-col">
+
+          {/* Mobile: rank banner + hero */}
+          <div className="md:hidden">
             <RankBanner position={PROFILE.rank.position} label={PROFILE.rank.label} />
+            <ProfileHero
+              name={PROFILE.name}
+              avatar={PROFILE.avatar}
+              creatorBadge={PROFILE.creatorBadge}
+              bio={PROFILE.bio}
+              onReadMore={() => setBioOpen(true)}
+              onMenuOpen={() => setMenuOpen(true)}
+            />
+            <StatsRow
+              stats={PROFILE.stats}
+              onFollowersOpen={() => { setSocialTab('Followers'); setSocialOpen(true) }}
+              onFollowingOpen={() => { setSocialTab('Following'); setSocialOpen(true) }}
+            />
+            <ActivePersonaCard {...PERSONA} />
+            <BadgesWidget
+              badges={BADGES}
+              onSeeAll={() => setBadgesSheetOpen(true)}
+              onBadgeClick={() => setBadgesSheetOpen(true)}
+            />
+          </div>
 
-            {/* Mobile hero (hidden on desktop — moves to right sidebar) */}
-            <div className="md:hidden">
-              <ProfileHero
-                name={PROFILE.name}
-                avatar={PROFILE.avatar}
-                creatorBadge={PROFILE.creatorBadge}
-                bio={PROFILE.bio}
-                onReadMore={() => setBioOpen(true)}
-                onMenuOpen={() => setMenuOpen(true)}
-              />
-              <StatsRow
-                stats={PROFILE.stats}
-                onFollowersOpen={() => { setSocialTab('Followers'); setSocialOpen(true) }}
-                onFollowingOpen={() => { setSocialTab('Following'); setSocialOpen(true) }}
-              />
-              <ActivePersonaCard {...PERSONA} />
-              <BadgesWidget
-                badges={BADGES}
-                onSeeAll={() => setBadgesSheetOpen(true)}
-                onBadgeClick={() => setBadgesSheetOpen(true)}
-              />
-            </div>
-
-            {/* Desktop profile header row */}
-            <div className="hidden md:flex items-center gap-s px-xl py-s border-b border-white-10">
-              <AvatarRing src={PROFILE.avatar} alt={PROFILE.name} size={36} />
-              <div className="flex-1 min-w-0">
-                <h1 className="font-semibold text-base text-text-title leading-tight">{PROFILE.name}</h1>
-                <p className="text-xs text-text-dim">{PROFILE.handle}</p>
-              </div>
-              <button className="w-xxl h-xxl rounded-button flex items-center justify-center text-text-dim hover:bg-white-05 transition-colors">
+          {/* Desktop: profile header (56px, matches chat header) — outside scroll */}
+          <div className="hidden md:flex items-center h-3xxxl px-xs shrink-0 bg-page-bg">
+            <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors text-white-90 shrink-0 border-none bg-transparent cursor-pointer">
+              <svg width="20" height="20" viewBox="0 0 16.8333 13.5" fill="none">
+                <path d="M6.97727 0.5L0.5 6.75M0.5 6.75L6.97727 13M0.5 6.75H16.3333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <span className="ml-xs text-base font-semibold text-text-title">Profile</span>
+            <div className="flex-1" />
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(true)}
+                className="p-[10px] rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer"
+              >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <circle cx="12" cy="5" r="1.5" />
                   <circle cx="12" cy="12" r="1.5" />
                   <circle cx="12" cy="19" r="1.5" />
                 </svg>
               </button>
-            </div>
-
-            <ProfileTabBar tabs={tabs} active={activeTab} onChange={setActiveTab} />
-            <ContentGrid
-              activeTab={activeTab}
-              characters={CHARACTERS}
-              stories={STORIES}
-              onCharMenu={(name) => { setCharMenuChar(name); setCharMenuOpen(true) }}
-            />
-
-            {/* Footer text — mobile only (desktop has it in right sidebar) */}
-            <div className="pb-[80px] md:hidden">
-              <p className="text-center text-sm text-text-xsmall mt-xs">
-                Connect with us at{' '}
-                <a href="mailto:support@wsup.ai" className="text-brand-blue no-underline">support@wsup.ai</a>
-              </p>
-              <p className="text-center text-xs text-text-xxsmall mt-xxs">
-                © 2026 now.gg. All rights reserved.
-              </p>
+              {/* Desktop popover menu */}
+              <Popover open={menuOpen} onClose={() => setMenuOpen(false)}>
+                <MenuPopoverItems
+                  onClose={() => setMenuOpen(false)}
+                  onMyCards={() => setMyCardsOpen(true)}
+                  onLogout={() => { setMenuOpen(false); setLogoutOpen(true) }}
+                />
+              </Popover>
             </div>
           </div>
 
-          <ProfileRightSidebar
-            name={PROFILE.name}
-            handle={PROFILE.handle}
-            avatar={PROFILE.avatar}
-            creatorBadge={PROFILE.creatorBadge}
-            bio={PROFILE.bio}
-            stats={PROFILE.stats}
-            badges={BADGES}
-            persona={PERSONA}
-            onBadgesSeeAll={() => setBadgesSheetOpen(true)}
-          />
+          {/* Scrollable area below header */}
+          <div className="flex-1 min-h-0 relative">
+            <div className="scroll-thumb-vertical hidden md:block" {...thumbProps} />
+            <div ref={scrollRef} className="h-full md:overflow-y-auto scroll-hide">
+              <ProfileTabBar tabs={tabs} active={activeTab} onChange={setActiveTab} />
+              <ContentGrid
+                activeTab={activeTab}
+                characters={CHARACTERS}
+                stories={STORIES}
+                onCharMenu={(name) => { setCharMenuChar(name); setCharMenuOpen(true) }}
+              />
+            </div>
+          </div>
+
+          {/* Footer text — mobile only */}
+          <div className="pb-[80px] md:hidden">
+            <p className="text-center text-sm text-text-xsmall mt-xs">
+              Connect with us at{' '}
+              <a href="mailto:support@wsup.ai" className="text-brand-blue no-underline">support@wsup.ai</a>
+            </p>
+            <p className="text-center text-xs text-text-xxsmall mt-xxs">
+              © 2026 now.gg. All rights reserved.
+            </p>
+          </div>
         </div>
 
+        {/* Desktop: right sidebar */}
+        <ProfileRightSidebar
+          name={PROFILE.name}
+          handle={PROFILE.handle}
+          avatar={PROFILE.avatar}
+          creatorBadge={PROFILE.creatorBadge}
+          bio={PROFILE.bio}
+          stats={PROFILE.stats}
+          badges={BADGES}
+          persona={PERSONA}
+          rank={PROFILE.rank}
+          onBadgesSeeAll={() => setBadgesSheetOpen(true)}
+          onBadgeClick={() => setBadgesSheetOpen(true)}
+          onReadMore={() => setBioOpen(true)}
+          onMenuOpen={() => setMenuOpen(true)}
+          socialOpen={socialOpen}
+          socialTab={socialTab}
+          onSocialClose={() => setSocialOpen(false)}
+          onFollowersOpen={() => { setSocialTab('Followers'); setSocialOpen(true) }}
+          onFollowingOpen={() => { setSocialTab('Following'); setSocialOpen(true) }}
+          followers={FOLLOWERS}
+          following={FOLLOWING}
+          followersCount="3.2k"
+          followingCount="284"
+        />
       </main>
 
-      {/* Full-screen overlay views */}
-      <SocialView
-        open={socialOpen}
-        initialTab={socialTab}
-        onClose={() => setSocialOpen(false)}
-        followers={FOLLOWERS}
-        following={FOLLOWING}
-        followersCount="3.2k"
-        followingCount="284"
-      />
+      {/* Full-screen overlay views — mobile only */}
+      <div className="md:hidden">
+        <SocialView
+          open={socialOpen}
+          initialTab={socialTab}
+          onClose={() => setSocialOpen(false)}
+          followers={FOLLOWERS}
+          following={FOLLOWING}
+          followersCount="3.2k"
+          followingCount="284"
+        />
+      </div>
       <MyCardsView open={myCardsOpen} onClose={() => setMyCardsOpen(false)} cards={MY_CARDS} />
 
-      {/* Bottom sheets (mobile only) */}
+      {/* MenuSheet: BottomSheet handles mobile/desktop internally */}
       <MenuSheet
         open={menuOpen}
         onClose={() => setMenuOpen(false)}

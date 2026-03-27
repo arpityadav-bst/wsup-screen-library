@@ -7,8 +7,10 @@ export default function BlurSection({ onSectionVisible }: { onSectionVisible: (i
     <Section id="Blur" title="Backdrop Blur" onVisible={onSectionVisible}>
       <div className="flex flex-wrap gap-8">
         {[
-          ['bg',    '12px',  'backdrop-blur-bg'],
-          ['heavy', '120px', 'backdrop-blur-heavy'],
+          ['bg',     '12px',  'backdrop-blur-bg'],
+          ['medium', '32px',  'backdrop-blur-medium'],
+          ['popup',  '60px',  'backdrop-blur-popup'],
+          ['heavy',  '120px', 'backdrop-blur-heavy'],
         ].map(([name, val, cls]) => (
           <div id={`token-blur-${name}`} key={name} className="flex flex-col gap-3">
             <div

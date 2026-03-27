@@ -10,6 +10,7 @@ export default function ShadowsSection({ onSectionVisible }: { onSectionVisible:
           ['small',  '0 1px 4px rgba(0,0,0,0.3)'],
           ['normal', '0 4px 12px rgba(0,0,0,0.4)'],
           ['big',    '0 8px 32px rgba(0,0,0,0.6)'],
+          ['popup',  '0 8px 24px rgba(0,0,0,0.12)'],
           ['button', '0 2px 8px rgba(74,62,198,0.4)'],
           ['dark',   '0 4px 16px rgba(0,0,0,0.8)'],
         ].map(([name, val]) => (

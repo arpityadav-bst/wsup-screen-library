@@ -64,7 +64,29 @@
     @apply font-medium text-text-small tracking-[0.8px] uppercase;
   }
 
-  /* Category tabs scroll container — native scrollbar hidden, custom JS scrollbar used */
+  /* ── Layout tokens ───────────────────────────────────────────── */
+
+  /* Center area content padding for layout type 2 (header + left sidebar + center + right sidebar) */
+  /* Apply below the center area header — gives 64px left/right on desktop */
+  .center-content-pad { @apply md:px-4xl; }
+
+  /* ── Scrollbar tokens ─────────────────────────────────────────── */
+
+  /* Hide native scrollbar — use on any scroll container with custom JS scrollbar */
+  .scroll-hide { scrollbar-width: none; }
+  .scroll-hide::-webkit-scrollbar { display: none; }
+
+  /* Vertical scrollbar thumb — 2px, right-aligned, fades after idle (sidebar, center areas) */
+  .scroll-thumb-vertical {
+    @apply absolute right-0 w-[2px] rounded-pill pointer-events-none z-50 transition-opacity duration-300;
+    background-color: var(--white-20);
+  }
+
+  /* Horizontal scrollbar track + thumb — 3px, bottom-aligned, visible on hover (category tabs) */
+  .scroll-track-horizontal { @apply absolute bottom-0 left-0 right-0 h-[3px]; }
+  .scroll-thumb-horizontal { @apply absolute h-full rounded-full transition-opacity duration-300; background-color: var(--white-20); }
+
+  /* Legacy alias */
   .tabs-scroll { overflow-x: auto; scrollbar-width: none; }
   .tabs-scroll::-webkit-scrollbar { display: none; }
 }

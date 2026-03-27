@@ -17,7 +17,12 @@ export default function SpacingSection({ onSectionVisible }: { onSectionVisible:
             ['l',    '20px'],
             ['xl',   '24px'],
             ['xxl',  '32px'],
-            ['xxxl', '40px'],
+            ['xxxl',  '40px'],
+            ['2xxxl', '48px'],
+            ['3xxxl', '56px'],
+            ['4xl',   '64px'],
+            ['5xl',   '72px'],
+            ['6xl',   '80px'],
           ].map(([name, val]) => (
             <div id={`token-spacing-${name}`} key={name} className="flex items-center gap-4">
               <div className="w-8 text-right">

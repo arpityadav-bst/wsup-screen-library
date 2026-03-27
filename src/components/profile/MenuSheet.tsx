@@ -7,10 +7,24 @@ interface MenuSheetProps {
   onLogout: () => void
 }
 
+/** Popover content for desktop 3-dot menu */
+export function MenuPopoverItems({ onClose, onMyCards, onLogout }: Omit<MenuSheetProps, 'open'>) {
+  return (
+    <div className="flex flex-col gap-xxs">
+      <button onClick={() => { onClose(); onMyCards() }} className="w-full px-m py-xs text-sm font-semibold text-text-title bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors">
+        My cards
+      </button>
+      <button onClick={() => { onClose(); onLogout() }} className="w-full px-m py-xs text-sm font-semibold text-status-alert bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors">
+        Log out
+      </button>
+    </div>
+  )
+}
+
 export default function MenuSheet({ open, onClose, onMyCards, onLogout }: MenuSheetProps) {
   return (
     <BottomSheet open={open} onClose={onClose} maxHeight="40%">
-      <div className="py-xs pb-[calc(80px+env(safe-area-inset-bottom,0px))]">
+      <div className="py-xs pb-m">
         <p className="px-m py-xs label-xs">Account</p>
         <div className="h-px bg-white-05 my-xxs" />
         <button

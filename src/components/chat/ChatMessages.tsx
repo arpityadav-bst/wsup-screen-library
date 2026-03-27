@@ -161,7 +161,7 @@ export default function ChatMessages() {
   }, [])
 
   return (
-    <div className="flex-1 overflow-y-auto px-[16px] md:px-[48px] py-[16px] flex flex-col gap-[16px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex-1 overflow-y-auto px-m md:px-4xl py-m flex flex-col gap-[16px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {/* Spacer — pushes messages to bottom when chat is short */}
       <div className="flex-1" />
       <Disclaimer />

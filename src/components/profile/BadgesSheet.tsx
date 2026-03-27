@@ -17,7 +17,7 @@ export default function BadgesSheet({ open, onClose, badges }: BadgesSheetProps)
   return (
     <BottomSheet open={open} onClose={onClose} title="Badges" subtitle={`${badges.length} earned`} fillHeight>
       <div className="relative flex-1 min-h-0">
-        <div className="h-full overflow-y-auto p-m pb-[calc(24px+env(safe-area-inset-bottom,0px))]" style={{ scrollbarWidth: 'none' }}>
+        <div className="h-full overflow-y-auto p-m pb-m" style={{ scrollbarWidth: 'none' }}>
           <div className="grid grid-cols-3 gap-s">
             {badges.map((b) => (
               <div

@@ -1,4 +1,9 @@
+'use client'
+
+import { useState } from 'react'
 import TrendArrow from '@/components/ui/TrendArrow'
+import Popover from '@/components/ui/Popover'
+import { CharacterMenuPopoverItems } from './CharacterMenuSheet'
 
 const TAG_CONFIG: Record<string, { label: string; border: string; glow: string }> = {
   'chat-leader':   { label: '💬 Chat Leader',  border: 'rgba(0,131,255,0.50)',   glow: '0 0 8px rgba(0,131,255,0.40), 0 0 16px rgba(0,131,255,0.20)' },
@@ -19,9 +24,21 @@ interface ProfileCharacterCardProps {
 
 export default function ProfileCharacterCard({ name, chats, img, rank, trend, tag, onMenu }: ProfileCharacterCardProps) {
   const tagInfo = tag ? TAG_CONFIG[tag] : null
+  const [popoverOpen, setPopoverOpen] = useState(false)
+
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // Mobile: trigger bottom sheet via parent
+    if (window.innerWidth < 768) {
+      onMenu?.()
+    } else {
+      // Desktop: open popover
+      setPopoverOpen(true)
+    }
+  }
 
   return (
-    <div className="flex flex-col rounded-card overflow-hidden bg-white-05 border border-white-10 cursor-pointer relative">
+    <div className="flex flex-col rounded-card bg-white-05 border border-white-10 cursor-pointer relative" style={{ overflow: popoverOpen ? 'visible' : 'hidden' }}>
       {/* Image */}
       <div className="relative" style={{ paddingBottom: '142.22%' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -40,17 +57,23 @@ export default function ProfileCharacterCard({ name, chats, img, rank, trend, ta
           </div>
         )}
         {/* 3-dot menu */}
-        <button
-          onClick={(e) => { e.stopPropagation(); onMenu?.() }}
-          className="absolute top-xs right-xxs w-l h-l flex items-center justify-center text-text-title bg-transparent border-none cursor-pointer p-0"
-          style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.9))' }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="5" r="2" />
-            <circle cx="12" cy="12" r="2" />
-            <circle cx="12" cy="19" r="2" />
-          </svg>
-        </button>
+        <div className="absolute top-xs right-xxs">
+          <button
+            onClick={handleMenuClick}
+            className="w-l h-l flex items-center justify-center text-text-title bg-transparent border-none cursor-pointer p-0"
+            style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.9))' }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="5" r="2" />
+              <circle cx="12" cy="12" r="2" />
+              <circle cx="12" cy="19" r="2" />
+            </svg>
+          </button>
+          {/* Desktop: popover */}
+          <Popover open={popoverOpen} onClose={() => setPopoverOpen(false)} variant="dark">
+            <CharacterMenuPopoverItems onClose={() => setPopoverOpen(false)} />
+          </Popover>
+        </div>
       </div>
 
       {/* Bottom strip */}

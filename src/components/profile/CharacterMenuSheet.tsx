@@ -6,6 +6,17 @@ interface CharacterMenuSheetProps {
   character: string | null
 }
 
+/** Popover content for desktop character 3-dot menu */
+export function CharacterMenuPopoverItems({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="flex flex-col gap-xxs">
+      <button onClick={onClose} className="w-full px-m py-xs text-sm font-semibold text-text-title bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors">Edit</button>
+      <button onClick={onClose} className="w-full px-m py-xs text-sm font-semibold text-text-title bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors">Share</button>
+      <button onClick={onClose} className="w-full px-m py-xs text-sm font-semibold text-status-alert bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors">Delete</button>
+    </div>
+  )
+}
+
 function SheetItem({ icon, label, destructive, onClick }: { icon: React.ReactNode; label: string; destructive?: boolean; onClick: () => void }) {
   return (
     <button
@@ -23,7 +34,7 @@ function SheetItem({ icon, label, destructive, onClick }: { icon: React.ReactNod
 export default function CharacterMenuSheet({ open, onClose, character }: CharacterMenuSheetProps) {
   return (
     <BottomSheet open={open} onClose={onClose} maxHeight="50%">
-      <div className="py-xs pb-[calc(80px+env(safe-area-inset-bottom,0px))]">
+      <div className="py-xs pb-m">
         <p className="px-m py-xs label-xs">Character</p>
         <div className="h-px bg-white-05 my-xxs" />
         <SheetItem
