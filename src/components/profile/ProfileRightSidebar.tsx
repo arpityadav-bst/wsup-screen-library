@@ -22,7 +22,6 @@ interface ProfileRightSidebarProps {
   persona: { name: string; description: string; img: string }
   rank: { position: number; label: string }
   onBadgesSeeAll: () => void
-  onBadgeClick: (badge: Badge) => void
   onReadMore: () => void
   onMenuOpen: () => void
   socialOpen: boolean
@@ -38,7 +37,7 @@ interface ProfileRightSidebarProps {
 
 export default function ProfileRightSidebar({
   name, handle, avatar, creatorBadge, bio, stats, persona, rank, badges,
-  onBadgesSeeAll, onBadgeClick, onReadMore, onMenuOpen,
+  onBadgesSeeAll, onReadMore, onMenuOpen,
   socialOpen, socialTab, onSocialClose, onFollowersOpen, onFollowingOpen,
   followers, following, followersCount, followingCount,
 }: ProfileRightSidebarProps) {
@@ -90,8 +89,7 @@ export default function ProfileRightSidebar({
           {badges.map((b) => (
             <div
               key={b.label}
-              onClick={() => onBadgeClick(b)}
-              className="flex flex-col items-center shrink-0 py-s px-s rounded-card bg-white-10 backdrop-blur-bg border border-white-10 cursor-pointer"
+              className="flex flex-col items-center shrink-0 py-s px-s rounded-card bg-white-10 backdrop-blur-bg border border-white-10"
             >
               <div
                 className="flex items-center justify-center w-xxxl h-xxxl rounded-full text-lg mb-xs shrink-0"

@@ -246,7 +246,6 @@ export default function ProfilePage() {
           persona={PERSONA}
           rank={PROFILE.rank}
           onBadgesSeeAll={() => setBadgesSheetOpen(true)}
-          onBadgeClick={() => setBadgesSheetOpen(true)}
           onReadMore={() => setBioOpen(true)}
           onMenuOpen={() => setMenuOpen(true)}
           socialOpen={socialOpen}
