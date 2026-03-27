@@ -29,8 +29,8 @@ function StatPill({ icon, value, label }: { icon: React.ReactNode; value: string
   return (
     <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[2px] pl-[6px] pr-[8px] py-[4px] rounded-[20px]">
       <div className="w-[18px] flex items-center justify-center shrink-0">{icon}</div>
-      <span className="text-xxs text-white-70 tracking-[0.2px] whitespace-nowrap">{value}</span>
-      <span className="text-xxs text-white-70 tracking-[0.2px] whitespace-nowrap">{label}</span>
+      <span className="text-xxs text-white-70 tracking-[0.8px] whitespace-nowrap">{value}</span>
+      <span className="text-xxs text-white-70 tracking-[0.8px] whitespace-nowrap">{label}</span>
     </div>
   )
 }

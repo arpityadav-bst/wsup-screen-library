@@ -5,7 +5,7 @@ import { useRef, useEffect } from 'react'
 
 function Disclaimer() {
   return (
-    <div className="self-center backdrop-blur-[60px] bg-black-40 px-[12px] py-[8px] rounded-[16px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.12)]">
+    <div className="self-center backdrop-blur-[60px] bg-black-40 px-[12px] py-[8px] rounded-card shadow-[0px_8px_24px_0px_rgba(0,0,0,0.12)]">
       <p className="text-xxs text-white-90">
         <span className="font-medium">Remember: </span>
         <span>Everything here is AI generated</span>
@@ -43,10 +43,10 @@ const ThumbsDownIcon = () => <div style={maskStyle('icon-dislike.svg')} />
 
 
 const DotsVertIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="white">
-    <circle cx="8" cy="3" r="1.3" />
-    <circle cx="8" cy="8" r="1.3" />
-    <circle cx="8" cy="13" r="1.3" />
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <circle cx="12" cy="5" r="1.5" />
+    <circle cx="12" cy="12" r="1.5" />
+    <circle cx="12" cy="19" r="1.5" />
   </svg>
 )
 
@@ -114,7 +114,7 @@ function AIBubble({ emotion, text }: { emotion?: string; text: string }) {
           <div className="flex-1" />
           <div className="flex items-center gap-[4px]">
             <GenerateImageBtn />
-            <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors">
+            <button className="p-[8px] rounded-full backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors text-text-title">
               <DotsVertIcon />
             </button>
           </div>
@@ -126,7 +126,7 @@ function AIBubble({ emotion, text }: { emotion?: string; text: string }) {
         <button className="w-[32px] h-[32px] flex items-center justify-center backdrop-blur-[32px] bg-black-70 rounded-full hover:bg-white-10 transition-colors">
           <div style={maskStyle('icon-regenerate.svg')} />
         </button>
-        <span className="text-xxs font-semibold text-white tracking-[0.2px]">0/3</span>
+        <span className="text-xxs font-semibold text-white tracking-[0.8px]">0/3</span>
       </div>
     </div>
   )

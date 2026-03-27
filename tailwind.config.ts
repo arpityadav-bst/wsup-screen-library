@@ -192,7 +192,10 @@ const config: Config = {
         'black-60':  '#00000099',
         'black-70':  '#000000b2',
         'black-80':  '#000000cc',
+        'black-55':  '#0000008c',
         'black-90':  '#000000e5',
+        // Profile screen
+        'profile-sheet-bg': '#1a1a1a',
       },
 
       // ─── Backdrop Blur ─────────────────────────────────────

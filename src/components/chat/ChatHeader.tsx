@@ -23,10 +23,10 @@ const ChevronSmall = () => (
 )
 
 const DotsVerticalIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="rgba(255,255,255,0.9)">
-    <circle cx="10" cy="4.5" r="1.5" />
-    <circle cx="10" cy="10" r="1.5" />
-    <circle cx="10" cy="15.5" r="1.5" />
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <circle cx="12" cy="5" r="1.5" />
+    <circle cx="12" cy="12" r="1.5" />
+    <circle cx="12" cy="19" r="1.5" />
   </svg>
 )
 
@@ -116,7 +116,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName 
           )}
         </div>
 
-        <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
+        <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors text-white-90">
           <DotsVerticalIcon />
         </button>
       </div>

@@ -183,7 +183,7 @@ export default function Sidebar() {
       <div ref={scrollRef} className="h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="flex items-center justify-between px-xl py-s">
           <span className="label-xs">Recent Chats</span>
-          <button className="text-secondary text-xxs font-semibold tracking-[0.2px] flex items-center justify-center gap-xxs">
+          <button className="text-secondary text-xxs font-semibold tracking-[0.8px] flex items-center justify-center gap-xxs">
             <svg width="11" height="11" viewBox="0 0 14 14" fill="none" className="shrink-0 relative -top-[1px]">
               <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
