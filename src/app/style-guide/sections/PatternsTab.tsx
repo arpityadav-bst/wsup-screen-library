@@ -11,6 +11,7 @@ import ChatHeaderSection from './patterns/ChatHeaderSection'
 import ChatMessagesSection from './patterns/ChatMessagesSection'
 import ChatBarSection from './patterns/ChatBarSection'
 import ChatRightSidebarSection from './patterns/ChatRightSidebarSection'
+import DormancyBannerSection from './patterns/DormancyBannerSection'
 
 export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -26,6 +27,7 @@ export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (i
       <ChatMessagesSection onSectionVisible={onSectionVisible} />
       <ChatBarSection onSectionVisible={onSectionVisible} />
       <ChatRightSidebarSection onSectionVisible={onSectionVisible} />
+      <DormancyBannerSection onSectionVisible={onSectionVisible} />
     </>
   )
 }

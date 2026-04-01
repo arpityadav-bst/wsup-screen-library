@@ -1,6 +1,7 @@
 'use client'
 
 import { Section, SubLabel, PreviewBox, StateLabel } from '../../helpers'
+import CreditButton from '@/components/ui/CreditButton'
 
 export default function ButtonsSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -171,6 +172,36 @@ export default function ButtonsSection({ onSectionVisible }: { onSectionVisible:
             </PreviewBox>
             <StateLabel>Hover</StateLabel>
           </div>
+        </div>
+      </div>
+
+      <div>
+        <SubLabel>Credit Button — Primary (Paid Action)</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">For the single key paid action on a screen. Component: <code className="text-accent-light">CreditButton</code> in <code className="text-accent-light">src/components/ui/</code>.</p>
+        <div className="flex flex-wrap gap-6 items-end">
+          {(['xs', 's', 'm', 'l'] as const).map((size) => (
+            <div key={size} className="flex flex-col items-start gap-2">
+              <PreviewBox>
+                <CreditButton label="Revive" credits={20} size={size} />
+              </PreviewBox>
+              <StateLabel>{size.toUpperCase()}</StateLabel>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <SubLabel>Credit Button — Secondary (Repeated Actions)</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">For repeated paid actions in lists/grids. Outlined style to reduce visual noise when shown multiple times.</p>
+        <div className="flex flex-wrap gap-6 items-end">
+          {(['xs', 's', 'm', 'l'] as const).map((size) => (
+            <div key={size} className="flex flex-col items-start gap-2">
+              <PreviewBox>
+                <CreditButton label="Revive" credits={20} size={size} variant="secondary" />
+              </PreviewBox>
+              <StateLabel>{size.toUpperCase()}</StateLabel>
+            </div>
+          ))}
         </div>
       </div>
 

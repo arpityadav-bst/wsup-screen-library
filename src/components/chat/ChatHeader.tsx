@@ -38,16 +38,20 @@ const GameIcon = () => (
   </svg>
 )
 
+export type CharacterState = 'active' | 'dormant-inactive' | 'dormant-moderation' | 'removed'
+
 interface ChatHeaderProps {
   characterName: string
   characterImage: string
   creatorName: string
+  characterState?: CharacterState
 }
 
 // DEV MODE: coachmark always visible. For production, wire showCoachmark to
 // useState(() => !localStorage.getItem('wsup_game_seen')) and set
 // localStorage.setItem('wsup_game_seen', '1') inside dismissCoachmark().
-export default function ChatHeader({ characterName, characterImage, creatorName }: ChatHeaderProps) {
+export default function ChatHeader({ characterName, characterImage, creatorName, characterState = 'active' }: ChatHeaderProps) {
+  const isRemoved = characterState === 'removed'
   const [showCoachmark, setShowCoachmark] = useState(true)
 
   return (
@@ -59,7 +63,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName 
 
       {/* Avatar + add group overlay */}
       <div className="relative shrink-0 mr-m">
-        <div className="w-10 h-10 rounded-full ring-1 ring-white-10 overflow-hidden">
+        <div className={`w-10 h-10 rounded-full ring-1 ring-white-10 overflow-hidden ${isRemoved ? 'grayscale' : ''}`}>
           <Image src={characterImage} alt={characterName} width={40} height={40} className="object-cover w-full h-full" />
         </div>
         <button className="absolute -bottom-1 -right-2 w-[22px] h-[22px] bg-accent border-2 border-page-bg rounded-full flex items-center justify-center hover:bg-accent-hover transition-colors">
@@ -69,7 +73,14 @@ export default function ChatHeader({ characterName, characterImage, creatorName 
 
       {/* Name + creator */}
       <div className="flex flex-col gap-[2px] flex-1 min-w-0">
-        <h2 className="text-text-title font-medium text-sm leading-tight truncate">{characterName}</h2>
+        <div className="flex items-center gap-xs">
+          <h2 className="text-text-title font-medium text-sm leading-tight truncate">{characterName}</h2>
+          {isRemoved && (
+            <span className="inline-flex items-center px-xs py-xxxs bg-status-alert rounded-pill text-xxs font-medium text-white shrink-0">
+              Removed
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-[4px]">
           <span className="text-xs text-text-body leading-tight">by</span>
           <Link href="#" className="text-xs text-white underline leading-tight whitespace-nowrap">{creatorName}</Link>

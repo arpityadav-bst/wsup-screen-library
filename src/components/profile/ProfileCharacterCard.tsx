@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import TrendArrow from '@/components/ui/TrendArrow'
 import Popover from '@/components/ui/Popover'
 import { CharacterMenuPopoverItems } from './CharacterMenuSheet'
@@ -38,7 +39,7 @@ export default function ProfileCharacterCard({ name, chats, img, rank, trend, ta
   }
 
   return (
-    <div className="flex flex-col rounded-card bg-white-05 border border-white-10 cursor-pointer relative" style={{ overflow: popoverOpen ? 'visible' : 'hidden' }}>
+    <Link href="/chat" className="flex flex-col rounded-card bg-white-05 border border-white-10 cursor-pointer relative no-underline" style={{ overflow: popoverOpen ? 'visible' : 'hidden' }}>
       {/* Image */}
       <div className="relative" style={{ paddingBottom: '142.22%' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -92,6 +93,6 @@ export default function ProfileCharacterCard({ name, chats, img, rank, trend, ta
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

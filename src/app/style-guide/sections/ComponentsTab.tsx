@@ -9,6 +9,8 @@ import WidgetsSection from './components/WidgetsSection'
 import CategoryTabsSection from './components/CategoryTabsSection'
 import BottomNavSection from './components/BottomNavSection'
 import OverlaysSection from './components/OverlaysSection'
+import FilterPillsSection from './components/FilterPillsSection'
+import LifecycleSection from './components/LifecycleSection'
 
 export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -20,7 +22,9 @@ export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: 
       <CharacterCardSection onSectionVisible={onSectionVisible} />
       <WidgetsSection onSectionVisible={onSectionVisible} />
       <CategoryTabsSection onSectionVisible={onSectionVisible} />
+      <FilterPillsSection onSectionVisible={onSectionVisible} />
       <OverlaysSection onSectionVisible={onSectionVisible} />
+      <LifecycleSection onSectionVisible={onSectionVisible} />
       <BottomNavSection onSectionVisible={onSectionVisible} />
     </>
   )

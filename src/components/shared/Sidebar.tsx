@@ -194,7 +194,7 @@ export default function Sidebar() {
         <div className="flex flex-col">
           {recentChats.map((chat, i) => (
             <div key={chat.name} className="relative group">
-              <div className="flex items-center gap-s px-xl py-m hover:bg-white-05 cursor-pointer transition-colors">
+              <Link href="/chat" className="flex items-center gap-s px-xl py-m hover:bg-white-05 cursor-pointer transition-colors no-underline">
 
                 {/* Avatar */}
                 <div className="relative shrink-0 w-9 h-9">
@@ -222,7 +222,7 @@ export default function Sidebar() {
                     <span className="text-text-dim shrink-0 whitespace-nowrap">· {chat.time}</span>
                   </div>
                 </div>
-              </div>
+              </Link>
 
               {/* Close button on hover */}
               <button aria-label="Remove chat" className="absolute top-s right-m opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity p-xs rounded-pill hover:bg-white-10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white-20">

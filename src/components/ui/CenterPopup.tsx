@@ -53,7 +53,7 @@ export default function CenterPopup({ open, onClose, title, subtitle, maxWidth =
         )}
 
         {/* Content */}
-        <div className="overflow-y-auto">{children}</div>
+        <div className="overflow-y-auto scroll-hide">{children}</div>
       </div>
     </div>
   )

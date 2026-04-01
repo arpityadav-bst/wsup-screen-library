@@ -15,6 +15,36 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
   return (
     <Section id="Overlays" title="Overlays & Menus" onVisible={onSectionVisible}>
 
+      {/* Usage guide */}
+      <div className="w-full mb-4">
+        <SubLabel>When to use which</SubLabel>
+        <div className="flex flex-col gap-xs text-sm text-text-body leading-relaxed max-w-[600px]">
+          <div className="flex gap-xs">
+            <span className="text-text-title font-semibold shrink-0 w-[140px]">BottomSheet</span>
+            <span>Mobile only. Slides up with dark backdrop. For any content that needs focus — menus, details, explainers, forms.</span>
+          </div>
+          <div className="flex gap-xs">
+            <span className="text-text-title font-semibold shrink-0 w-[140px]">CenterPopup</span>
+            <span>Desktop only. Centered card with dark backdrop. Use for the same content as BottomSheet — pair them together (shared state, separate DOM).</span>
+          </div>
+          <div className="flex gap-xs">
+            <span className="text-text-title font-semibold shrink-0 w-[140px]">Popover</span>
+            <span>Desktop only. Anchored to trigger, no backdrop. For compact contextual menus (3-dot, actions). Does not block the page.</span>
+          </div>
+          <div className="flex gap-xs">
+            <span className="text-text-title font-semibold shrink-0 w-[140px]">Confirmation</span>
+            <span>Desktop only. Centered card with backdrop. For destructive or irreversible actions (logout, delete). Always has Cancel + Confirm buttons.</span>
+          </div>
+          <div className="mt-xs p-s bg-white-05 rounded-card border border-white-10 text-xs text-text-small leading-relaxed">
+            <p className="font-semibold text-text-title mb-xxs">Rules</p>
+            <p>Backdrop overlay = demands attention, blocks page (BottomSheet, CenterPopup, Confirmation).</p>
+            <p>No backdrop = contextual, doesn&apos;t block (Popover).</p>
+            <p>All overlay surfaces use solid <code className="text-accent-light">bg-profile-sheet-bg</code> (#1a1a1a). No backdrop-blur on surfaces — frosted glass was abandoned due to click-through bugs.</p>
+            <p>Mobile and desktop overlays are always separate components. Never dual-render in one tree.</p>
+          </div>
+        </div>
+      </div>
+
       {/* BottomSheet */}
       <div className="min-w-[440px] flex-1">
         <SubLabel>BottomSheet (mobile)</SubLabel>
