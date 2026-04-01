@@ -113,7 +113,7 @@ export default function ChatPage() {
 
       {/* State toggle — press R to show/hide, Shift+R to cycle states */}
       {showToggle && (
-        <div className="fixed bottom-m right-m z-[70] flex flex-col gap-xxs bg-white-10 backdrop-blur-popup rounded-card p-s shadow-big border border-white-10"
+        <div className="fixed bottom-m right-m z-[70] flex flex-col gap-xxs bg-secondary-surface backdrop-blur-popup rounded-card p-s shadow-big border border-white-10"
           style={{ animation: 'fade-in 0.15s ease-out' }}
         >
           <span className="text-xxs font-semibold text-text-dim uppercase tracking-[0.8px] mb-xxs">

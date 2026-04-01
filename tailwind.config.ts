@@ -101,6 +101,7 @@ const config: Config = {
         },
 
         // Semantic — Dark theme
+        'secondary-surface': 'var(--secondary-surface)',
         footer: {
           bg:         '#111111',
         },
