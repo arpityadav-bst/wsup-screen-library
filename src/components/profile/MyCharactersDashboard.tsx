@@ -33,7 +33,7 @@ export default function MyCharactersDashboard({
   onCharMenu,
   onStatesInfo,
 }: MyCharactersDashboardProps) {
-  const [filter, setFilter] = useState(dormantChars.length > 0 ? 'Needs Attention' : 'All')
+  const [filter, setFilter] = useState('All')
 
   const totalCount = activeChars.length + dormantChars.length + removedChars.length
   const pills: FilterPill[] = [
