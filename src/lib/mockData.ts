@@ -1,6 +1,5 @@
 import type { Badge } from '@/components/profile/BadgesWidget'
 import type { DormantCharacter } from '@/components/profile/DormantCharacterCard'
-import type { RemovedCharacter } from '@/components/profile/RemovedCharacterCard'
 
 // ── Profile ─────────────────────────────────────────────────────────────────
 
@@ -50,6 +49,7 @@ export const CHARACTERS = [
   { name: 'Neon Sage', chats: '154', img: '/chars/char7.webp', rank: 7, trend: 1 },
   { name: 'Void Walker', chats: '121', img: '/chars/char8.webp', rank: 8, trend: -1 },
   { name: 'Starbound', chats: '98', img: '/chars/char9.webp', rank: 9, trend: 2 },
+  { name: 'Arianda Grande', chats: '25.1K', img: '/chars/char14.webp', rank: 10, trend: 0, approved: true },
 ]
 
 export const STORIES = [
@@ -107,15 +107,11 @@ export const MY_CARDS = [
 
 // ── Dormant & Removed Characters (Lifecycle) ────────────────────────────────
 
-export const DORMANT_CHARACTERS: DormantCharacter[] = [
+export const NEEDS_ATTENTION_CHARACTERS: DormantCharacter[] = [
   { name: 'Mika', img: '/chars/char10.webp', stateType: 'inactive', chats: '18.1K', daysUntilRemoval: 42 },
-  { name: 'Harlo', img: '/chars/char11.webp', stateType: 'inactive', chats: '21.8K', daysUntilRemoval: 42 },
+  { name: 'Harlo', img: '/chars/char11.webp', stateType: 'under-review', chats: '21.8K' },
   { name: 'Joo Jaekyung', img: '/chars/char12.webp', stateType: 'moderation', reason: 'IP infringement: manhwa character', chats: '48.4K', daysUntilRemoval: 38 },
-  { name: 'Roblox Story', img: '/chars/char13.webp', stateType: 'moderation', reason: 'IP/Trademark infringement', chats: '90.4K', daysUntilRemoval: 38 },
-  { name: 'Arianda Grande', img: '/chars/char14.webp', stateType: 'moderation', reason: 'Real person likeness', chats: '25.1K', daysUntilRemoval: 38 },
-]
-
-export const REMOVED_CHARACTERS: RemovedCharacter[] = [
-  { name: 'Class 1A MHA', img: '/chars/char15.webp', reason: 'Minor in inappropriate context', chats: '19.7K' },
-  { name: 'Subject removed', img: '/chars/char16.webp', reason: 'Severe content violation' },
+  { name: 'Roblox Story', img: '/chars/char13.webp', stateType: 'rejected', reason: 'IP/Trademark infringement', chats: '90.4K', daysUntilRemoval: 38 },
+  { name: 'Class 1A MHA', img: '/chars/char15.webp', stateType: 'removed', reason: 'Minor in inappropriate context', chats: '19.7K' },
+  { name: 'Subject removed', img: '/chars/char16.webp', stateType: 'removed', reason: 'Severe content violation', chats: '0' },
 ]

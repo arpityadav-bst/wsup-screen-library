@@ -1,13 +1,72 @@
 'use client'
 
 import { Section, SubLabel, PreviewBox, StateLabel } from '../../helpers'
+import FormInput from '@/components/ui/FormInput'
+import FormTextarea from '@/components/ui/FormTextarea'
+import SelectionPillGroup from '@/components/ui/SelectionPillGroup'
 
 export default function FormsSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
     <Section id="Forms" title="Forms" onVisible={onSectionVisible}>
 
       <div>
-        <SubLabel>Text Input</SubLabel>
+        <SubLabel>FormInput Component</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">Reusable input with label and helper text. Component: <code className="text-accent-light">{'<FormInput>'}</code> in <code className="text-accent-light">src/components/ui/FormInput.tsx</code></p>
+        <div className="flex flex-col gap-4 max-w-sm">
+          <PreviewBox>
+            <FormInput label="Name" value="Cyberpunk DJ" required />
+          </PreviewBox>
+          <PreviewBox>
+            <FormInput label="Character Age (18+)" value="18" required helperText="Minor characters (under 18 years old) are not allowed." />
+          </PreviewBox>
+        </div>
+      </div>
+
+      <div>
+        <SubLabel>FormTextarea Component</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">Textarea with label, AI generate link, and character counter. Component: <code className="text-accent-light">{'<FormTextarea>'}</code> in <code className="text-accent-light">src/components/ui/FormTextarea.tsx</code></p>
+        <div className="flex flex-col gap-4 max-w-sm">
+          <PreviewBox>
+            <FormTextarea label="Bio" placeholder="Example: Tall and athletic..." required maxLength={2000} aiGenerate />
+          </PreviewBox>
+          <PreviewBox>
+            <FormTextarea label="Tags (upto 5)" placeholder="Example: Athletic, Tall..." required maxLength={100} rows={3} aiGenerate />
+          </PreviewBox>
+        </div>
+      </div>
+
+      <div>
+        <SubLabel>SelectionPillGroup Component</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">Radio-style exclusive selection pills. Component: <code className="text-accent-light">{'<SelectionPillGroup>'}</code> in <code className="text-accent-light">src/components/ui/SelectionPillGroup.tsx</code></p>
+        <div className="flex flex-col gap-4 max-w-sm">
+          <PreviewBox>
+            <SelectionPillGroup
+              label="Gender"
+              options={[
+                { label: 'Male', value: 'male' },
+                { label: 'Female', value: 'female' },
+                { label: 'Others', value: 'others' },
+              ]}
+              value="male"
+              required
+            />
+          </PreviewBox>
+          <PreviewBox>
+            <SelectionPillGroup
+              label="Chat Filter"
+              options={[
+                { label: 'Filtered', value: 'filtered', description: 'Safe for all audiences' },
+                { label: 'Unfiltered', value: 'unfiltered', description: 'Mature themes allowed' },
+              ]}
+              value="unfiltered"
+              required
+            />
+          </PreviewBox>
+        </div>
+      </div>
+
+      <div>
+        <SubLabel>Raw Input (Base Pattern)</SubLabel>
         <div className="flex flex-col gap-2 max-w-sm">
           <PreviewBox>
             <input
@@ -22,7 +81,7 @@ export default function FormsSection({ onSectionVisible }: { onSectionVisible: (
       </div>
 
       <div>
-        <SubLabel>Textarea</SubLabel>
+        <SubLabel>Raw Textarea (Base Pattern)</SubLabel>
         <div className="flex flex-col gap-2 max-w-sm">
           <PreviewBox>
             <textarea

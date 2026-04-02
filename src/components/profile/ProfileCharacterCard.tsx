@@ -20,14 +20,17 @@ interface ProfileCharacterCardProps {
   rank: number
   trend: number
   tag?: string
+  approved?: boolean
   onMenu?: () => void
 }
 
-export default function ProfileCharacterCard({ name, chats, img, rank, trend, tag, onMenu }: ProfileCharacterCardProps) {
+export default function ProfileCharacterCard({ name, chats, img, rank, trend, tag, approved, onMenu }: ProfileCharacterCardProps) {
   const tagInfo = tag ? TAG_CONFIG[tag] : null
   const [popoverOpen, setPopoverOpen] = useState(false)
+  const [showApproved, setShowApproved] = useState(!!approved)
 
   const handleMenuClick = (e: React.MouseEvent) => {
+    e.preventDefault()
     e.stopPropagation()
     // Mobile: trigger bottom sheet via parent
     if (window.innerWidth < 768) {
@@ -48,15 +51,25 @@ export default function ProfileCharacterCard({ name, chats, img, rank, trend, ta
         <div className="absolute top-0 left-0 right-0 h-[40px] pointer-events-none"
           style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.30) 60%, transparent 100%)' }}
         />
-        {/* Tag badge */}
-        {tagInfo && (
+        {/* Approved badge — tap to dismiss, overrides tag */}
+        {showApproved ? (
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowApproved(false) }}
+            className="absolute top-[6px] left-[6px] flex items-center gap-xxs px-xs py-xxxs rounded-pill backdrop-blur-bg bg-status-success/[0.15] border border-status-success/[0.30] cursor-pointer hover:bg-status-success/[0.25] transition-colors"
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-status-success">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span className="text-xxs font-medium text-status-success">Approved</span>
+          </button>
+        ) : tagInfo ? (
           <div
             className="absolute top-[6px] left-[6px] flex items-center px-xs py-xxxs rounded-pill backdrop-blur-bg"
             style={{ background: 'rgba(0,0,0,0.45)', border: `1px solid ${tagInfo.border}`, boxShadow: tagInfo.glow }}
           >
             <span className="text-xxs text-text-title tracking-[0.8px]">{tagInfo.label}</span>
           </div>
-        )}
+        ) : null}
         {/* 3-dot menu */}
         <div className="absolute top-xs right-xxs">
           <button

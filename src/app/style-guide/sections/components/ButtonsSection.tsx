@@ -1,6 +1,7 @@
 'use client'
 
 import { Section, SubLabel, PreviewBox, StateLabel } from '../../helpers'
+import Button from '@/components/ui/Button'
 import CreditButton from '@/components/ui/CreditButton'
 
 export default function ButtonsSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
@@ -8,18 +9,37 @@ export default function ButtonsSection({ onSectionVisible }: { onSectionVisible:
     <Section id="Buttons" title="Buttons" onVisible={onSectionVisible}>
 
       <div>
+        <SubLabel>Button Component</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">Reusable component: <code className="text-accent-light">{'<Button>'}</code> in <code className="text-accent-light">src/components/ui/Button.tsx</code>. All variants use <code className="text-accent-light">font-medium</code>. Same size = same weight.</p>
+        <div className="flex flex-wrap gap-6 items-end">
+          {(['xs', 's', 'm', 'l'] as const).map((size) => (
+            <div key={`p-${size}`} className="flex flex-col items-start gap-2">
+              <PreviewBox>
+                <div className="flex items-center gap-xs">
+                  <Button size={size}>Primary</Button>
+                  <Button variant="secondary" size={size}>Secondary</Button>
+                  <Button variant="dark" size={size}>Dark</Button>
+                </div>
+              </PreviewBox>
+              <StateLabel>{size.toUpperCase()}</StateLabel>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
         <SubLabel>Primary</SubLabel>
         <div className="flex flex-wrap gap-6 items-start">
           <div className="flex flex-col items-start gap-2">
-            <PreviewBox><button className="bg-accent text-white text-sm font-semibold px-xl py-s rounded-pill shadow-button leading-none">Button</button></PreviewBox>
+            <PreviewBox><button className="bg-accent text-white text-sm font-medium px-xl py-s rounded-pill shadow-button leading-none">Button</button></PreviewBox>
             <StateLabel>Default</StateLabel>
           </div>
           <div className="flex flex-col items-start gap-2">
-            <PreviewBox><button className="bg-accent-hover text-white text-sm font-semibold px-xl py-s rounded-pill shadow-button leading-none">Button</button></PreviewBox>
+            <PreviewBox><button className="bg-accent-hover text-white text-sm font-medium px-xl py-s rounded-pill shadow-button leading-none">Button</button></PreviewBox>
             <StateLabel>Hover</StateLabel>
           </div>
           <div className="flex flex-col items-start gap-2">
-            <PreviewBox><button className="bg-accent text-white/40 text-sm font-semibold px-xl py-s rounded-pill leading-none cursor-not-allowed opacity-40">Button</button></PreviewBox>
+            <PreviewBox><button className="bg-accent text-white/40 text-sm font-medium px-xl py-s rounded-pill leading-none cursor-not-allowed opacity-40">Button</button></PreviewBox>
             <StateLabel>Disabled</StateLabel>
           </div>
         </div>
@@ -29,11 +49,11 @@ export default function ButtonsSection({ onSectionVisible }: { onSectionVisible:
         <SubLabel>Dark</SubLabel>
         <div className="flex flex-wrap gap-6 items-start">
           <div className="flex flex-col items-start gap-2">
-            <PreviewBox><button className="bg-accent-dark text-white text-sm font-semibold px-xl py-s rounded-pill leading-none">Button</button></PreviewBox>
+            <PreviewBox><button className="bg-accent-dark text-white text-sm font-medium px-xl py-s rounded-pill leading-none">Button</button></PreviewBox>
             <StateLabel>Default</StateLabel>
           </div>
           <div className="flex flex-col items-start gap-2">
-            <PreviewBox><button className="bg-accent-dark-hover text-white text-sm font-semibold px-xl py-s rounded-pill leading-none">Button</button></PreviewBox>
+            <PreviewBox><button className="bg-accent-dark-hover text-white text-sm font-medium px-xl py-s rounded-pill leading-none">Button</button></PreviewBox>
             <StateLabel>Hover</StateLabel>
           </div>
         </div>
@@ -61,14 +81,14 @@ export default function ButtonsSection({ onSectionVisible }: { onSectionVisible:
             <PreviewBox>
               <div className="flex items-center gap-xl">
                 <span className="label-xs">Badges · 10</span>
-                <button className="text-secondary text-xxs font-semibold tracking-[0.8px] uppercase">See all</button>
+                <button className="text-secondary text-xxs font-medium tracking-[0.8px] uppercase">See all</button>
               </div>
             </PreviewBox>
             <StateLabel>In context</StateLabel>
           </div>
           <div className="flex flex-col items-start gap-2">
             <PreviewBox>
-              <button className="text-secondary text-xxs font-semibold tracking-[0.8px] uppercase">View all</button>
+              <button className="text-secondary text-xxs font-medium tracking-[0.8px] uppercase">View all</button>
             </PreviewBox>
             <StateLabel>Standalone</StateLabel>
           </div>
@@ -80,11 +100,11 @@ export default function ButtonsSection({ onSectionVisible }: { onSectionVisible:
         <p className="text-text-xsmall text-xs mb-3">Used for active/toggled states like &quot;Following&quot; in social lists. White background with accent text. Pair with Secondary/Outlined for the inactive state.</p>
         <div className="flex flex-wrap gap-6 items-start">
           <div className="flex flex-col items-start gap-2">
-            <PreviewBox><button className="bg-white-80 text-accent text-sm font-semibold px-m py-xs rounded-pill leading-none">Following</button></PreviewBox>
+            <PreviewBox><button className="bg-white-80 text-accent text-sm font-medium px-m py-xs rounded-pill leading-none">Following</button></PreviewBox>
             <StateLabel>Active / Filled</StateLabel>
           </div>
           <div className="flex flex-col items-start gap-2">
-            <PreviewBox><button className="bg-transparent border border-white-20 text-text-body text-sm font-semibold px-m py-xs rounded-pill leading-none">Follow back</button></PreviewBox>
+            <PreviewBox><button className="bg-transparent border border-white-20 text-text-body text-sm font-medium px-m py-xs rounded-pill leading-none">Follow back</button></PreviewBox>
             <StateLabel>Inactive / Outlined</StateLabel>
           </div>
         </div>
@@ -144,7 +164,7 @@ export default function ButtonsSection({ onSectionVisible }: { onSectionVisible:
           ] as const).map(([cls, label]) => (
             <div key={label} className="flex flex-col items-start gap-2">
               <PreviewBox>
-                <button className={`bg-accent text-white font-semibold rounded-pill leading-none ${cls}`}>Button</button>
+                <button className={`bg-accent text-white font-medium rounded-pill leading-none ${cls}`}>Button</button>
               </PreviewBox>
               <StateLabel>{label}</StateLabel>
             </div>

@@ -1,3 +1,4 @@
+import Button from '@/components/ui/Button'
 import Header from '@/components/shared/Header'
 import Sidebar from '@/components/shared/Sidebar'
 import CategoryTabs from '@/components/shared/CategoryTabs'
@@ -144,9 +145,9 @@ export default function ExplorePage() {
 
           {/* Show more */}
           <div className="flex justify-center mb-xl">
-            <button className="px-xl py-s border border-white-20 rounded-pill text-text-body text-sm font-medium hover:bg-white-05 transition-colors">
+            <Button variant="secondary">
               Show more
-            </button>
+            </Button>
           </div>
 
           {/* Divider */}

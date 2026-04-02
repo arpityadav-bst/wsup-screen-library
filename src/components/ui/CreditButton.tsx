@@ -15,10 +15,10 @@ interface CreditButtonProps {
 }
 
 const SIZE_CLASSES: Record<ButtonSize, { button: string; icon: number }> = {
-  xs: { button: 'text-xs px-s py-xxs', icon: 12 },
-  s:  { button: 'text-sm px-m py-xs', icon: 16 },
-  m:  { button: 'text-sm px-xl py-s', icon: 18 },
-  l:  { button: 'text-base px-xxl py-m', icon: 20 },
+  xs: { button: 'text-xs leading-none px-s py-xxs', icon: 12 },
+  s:  { button: 'text-sm leading-none px-m py-xs', icon: 16 },
+  m:  { button: 'text-sm leading-none px-xl py-s', icon: 18 },
+  l:  { button: 'text-base leading-none px-xxl py-m', icon: 20 },
 }
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
@@ -41,7 +41,7 @@ export default function CreditButton({
     <button
       onClick={onClick}
       className={cn(
-        'flex items-center justify-center gap-xxs font-semibold rounded-pill leading-none transition-colors cursor-pointer',
+        'flex items-center justify-center gap-xxs font-medium rounded-pill transition-colors cursor-pointer',
         VARIANT_CLASSES[variant],
         button,
         fullWidth && 'w-full',

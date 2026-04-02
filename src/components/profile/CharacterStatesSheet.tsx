@@ -73,6 +73,60 @@ const STATE_CARDS: StateCardData[] = [
     cardBg: 'rgba(255,195,42,0.04)',
   },
   {
+    title: 'Under Review',
+    pillLabel: 'Under Review',
+    accentColor: '#82a1ff',
+    dotColor: '#82a1ff',
+    pillBg: 'rgba(130,161,255,0.12)',
+    pillText: '#a3bfff',
+    description: 'You submitted edits for this character and it is currently being reviewed by our team. No action is needed from you.',
+    checklist: [
+      { text: 'Not visible on explore or search', allowed: false },
+      { text: 'Existing users can still chat', allowed: true },
+      { text: 'Review typically takes 24-48 hours', allowed: true },
+    ],
+    nextBox: {
+      label: 'What happens next',
+      text: 'Once reviewed, your character will be either approved (back to active) or rejected (edits need revision).',
+    },
+    cardBg: 'rgba(130,161,255,0.04)',
+  },
+  {
+    title: 'Approved',
+    pillLabel: 'Approved',
+    accentColor: '#398b4d',
+    dotColor: '#398b4d',
+    pillBg: 'rgba(57,139,77,0.15)',
+    pillText: '#6ec97e',
+    description: 'Your edits have been reviewed and approved. Your character will return to active distribution shortly.',
+    checklist: [
+      { text: 'Will return to explore and search', allowed: true },
+      { text: 'New users can discover it again', allowed: true },
+      { text: 'You can dismiss this notification', allowed: true },
+    ],
+    cardBg: 'rgba(57,139,77,0.04)',
+  },
+  {
+    title: 'Rejected',
+    pillLabel: 'Rejected',
+    accentColor: '#de5a48',
+    dotColor: '#de5a48',
+    pillBg: 'rgba(222,90,72,0.12)',
+    pillText: '#f08070',
+    description: 'Your submitted edits did not pass review. You can revise and resubmit through the edit character flow.',
+    checklist: [
+      { text: 'Not visible on explore or search', allowed: false },
+      { text: 'Existing users can still chat', allowed: true },
+      { text: 'You can edit and resubmit', allowed: true },
+    ],
+    nextBox: {
+      label: 'What happens next',
+      text: 'Revise your character to address the feedback, then resubmit for review. The countdown timer continues.',
+    },
+    cta: { label: 'Edit and resubmit for 20 credits →', color: '#82a1ff' },
+    cardBg: 'rgba(222,90,72,0.04)',
+  },
+  {
     title: 'Removed',
     pillLabel: 'Removed',
     accentColor: '#de5a48',
@@ -107,8 +161,12 @@ function StatesContent() {
       <div className="pt-xl pb-xxl">
         <div className="h-px bg-white-10 mb-m" />
         <p className="text-sm text-text-small">Have questions?</p>
-        <p className="text-xs text-text-xxsmall leading-relaxed">
-          Visit our help center or contact support for more information.
+        <p className="text-xs text-text-xxsmall leading-relaxed mt-xxs">
+          Visit our{' '}
+          <a href="https://help.wsup.ai" className="text-secondary no-underline hover:underline">help center</a>
+          {' '}or{' '}
+          <a href="mailto:support@wsup.ai" className="text-secondary no-underline hover:underline">contact support</a>
+          {' '}for more information.
         </p>
       </div>
     </div>

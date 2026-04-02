@@ -18,7 +18,7 @@ import BioSheet from '@/components/profile/BioSheet'
 import BadgesSheet from '@/components/profile/BadgesSheet'
 import MenuSheet, { MenuPopoverItems } from '@/components/profile/MenuSheet'
 import Popover from '@/components/ui/Popover'
-import CharacterMenuSheet from '@/components/profile/CharacterMenuSheet'
+import CharacterMenuSheet, { DormantCharacterMenuSheet } from '@/components/profile/CharacterMenuSheet'
 import LogoutConfirmSheet from '@/components/profile/LogoutConfirmSheet'
 import SocialView from '@/components/profile/SocialView'
 import MyCardsView from '@/components/profile/MyCardsView'
@@ -26,7 +26,7 @@ import ProfileRightSidebar from '@/components/profile/ProfileRightSidebar'
 import {
   PROFILE, PERSONA, BADGES, CHARACTERS, STORIES,
   FOLLOWERS, FOLLOWING, MY_CARDS,
-  DORMANT_CHARACTERS, REMOVED_CHARACTERS,
+  NEEDS_ATTENTION_CHARACTERS,
 } from '@/lib/mockData'
 
 // ── Page Component ───────────────────────────────────────────────────────────
@@ -43,10 +43,13 @@ export default function ProfilePage() {
   const [charMenuOpen, setCharMenuOpen] = useState(false)
   const [charMenuChar, setCharMenuChar] = useState<string | null>(null)
   const [statesSheetOpen, setStatesSheetOpen] = useState(false)
+  const [dormantMenuOpen, setDormantMenuOpen] = useState(false)
+  const [dormantMenuChar, setDormantMenuChar] = useState<string | null>(null)
+  const [dormantMenuType, setDormantMenuType] = useState('inactive')
   const { scrollRef, thumbProps } = useVerticalScrollbar()
 
   const tabs = [
-    { label: 'Characters', count: CHARACTERS.length + DORMANT_CHARACTERS.length + REMOVED_CHARACTERS.length },
+    { label: 'Characters', count: CHARACTERS.length + NEEDS_ATTENTION_CHARACTERS.length },
     { label: 'Stories', count: STORIES.length },
   ]
 
@@ -123,9 +126,9 @@ export default function ProfilePage() {
               {activeTab === 'Characters' ? (
                 <MyCharactersDashboard
                   activeChars={CHARACTERS}
-                  dormantChars={DORMANT_CHARACTERS}
-                  removedChars={REMOVED_CHARACTERS}
+                  needsAttentionChars={NEEDS_ATTENTION_CHARACTERS}
                   onCharMenu={(name) => { setCharMenuChar(name); setCharMenuOpen(true) }}
+                  onDormantMenu={(name, stateType) => { setDormantMenuChar(name); setDormantMenuType(stateType); setDormantMenuOpen(true) }}
                   onStatesInfo={() => setStatesSheetOpen(true)}
                 />
               ) : (
@@ -202,6 +205,7 @@ export default function ProfilePage() {
       <BioSheet open={bioOpen} onClose={() => setBioOpen(false)} name={PROFILE.name} bio={PROFILE.bio} />
       <BadgesSheet open={badgesSheetOpen} onClose={() => setBadgesSheetOpen(false)} badges={BADGES} />
       <CharacterMenuSheet open={charMenuOpen} onClose={() => setCharMenuOpen(false)} character={charMenuChar} />
+      <DormantCharacterMenuSheet open={dormantMenuOpen} onClose={() => setDormantMenuOpen(false)} character={dormantMenuChar} stateType={dormantMenuType} />
       <CharacterStatesSheet open={statesSheetOpen} onClose={() => setStatesSheetOpen(false)} />
 
       <BottomNav />

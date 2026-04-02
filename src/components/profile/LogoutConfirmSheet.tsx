@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import Button from '@/components/ui/Button'
 import BottomSheet from '@/components/ui/BottomSheet'
 
 interface LogoutConfirmSheetProps {
@@ -63,18 +64,12 @@ function DesktopLogout({ open, onClose, onConfirm }: LogoutConfirmSheetProps) {
           <p className="text-sm text-text-body leading-normal">You can always log back in at any time.</p>
         </div>
         <div className="flex items-center justify-end gap-xs px-m pb-m">
-          <button
-            onClick={onClose}
-            className="px-xl py-xs rounded-pill bg-transparent border border-white-20 text-sm font-medium text-text-body cursor-pointer hover:bg-white-05 transition-colors"
-          >
+          <Button variant="secondary" size="s" onClick={onClose}>
             Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-xl py-xs rounded-pill bg-accent text-sm font-semibold text-white cursor-pointer border-none shadow-button hover:bg-accent-hover transition-colors"
-          >
+          </Button>
+          <Button size="s" onClick={onConfirm}>
             Log out
-          </button>
+          </Button>
         </div>
       </div>
     </div>
