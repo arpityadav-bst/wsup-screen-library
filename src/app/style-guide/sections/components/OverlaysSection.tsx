@@ -32,8 +32,12 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
             <span>Desktop only. Anchored to trigger, no backdrop. For compact contextual menus (3-dot, actions). Does not block the page.</span>
           </div>
           <div className="flex gap-xs">
-            <span className="text-text-title font-semibold shrink-0 w-[140px]">Confirmation</span>
-            <span>Desktop only. Centered card with backdrop. For destructive or irreversible actions (logout, delete). Always has Cancel + Confirm buttons.</span>
+            <span className="text-text-title font-semibold shrink-0 w-[140px]">ConfirmSheet</span>
+            <span>Responsive. BottomSheet on mobile, centered dialog on desktop. For actions needing informed consent (logout, revive, delete). Always has Cancel + Confirm buttons. Use the reusable component.</span>
+          </div>
+          <div className="flex gap-xs">
+            <span className="text-text-title font-semibold shrink-0 w-[140px]">BadgeTooltip</span>
+            <span>Both viewports. Anchored to badge, dismiss on outside click. For contextual state explanations. Optional accent color bar ties tooltip to badge severity.</span>
           </div>
           <div className="mt-xs p-s bg-white-05 rounded-card border border-white-10 text-xs text-text-small leading-relaxed">
             <p className="font-semibold text-text-title mb-xxs">Rules</p>
@@ -137,27 +141,69 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
 
       {/* Confirmation Dialog */}
       <div className="min-w-[440px] flex-1">
-        <SubLabel>Confirmation Dialog (desktop)</SubLabel>
+        <SubLabel>ConfirmSheet (responsive)</SubLabel>
         <PreviewBox>
           <div className="w-[320px] bg-profile-sheet-bg border border-white-10 rounded-popup shadow-popup overflow-hidden">
             <div className="flex items-start justify-between pt-m px-xl">
-              <p className="font-semibold text-base text-text-title">Log out?</p>
+              <p className="font-semibold text-base text-text-title">Action title?</p>
               <button className="p-[10px] -mr-[10px] -mt-xxs rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
             </div>
-            <div className="px-xl pt-s pb-m">
-              <p className="text-sm text-text-body">Description text goes here.</p>
+            <div className="px-xl pt-xs pb-xl">
+              <p className="text-sm text-text-body">Description supports ReactNode — can include styled spans, credit amounts, etc.</p>
             </div>
             <div className="flex items-center justify-end gap-xs px-m pb-m">
-              <button className="px-xl py-xs rounded-pill bg-white-10 border border-white-10 text-sm font-semibold text-text-subtitle cursor-pointer">Cancel</button>
-              <button className="px-xl py-xs rounded-pill bg-accent text-sm font-semibold text-text-title cursor-pointer border-none">Confirm</button>
+              <button className="px-xl py-xs rounded-pill bg-white-10 border border-white-10 text-sm font-medium text-text-subtitle cursor-pointer">Cancel</button>
+              <button className="px-xl py-xs rounded-pill bg-accent text-sm font-medium text-text-title cursor-pointer border-none">Confirm</button>
             </div>
           </div>
         </PreviewBox>
-        <StateLabel>Title + body + right-aligned actions</StateLabel>
+        <StateLabel>Desktop: centered dialog. Mobile: BottomSheet. Both handled by one component.</StateLabel>
+
+        <div className="mt-m flex flex-col gap-xxs">
+          <TokenRow token="ConfirmSheet" desc="src/components/ui/ConfirmSheet.tsx" />
+          <TokenRow token="Props" desc="title, description (ReactNode), confirmLabel, cancelLabel, destructive" />
+          <TokenRow token="Button size" desc="m on both mobile and desktop" />
+          <TokenRow token="Usages" desc="LogoutConfirmSheet, ReviveConfirmSheet" />
+        </div>
+      </div>
+
+      {/* BadgeTooltip */}
+      <div className="min-w-[440px] flex-1">
+        <SubLabel>BadgeTooltip (contextual info)</SubLabel>
+        <PreviewBox>
+          <div className="w-[240px] bg-profile-sheet-bg border border-white-10 rounded-card shadow-popup overflow-hidden">
+            <div className="h-[3px] w-full bg-status-warning" />
+            <div className="p-s">
+              <div className="flex flex-col gap-xs">
+                <p className="text-xs text-text-body leading-relaxed">This character may infringe on copyrighted content.</p>
+                <div className="h-px bg-white-05" />
+                <p className="text-xxs text-text-xsmall leading-relaxed">Edit and resubmit to address the issue.</p>
+              </div>
+            </div>
+          </div>
+        </PreviewBox>
+        <StateLabel>Anchored to badge — accent color bar matches severity</StateLabel>
+
+        <div className="mt-m" />
+        <PreviewBox>
+          <div className="w-[240px] bg-profile-sheet-bg border border-white-10 rounded-card shadow-popup overflow-hidden">
+            <div className="p-s">
+              <p className="text-xs text-text-body leading-relaxed">No new conversations in 30 days. Revive to get back into distribution.</p>
+            </div>
+          </div>
+        </PreviewBox>
+        <StateLabel>Without accent bar — for non-policy states</StateLabel>
+
+        <div className="mt-m flex flex-col gap-xxs">
+          <TokenRow token="BadgeTooltip" desc="src/components/ui/BadgeTooltip.tsx" />
+          <TokenRow token="w-[240px]" desc="Fixed width for consistent reading" />
+          <TokenRow token="accentColor" desc="Optional — maps to badge severity color" />
+          <TokenRow token="rounded-card" desc="12px (same as Popover)" />
+        </div>
       </div>
 
     </Section>

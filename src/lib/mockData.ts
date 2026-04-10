@@ -110,8 +110,8 @@ export const MY_CARDS = [
 export const NEEDS_ATTENTION_CHARACTERS: DormantCharacter[] = [
   { name: 'Mika', img: '/chars/char10.webp', stateType: 'inactive', chats: '18.1K', daysUntilRemoval: 42 },
   { name: 'Harlo', img: '/chars/char11.webp', stateType: 'under-review', chats: '21.8K' },
-  { name: 'Joo Jaekyung', img: '/chars/char12.webp', stateType: 'moderation', reason: 'IP infringement: manhwa character', chats: '48.4K', daysUntilRemoval: 38 },
-  { name: 'Roblox Story', img: '/chars/char13.webp', stateType: 'rejected', reason: 'IP/Trademark infringement', chats: '90.4K', daysUntilRemoval: 38 },
-  { name: 'Class 1A MHA', img: '/chars/char15.webp', stateType: 'removed', reason: 'Minor in inappropriate context', chats: '19.7K' },
-  { name: 'Subject removed', img: '/chars/char16.webp', stateType: 'removed', reason: 'Severe content violation', chats: '0' },
+  { name: 'Joo Jaekyung', img: '/chars/char12.webp', stateType: 'moderation', reason: 'This character may infringe on copyrighted or trademarked content. Please use an original character concept and try again.', chats: '48.4K', daysUntilRemoval: 38 },
+  { name: 'Roblox Story', img: '/chars/char13.webp', stateType: 'rejected', reason: 'This character may infringe on copyrighted or trademarked content. Please use an original character concept and try again.', chats: '90.4K', daysUntilRemoval: 38 },
+  { name: 'Class 1A MHA', img: '/chars/char15.webp', stateType: 'removed', reason: 'This character appears to depict or reference a minor. Please ensure your character is 18 or older.', chats: '19.7K' },
+  { name: 'Subject removed', img: '/chars/char16.webp', stateType: 'removed', reason: 'This character contains content that violates our guidelines.', chats: '0' },
 ]

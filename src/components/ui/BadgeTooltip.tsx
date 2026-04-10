@@ -6,9 +6,10 @@ interface BadgeTooltipProps {
   open: boolean
   onClose: () => void
   children: React.ReactNode
+  accentColor?: string
 }
 
-export default function BadgeTooltip({ open, onClose, children }: BadgeTooltipProps) {
+export default function BadgeTooltip({ open, onClose, children, accentColor }: BadgeTooltipProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -27,10 +28,16 @@ export default function BadgeTooltip({ open, onClose, children }: BadgeTooltipPr
   return (
     <div
       ref={ref}
-      className="absolute left-0 top-full mt-xxs w-[200px] p-s bg-profile-sheet-bg border border-white-10 rounded-card shadow-popup z-50"
+      className="absolute left-0 top-full mt-xxs w-[240px] bg-profile-sheet-bg border border-white-10 rounded-card shadow-popup z-50 overflow-hidden"
       style={{ animation: 'fade-in 0.15s ease-out' }}
     >
-      {children}
+      {/* Accent top bar */}
+      {accentColor && (
+        <div className="h-[3px] w-full" style={{ background: accentColor }} />
+      )}
+      <div className="p-s">
+        {children}
+      </div>
     </div>
   )
 }

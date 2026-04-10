@@ -152,9 +152,19 @@ const STATE_CARDS: StateCardData[] = [
 function StatesContent() {
   return (
     <div className="flex-1 overflow-y-auto scroll-hide px-l py-m">
-      <p className="text-sm text-text-body leading-relaxed mb-l">
+      <p className="text-sm text-text-body leading-relaxed mb-s">
         Every character on wsup.ai has a state that determines how it appears and who can interact with it.
       </p>
+      <a
+        href="https://medium.com/@wsup"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-s px-s py-xs rounded-card bg-white-05 hover:bg-white-10 border border-white-05 hover:border-white-10 transition-all cursor-pointer no-underline mb-l group"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-xsmall shrink-0"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        <span className="flex-1 text-xs text-text-subtitle underline decoration-white-10 underline-offset-2 group-hover:text-text-title group-hover:decoration-white-20 transition-colors">How character states work</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-xxsmall group-hover:text-text-xsmall group-hover:translate-x-0.5 transition-all shrink-0"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+      </a>
       {STATE_CARDS.map((card) => (
         <StateExplainerCard key={card.title} data={card} />
       ))}

@@ -34,19 +34,14 @@ export default function RemovedCharacterCard({
       <div className="p-s border-t border-white-05 flex flex-col gap-xs">
         <p className="font-semibold text-xs text-text-title truncate">{name}</p>
 
-        <div className="flex items-center justify-between">
-          {chats && (
-            <span className="inline-flex items-center gap-xxs text-text-xsmall text-xs">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-              </svg>
-              {chats}
-            </span>
-          )}
-          <span className="text-xxs text-text-xxsmall underline cursor-pointer hover:text-text-xsmall transition-colors ml-auto">
-            Support
+        {chats && (
+          <span className="inline-flex items-center gap-xxs text-text-xsmall text-xs">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+            {chats}
           </span>
-        </div>
+        )}
 
       </div>
     </div>

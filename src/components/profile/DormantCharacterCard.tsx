@@ -8,6 +8,7 @@ import Popover from '@/components/ui/Popover'
 import Button from '@/components/ui/Button'
 import BadgeTooltip from '@/components/ui/BadgeTooltip'
 import { DormantMenuPopoverItems } from './CharacterMenuSheet'
+import ReviveConfirmSheet from './ReviveConfirmSheet'
 
 export type CharacterStateType = 'inactive' | 'moderation' | 'under-review' | 'rejected' | 'removed'
 
@@ -31,6 +32,7 @@ const BADGE_CONFIG: Record<CharacterStateType, {
   border: string
   icon: React.ReactNode
   tooltip: string
+  accentColor?: string
 }> = {
   inactive: {
     label: 'Inactive',
@@ -43,33 +45,38 @@ const BADGE_CONFIG: Record<CharacterStateType, {
     bg: 'bg-status-warning/[0.20]', text: 'text-status-warning', border: 'border-status-warning/[0.30]',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>,
     tooltip: 'This character was flagged for a content policy concern. Edit and resubmit to address the issue.',
+    accentColor: '#ffc32a', // status-warning
   },
   'under-review': {
     label: 'Under Review',
     bg: 'bg-forms-focus-border/[0.15]', text: 'text-forms-focus-border', border: 'border-forms-focus-border/[0.30]',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
     tooltip: 'Your edits are being reviewed. This typically takes 24–48 hours. No action needed.',
+    accentColor: '#82a1ff', // forms-focus-border
   },
   rejected: {
     label: 'Rejected',
     bg: 'bg-status-alert/[0.15]', text: 'text-status-alert', border: 'border-status-alert/[0.30]',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>,
     tooltip: 'Your submitted edits didn\'t pass review. Revise and resubmit through the edit character flow.',
+    accentColor: '#de5a48', // status-alert
   },
   removed: {
     label: 'Removed',
     bg: 'bg-status-alert/[0.25]', text: 'text-status-alert', border: 'border-status-alert/[0.30]',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>,
     tooltip: 'This character has been permanently removed. Contact support if you believe this was made in error.',
+    accentColor: '#de5a48', // status-alert
   },
 }
 
 export default function DormantCharacterCard({
-  name, img, stateType, chats, daysUntilRemoval, onMenu,
+  name, img, stateType, reason, chats, daysUntilRemoval, onMenu,
 }: DormantCharacterCardProps) {
   const router = useRouter()
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [tooltipOpen, setTooltipOpen] = useState(false)
+  const [reviveOpen, setReviveOpen] = useState(false)
   const badge = BADGE_CONFIG[stateType]
   const isRemoved = stateType === 'removed'
   const isUnderReview = stateType === 'under-review'
@@ -103,8 +110,16 @@ export default function DormantCharacterCard({
             {badge.icon}
             {badge.label}
           </button>
-          <BadgeTooltip open={tooltipOpen} onClose={() => setTooltipOpen(false)}>
-            <p className="text-xs text-text-body leading-relaxed">{badge.tooltip}</p>
+          <BadgeTooltip open={tooltipOpen} onClose={() => setTooltipOpen(false)} accentColor={badge.accentColor}>
+            {reason ? (
+              <div className="flex flex-col gap-xs">
+                <p className="text-xs text-text-body leading-relaxed">{reason}</p>
+                <div className="h-px bg-white-05" />
+                <p className="text-xxs text-text-xsmall leading-relaxed">{badge.tooltip}</p>
+              </div>
+            ) : (
+              <p className="text-xs text-text-body leading-relaxed">{badge.tooltip}</p>
+            )}
           </BadgeTooltip>
         </div>
         {/* 3-dot menu */}
@@ -140,16 +155,11 @@ export default function DormantCharacterCard({
           {daysUntilRemoval && !isRemoved && !isUnderReview && (
             <span className="text-xs font-medium text-status-warning">{daysUntilRemoval}d left</span>
           )}
-          {isRemoved && (
-            <span className="text-xxs text-text-xxsmall underline cursor-pointer hover:text-text-xsmall transition-colors">
-              Support
-            </span>
-          )}
         </div>
 
         {/* CTA — varies by state */}
         {!isRemoved && !isUnderReview && (
-          <CreditButton label="Revive" credits={20} size="s" variant="secondary" fullWidth onClick={() => router.push('/edit-character')} />
+          <CreditButton label="Revive" credits={20} size="s" variant="secondary" fullWidth onClick={() => setReviveOpen(true)} />
         )}
         {isRemoved && (
           <Button variant="secondary" size="s" fullWidth>
@@ -157,6 +167,12 @@ export default function DormantCharacterCard({
           </Button>
         )}
       </div>
+      <ReviveConfirmSheet
+        open={reviveOpen}
+        onClose={() => setReviveOpen(false)}
+        onConfirm={() => { setReviveOpen(false); router.push('/edit-character') }}
+        credits={20}
+      />
     </div>
   )
 }

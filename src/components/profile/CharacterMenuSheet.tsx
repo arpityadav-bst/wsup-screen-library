@@ -23,12 +23,10 @@ export function CharacterMenuPopoverItems({ onClose }: { onClose: () => void }) 
 /** Popover content for dormant/needs-attention character 3-dot menu */
 export function DormantMenuPopoverItems({ stateType, onClose }: { stateType: string; onClose: () => void }) {
   const showShare = stateType === 'inactive'
-  const showSupport = stateType === 'removed'
   const btnBase = "w-full px-m py-xs text-sm font-semibold bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors"
   return (
     <div className="flex flex-col gap-xxs" onClick={(e) => { e.preventDefault(); e.stopPropagation() }}>
       {showShare && <button onClick={onClose} className={`${btnBase} text-text-title`}>Share</button>}
-      {showSupport && <button onClick={onClose} className={`${btnBase} text-forms-focus-border`}>Contact Support</button>}
       <button onClick={onClose} className={`${btnBase} text-status-alert`}>Delete</button>
     </div>
   )
@@ -51,10 +49,8 @@ function SheetItem({ icon, label, destructive, onClick }: { icon: React.ReactNod
 /** Bottom sheet for needs-attention character menu — actions vary by state */
 export function DormantCharacterMenuSheet({ open, onClose, character, stateType }: CharacterMenuSheetProps & { stateType: string }) {
   const showShare = stateType === 'inactive'
-  const showSupport = stateType === 'removed'
   const shareIcon = <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="18" cy="5" r="3" stroke="currentColor" strokeWidth="1.8"/><circle cx="6" cy="12" r="3" stroke="currentColor" strokeWidth="1.8"/><circle cx="18" cy="19" r="3" stroke="currentColor" strokeWidth="1.8"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51L8.59 10.49" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
   const deleteIcon = <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polyline points="3 6 5 6 21 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M19 6l-1 14H6L5 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M10 11v6M14 11v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M9 6V4h6v2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-  const supportIcon = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
   return (
     <BottomSheet open={open} onClose={onClose} maxHeight="50%">
       <div className="py-xs pb-m">
@@ -63,12 +59,6 @@ export function DormantCharacterMenuSheet({ open, onClose, character, stateType 
         {showShare && (
           <>
             <SheetItem onClick={onClose} icon={shareIcon} label="Share character" />
-            <div className="h-px bg-white-05 my-xxs" />
-          </>
-        )}
-        {showSupport && (
-          <>
-            <SheetItem onClick={onClose} icon={supportIcon} label="Contact Support" />
             <div className="h-px bg-white-05 my-xxs" />
           </>
         )}
