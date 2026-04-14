@@ -4,7 +4,7 @@ A production-grade UI screen library and living design system for [wsup.ai](http
 
 This isn't a Figma file — it's a **running, deployable reference** that serves as the single source of truth for design tokens, components, patterns, and screen layouts.
 
-<img src="docs/screenshots/explore.png" width="720" />
+<img src="docs/screenshots/explore.png" width="100%" />
 
 ## What's Inside
 
@@ -43,7 +43,7 @@ Every visual property is tokenized — zero hardcoded values.
 | **Shadows** | 6 | small, normal, big, popup, button, dark |
 | **Backdrop Blur** | 4 | `bg: 12px`, `medium: 32px`, `popup: 60px`, `heavy: 120px` |
 
-<img src="docs/screenshots/chat.png" width="720" />
+<img src="docs/screenshots/chat.png" width="100%" />
 
 ## The AI Design Agent
 
@@ -63,19 +63,19 @@ The agent doesn't use screenshots or Figma — it designs from accumulated knowl
 
 **Explore**
 
-<img src="docs/screenshots/explore.png" width="720" />
+<img src="docs/screenshots/explore.png" width="100%" />
 
 **Chat**
 
-<img src="docs/screenshots/chat.png" width="720" />
+<img src="docs/screenshots/chat.png" width="100%" />
 
 **Profile**
 
-<img src="docs/screenshots/profile.png" width="720" />
+<img src="docs/screenshots/profile.png" width="100%" />
 
 **Style Guide**
 
-<img src="docs/screenshots/style-guide.png" width="720" />
+<img src="docs/screenshots/style-guide.png" width="100%" />
 
 ## Tech Stack
 
