@@ -136,5 +136,3 @@ src/
 ## Author
 
 **Arpit Yadav** — AI-Native Product Designer
-- [LinkedIn](https://www.linkedin.com/in/arpityadav-ux/)
-- arpit.uxdesign@gmail.com
