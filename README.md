@@ -4,7 +4,7 @@ A production-grade UI screen library and living design system for [wsup.ai](http
 
 This isn't a Figma file — it's a **running, deployable reference** that serves as the single source of truth for design tokens, components, patterns, and screen layouts.
 
-![Explore Page](docs/screenshots/explore.png)
+<img src="docs/screenshots/explore.png" width="720" />
 
 ## What's Inside
 
@@ -43,7 +43,7 @@ Every visual property is tokenized — zero hardcoded values.
 | **Shadows** | 6 | small, normal, big, popup, button, dark |
 | **Backdrop Blur** | 4 | `bg: 12px`, `medium: 32px`, `popup: 60px`, `heavy: 120px` |
 
-![Chat Page](docs/screenshots/chat.png)
+<img src="docs/screenshots/chat.png" width="720" />
 
 ## The AI Design Agent
 
@@ -61,34 +61,21 @@ The agent doesn't use screenshots or Figma — it designs from accumulated knowl
 
 ## Screenshots
 
-<table>
-<tr>
-<td><strong>Explore (Desktop)</strong></td>
-<td><strong>Explore (Mobile)</strong></td>
-</tr>
-<tr>
-<td><img src="docs/screenshots/explore.png" width="600" /></td>
-<td><img src="docs/screenshots/explore-mobile.png" width="200" /></td>
-</tr>
-<tr>
-<td><strong>Chat (Desktop)</strong></td>
-<td><strong>Chat (Mobile)</strong></td>
-</tr>
-<tr>
-<td><img src="docs/screenshots/chat.png" width="600" /></td>
-<td><img src="docs/screenshots/chat-mobile.png" width="200" /></td>
-</tr>
-<tr>
-<td><strong>Profile (Desktop)</strong></td>
-<td><strong>Profile (Mobile)</strong></td>
-</tr>
-<tr>
-<td><img src="docs/screenshots/profile.png" width="600" /></td>
-<td><img src="docs/screenshots/profile-mobile.png" width="200" /></td>
-</tr>
-</table>
+**Explore**
 
-![Style Guide](docs/screenshots/style-guide.png)
+<img src="docs/screenshots/explore.png" width="720" />
+
+**Chat**
+
+<img src="docs/screenshots/chat.png" width="720" />
+
+**Profile**
+
+<img src="docs/screenshots/profile.png" width="720" />
+
+**Style Guide**
+
+<img src="docs/screenshots/style-guide.png" width="720" />
 
 ## Tech Stack
 
