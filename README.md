@@ -71,7 +71,7 @@ The agent doesn't use screenshots or Figma — it designs from accumulated knowl
 
 **Profile**
 
-<img src="docs/screenshots/profile.png" width="100%" />
+<img src="docs/screenshots/profile.png?v=2" width="100%" />
 
 **Style Guide**
 
