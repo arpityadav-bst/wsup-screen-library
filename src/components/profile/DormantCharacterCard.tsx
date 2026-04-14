@@ -96,7 +96,7 @@ export default function DormantCharacterCard({
   return (
     <div className={`flex flex-col rounded-card bg-white-05 border border-white-10 cursor-pointer relative ${isRemoved ? 'opacity-70' : ''}`} style={{ overflow: hasOverlay ? 'visible' : 'hidden' }}>
       {/* Image */}
-      <div className={`relative pb-[142.22%] md:pb-[125%] ${isRemoved ? 'grayscale' : ''}`}>
+      <div className={`relative aspect-[4/5] ${isRemoved ? 'grayscale' : ''}`}>
         <Image src={img} alt={name} fill className={`object-cover object-top ${isRemoved ? 'opacity-50' : ''}`} />
         <div className="absolute top-0 left-0 right-0 h-xxxl pointer-events-none"
           style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.30) 60%, transparent 100%)' }}
