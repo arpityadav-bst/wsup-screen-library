@@ -6,6 +6,7 @@ export type BannerVariant = 'inactivity' | 'moderation' | 'removed'
 
 interface DormancyBannerProps {
   variant: BannerVariant
+  isCreator?: boolean
 }
 
 const BANNER_CONFIG: Record<BannerVariant, {
@@ -19,8 +20,8 @@ const BANNER_CONFIG: Record<BannerVariant, {
   inactivity: {
     bg: 'bg-white-05',
     border: 'border-white-10',
-    text: 'This character is dormant due to inactivity. Chat is still available.',
-    mobileText: 'Dormant — chat still available',
+    text: 'This character isn\'t currently listed publicly. You can keep chatting.',
+    mobileText: 'Not listed — chat available',
     textColor: 'text-white-50',
     icon: (
       <svg className="w-m h-m text-white-40 shrink-0" viewBox="0 0 24 24">
@@ -31,37 +32,39 @@ const BANNER_CONFIG: Record<BannerVariant, {
     ),
   },
   moderation: {
-    bg: 'bg-status-warning/[0.08]',
-    border: 'border-status-warning/[0.15]',
-    text: 'This character is under review and no longer publicly listed. You can continue chatting.',
-    mobileText: 'Under review — chat available',
+    bg: 'bg-white-05',
+    border: 'border-white-10',
+    text: 'This character isn\'t currently listed publicly. You can keep chatting.',
+    mobileText: 'Not listed — chat available',
     textColor: 'text-white-60',
     icon: (
-      <svg className="w-m h-m text-status-warning shrink-0" viewBox="0 0 24 24">
-        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="12" cy="16" r="0.5" fill="currentColor" stroke="currentColor" strokeWidth="1" />
+      <svg className="w-m h-m text-white-50 shrink-0" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="12" cy="8" r="0.5" fill="currentColor" stroke="currentColor" strokeWidth="1" />
       </svg>
     ),
   },
   removed: {
-    bg: 'bg-status-alert/[0.08]',
-    border: 'border-status-alert/[0.15]',
-    text: 'This character has been removed. Chat history is available as read-only.',
+    bg: 'bg-white-05',
+    border: 'border-white-10',
+    text: 'This character is no longer on the platform. Your chat history is here for you to read.',
     mobileText: 'Removed — read-only',
     textColor: 'text-white-50',
     icon: (
-      <svg className="w-m h-m text-status-alert shrink-0" viewBox="0 0 24 24">
+      <svg className="w-m h-m text-white-50 shrink-0" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" stroke="currentColor" strokeWidth="1.5" />
+        <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="12" cy="8" r="0.5" fill="currentColor" stroke="currentColor" strokeWidth="1" />
       </svg>
     ),
   },
 }
 
-export default function DormancyBanner({ variant }: DormancyBannerProps) {
+export default function DormancyBanner({ variant, isCreator }: DormancyBannerProps) {
   const [dismissed, setDismissed] = useState(false)
   const config = BANNER_CONFIG[variant]
+  const showReviveLink = isCreator && variant !== 'removed'
 
   if (dismissed) return null
 
@@ -75,6 +78,7 @@ export default function DormancyBanner({ variant }: DormancyBannerProps) {
           </div>
           <p className="text-xs font-medium leading-none text-white-60">
             {config.mobileText}
+            {showReviveLink && <a href="/edit-character" className="ml-xs text-secondary no-underline hover:underline">Revive</a>}
           </p>
           <button
             onClick={() => setDismissed(true)}
@@ -94,6 +98,7 @@ export default function DormancyBanner({ variant }: DormancyBannerProps) {
         </div>
         <p className={`text-xs font-normal leading-snug flex-1 ${config.textColor}`}>
           {config.text}
+          {showReviveLink && <a href="/edit-character" className="ml-xs text-secondary no-underline hover:underline">Revive</a>}
         </p>
         <button
           onClick={() => setDismissed(true)}

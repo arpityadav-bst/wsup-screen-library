@@ -24,6 +24,7 @@ const config: Config = {
         'xxxs': '2px',
         'xxs':  '4px',
         'xs':   '8px',
+        'icon-btn': '10px',
         's':    '12px',
         'm':    '16px',
         'l':    '20px',

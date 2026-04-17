@@ -5,7 +5,7 @@ import { useRef, useEffect } from 'react'
 
 function Disclaimer() {
   return (
-    <div className="self-center backdrop-blur-[60px] bg-black-40 px-[12px] py-[8px] rounded-card shadow-[0px_8px_24px_0px_rgba(0,0,0,0.12)]">
+    <div className="self-center backdrop-blur-[60px] bg-black-40 px-s py-xs rounded-card shadow-[0px_8px_24px_0px_rgba(0,0,0,0.12)]">
       <p className="text-xxs text-white-90">
         <span className="font-medium">Remember: </span>
         <span>Everything here is AI generated</span>
@@ -19,7 +19,7 @@ function Disclaimer() {
 function UserBubble({ text, emotion }: { text: string; emotion?: string }) {
   return (
     <div className="flex justify-end w-full">
-      <div className="backdrop-blur-[32px] bg-chat-user-bubble px-[12px] py-[10px] rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl max-w-[360px]">
+      <div className="backdrop-blur-[32px] bg-chat-user-bubble px-s py-[10px] rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl max-w-[360px]">
         <p className="text-sm text-white leading-normal whitespace-pre-wrap">{text}</p>
         {emotion && <p className="text-sm italic text-white-50 leading-snug mt-[2px]">{emotion}</p>}
       </div>
@@ -54,9 +54,9 @@ const DotsVertIcon = () => (
 
 function AudioPlayBtn() {
   return (
-    <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[4px] h-[32px] pl-[8px] pr-[6px] rounded-[24px] shrink-0">
+    <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-xxs h-[32px] pl-xs pr-[6px] rounded-[24px] shrink-0">
       {/* Static waveform bars */}
-      <div className="flex items-center gap-[2px]">
+      <div className="flex items-center gap-xxxs">
         {[3, 7, 10, 8, 5, 8, 10, 7, 3].map((h, i) => (
           <div key={i} className="w-[1.5px] bg-white-70 rounded-pill" style={{ height: `${h}px` }} />
         ))}
@@ -75,7 +75,7 @@ function AudioPlayBtn() {
 
 function GenerateImageBtn() {
   return (
-    <button className="p-[8px] rounded-pill backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors shrink-0">
+    <button className="p-xs rounded-pill backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors shrink-0">
       <div style={{
         width: 16, height: 16,
         backgroundImage: 'var(--icon-gradient-warm)',
@@ -92,29 +92,29 @@ function GenerateImageBtn() {
 
 function AIBubble({ emotion, text }: { emotion?: string; text: string }) {
   return (
-    <div className="flex items-start gap-[4px]">
+    <div className="flex items-start gap-xxs">
       {/* Left: bubble + actions — constrained width */}
       <div className="flex flex-col max-w-[290px] min-w-[64px]">
-        <div className="bg-chat-ai-bubble px-[12px] pt-[8px] pb-[14px] rounded-tl-2xl rounded-tr-2xl rounded-br-2xl">
+        <div className="bg-chat-ai-bubble px-s pt-xs pb-[14px] rounded-tl-2xl rounded-tr-2xl rounded-br-2xl">
           {emotion && (
             <p className="text-sm italic text-white-50 leading-snug mb-s">{emotion}</p>
           )}
           <p className="text-sm text-white leading-normal whitespace-pre-wrap">{text}</p>
         </div>
-        <div className="flex items-center pt-[4px]">
-          <div className="flex items-center gap-[4px]">
+        <div className="flex items-center pt-xxs">
+          <div className="flex items-center gap-xxs">
             <AudioPlayBtn />
-            <button className="p-[8px] rounded-pill backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors">
+            <button className="p-xs rounded-pill backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors">
               <ThumbsUpIcon />
             </button>
-            <button className="p-[8px] rounded-pill backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors">
+            <button className="p-xs rounded-pill backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors">
               <ThumbsDownIcon />
             </button>
           </div>
           <div className="flex-1" />
-          <div className="flex items-center gap-[4px]">
+          <div className="flex items-center gap-xxs">
             <GenerateImageBtn />
-            <button className="p-[8px] rounded-pill backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors text-text-title">
+            <button className="p-xs rounded-pill backdrop-blur-[32px] bg-black-70 border border-white-10 hover:bg-white-10 transition-colors text-text-title">
               <DotsVertIcon />
             </button>
           </div>
@@ -122,7 +122,7 @@ function AIBubble({ emotion, text }: { emotion?: string; text: string }) {
       </div>
 
       {/* Regenerate — stretches full height, centered within */}
-      <div className="self-stretch flex flex-col items-center justify-center gap-[4px] shrink-0">
+      <div className="self-stretch flex flex-col items-center justify-center gap-xxs shrink-0">
         <button className="w-[32px] h-[32px] flex items-center justify-center backdrop-blur-[32px] bg-black-70 rounded-pill hover:bg-white-10 transition-colors">
           <div style={maskStyle('icon-regenerate.svg')} />
         </button>
@@ -136,7 +136,7 @@ function AIBubble({ emotion, text }: { emotion?: string; text: string }) {
 
 function TypingIndicator({ name }: { name: string }) {
   return (
-    <div className="bg-chat-ai-bubble flex items-center gap-[4px] px-[12px] py-[8px] rounded-tl-2xl rounded-tr-2xl rounded-br-2xl self-start">
+    <div className="bg-chat-ai-bubble flex items-center gap-xxs px-s py-xs rounded-tl-2xl rounded-tr-2xl rounded-br-2xl self-start">
       <p className="text-sm text-white-50 whitespace-nowrap">{name} is typing</p>
       <div className="flex items-center gap-[3px] ml-[2px]">
         {[0, 1, 2].map(i => (
@@ -163,7 +163,7 @@ export default function ChatMessages() {
   }, [])
 
   return (
-    <div className="flex-1 overflow-y-auto px-m md:px-4xl py-m flex flex-col gap-[16px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex-1 overflow-y-auto px-m md:px-4xl py-m flex flex-col gap-m [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {/* Spacer — pushes messages to bottom when chat is short */}
       <div className="flex-1" />
       <Disclaimer />

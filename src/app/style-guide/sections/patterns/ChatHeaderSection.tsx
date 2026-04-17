@@ -11,7 +11,7 @@ export default function ChatHeaderSection({ onSectionVisible }: { onSectionVisib
         <PreviewBox className="p-0 overflow-hidden">
           <div className="h-[56px] border-b border-white-10 flex items-center px-xs bg-page-bg">
             {/* Back */}
-            <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors shrink-0">
+            <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors shrink-0">
               <svg width="20" height="20" viewBox="0 0 16.8333 13.5" fill="none">
                 <path d="M6.97727 0.5L0.5 6.75M0.5 6.75L6.97727 13M0.5 6.75H16.3333" stroke="rgba(255,255,255,0.9)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -24,9 +24,9 @@ export default function ChatHeaderSection({ onSectionVisible }: { onSectionVisib
               </button>
             </div>
             {/* Name */}
-            <div className="flex flex-col gap-[2px] flex-1 min-w-0">
+            <div className="flex flex-col gap-xxxs flex-1 min-w-0">
               <span className="text-text-title font-medium text-sm leading-tight">Billie Eilish</span>
-              <div className="flex items-center gap-[4px]">
+              <div className="flex items-center gap-xxs">
                 <span className="text-xs text-text-body leading-tight">by</span>
                 <span className="text-xs text-white underline leading-tight">Honeybadger</span>
                 <svg width="5" height="8" viewBox="0 0 5 8" fill="none"><path d="M1 1l3 3-3 3" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -35,20 +35,20 @@ export default function ChatHeaderSection({ onSectionVisible }: { onSectionVisib
             {/* Actions */}
             <div className="flex items-center shrink-0">
               {/* Call — warm gradient placeholder */}
-              <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
+              <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors">
                 <div className="w-5 h-5 rounded-sm" style={{ background: 'var(--icon-gradient-warm)' }} />
               </button>
               {/* Gallery */}
-              <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
+              <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors">
                 <div className="w-5 h-5 rounded-sm bg-white-10" />
               </button>
               {/* Game — dot badge */}
-              <button className="relative p-[10px] rounded-full hover:bg-white-10 transition-colors">
+              <button className="relative p-icon-btn rounded-full hover:bg-white-10 transition-colors">
                 <div className="w-[22px] h-[22px] rounded-sm bg-white-10" />
                 <span className="absolute top-[6px] right-[6px] w-[8px] h-[8px] rounded-full bg-status-alert animate-pulse" />
               </button>
               {/* Dots */}
-              <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
+              <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors">
                 <div className="w-5 h-5 rounded-sm bg-white-10" />
               </button>
             </div>
@@ -61,7 +61,7 @@ export default function ChatHeaderSection({ onSectionVisible }: { onSectionVisib
         <div className="flex flex-col gap-s text-xs text-text-body bg-white-05 border border-white-10 rounded-card p-m w-full">
           {[
             ['h-[56px] border-b border-white-10 flex items-center px-xs shrink-0', 'Header bar'],
-            ['p-[10px] rounded-full hover:bg-white-10', 'Back button — hit area'],
+            ['p-icon-btn rounded-full hover:bg-white-10', 'Back button — hit area'],
             ['w-10 h-10 rounded-full ring-1 ring-white-10 / mr-m', 'Avatar circle + right margin'],
             ['-bottom-1 -right-2 w-[22px] h-[22px] bg-accent border-2 border-page-bg rounded-full', '+ group badge — border-page-bg cutout trick'],
             ['text-text-title font-medium text-sm', 'Character name'],

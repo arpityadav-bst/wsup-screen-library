@@ -24,7 +24,7 @@ export default function BottomNavSection({ onSectionVisible }: { onSectionVisibl
                 {items.map(({ label, active }) => (
                   <div
                     key={label}
-                    className="flex flex-col items-center gap-[6px] py-[12px] flex-1 min-w-0"
+                    className="flex flex-col items-center gap-[6px] py-s flex-1 min-w-0"
                     style={active ? { backgroundImage: activeGrad } : undefined}
                   >
                     <div className="w-5 h-5 rounded-sm bg-white-20" />
@@ -51,7 +51,7 @@ export default function BottomNavSection({ onSectionVisible }: { onSectionVisibl
             ['bg-page-bg border-t border-white-10', 'Bar surface + top divider'],
             ['flex items-center', 'Bar layout — 5 items fill full width'],
             ['flex-1 min-w-0', 'Each item takes equal width'],
-            ['flex flex-col items-center gap-[6px] py-[12px]', 'Item layout — icon + label, 12px vertical padding'],
+            ['flex flex-col items-center gap-[6px] py-s', 'Item layout — icon + label, 12px vertical padding'],
             ['text-xs font-normal leading-none', 'Label typography'],
             ['text-text-title (active) / text-white-50 (inactive)', 'Label color states'],
             ['white (active) / rgba(255,255,255,0.5) (inactive)', 'Icon fill/bg color states'],

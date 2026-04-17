@@ -27,7 +27,7 @@ const ChevronSmall = () => (
 
 function StatPill({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
-    <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[2px] pl-[6px] pr-[8px] py-[4px] rounded-[20px]">
+    <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-xxxs pl-[6px] pr-xs py-xxs rounded-[20px]">
       <div className="w-[18px] flex items-center justify-center shrink-0">{icon}</div>
       <span className="text-xxs text-white-70 tracking-[0.8px] whitespace-nowrap">{value}</span>
       <span className="text-xxs text-white-70 tracking-[0.8px] whitespace-nowrap">{label}</span>
@@ -37,7 +37,7 @@ function StatPill({ icon, value, label }: { icon: React.ReactNode; value: string
 
 function AvatarCard({ name, description, image }: { name: string; description: string; image: string }) {
   return (
-    <div className="flex flex-col gap-[8px] cursor-pointer group">
+    <div className="flex flex-col gap-xs cursor-pointer group">
       {/* Image — portrait ~1:2.1 ratio matching Figma 124×260 */}
       <div className="relative rounded-[12px] overflow-hidden w-full" style={{ aspectRatio: '9/16' }}>
         <Image
@@ -48,7 +48,7 @@ function AvatarCard({ name, description, image }: { name: string; description: s
         />
       </div>
       {/* Text */}
-      <div className="flex flex-col gap-[4px]">
+      <div className="flex flex-col gap-xxs">
         <p className="text-sm font-semibold text-text-title leading-tight">{name}</p>
         <p className="text-xs text-text-body leading-snug line-clamp-2">{description}</p>
       </div>
@@ -109,7 +109,7 @@ export default function ChatRightSidebar() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent from-[44%] to-black-80 to-[72%]" />
 
         {/* Info overlay */}
-        <div className="relative z-10 flex flex-col items-center gap-[10px] px-[24px] pt-[24px] pb-[40px]">
+        <div className="relative z-10 flex flex-col items-center gap-icon-btn px-xl pt-xl pb-xxxl">
           {/* Name */}
           <h2
             className="text-base font-medium text-white text-center"
@@ -119,13 +119,13 @@ export default function ChatRightSidebar() {
           </h2>
 
           {/* Stats */}
-          <div className="flex items-center gap-[10px]">
+          <div className="flex items-center gap-icon-btn">
             <StatPill icon={<ChatStatIcon />} value={character.chats} label="Chats" />
             <StatPill icon={<RankStatIcon />} value={character.rank} label="Rank" />
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap items-center justify-center gap-[8px]">
+          <div className="flex flex-wrap items-center justify-center gap-xs">
             {character.tags.map(tag => (
               <span
                 key={tag}
@@ -147,7 +147,7 @@ export default function ChatRightSidebar() {
           </button>
 
           {/* Creator pill */}
-          <div className="flex items-center gap-[4px]">
+          <div className="flex items-center gap-xxs">
             <span className="text-xs text-white" style={{ textShadow: '0 0 2px var(--black-70)' }}>by</span>
             <Link href="#" className="text-xs text-white underline" style={{ textShadow: '0 0 2px var(--black-70)' }}>
               {character.creator}
@@ -159,8 +159,8 @@ export default function ChatRightSidebar() {
 
       {/* ── You May Also Like ───────────────────────────────────── */}
       <div className="bg-page-bg">
-        <p className="label-xs px-[24px] pt-[24px] pb-[12px]">You May Also Like</p>
-        <div className="grid grid-cols-2 gap-[12px] px-[24px] pb-[24px]">
+        <p className="label-xs px-xl pt-xl pb-s">You May Also Like</p>
+        <div className="grid grid-cols-2 gap-s px-xl pb-xl">
           {relatedCharacters.map(char => (
             <AvatarCard key={char.name} {...char} />
           ))}

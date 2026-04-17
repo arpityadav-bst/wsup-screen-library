@@ -32,23 +32,25 @@ function getBannerVariant(state: CharacterState) {
 export default function ChatPage() {
   const [characterState, setCharacterState] = useState<CharacterState>('active')
   const [showToggle, setShowToggle] = useState(false)
+  const [isCreator, setIsCreator] = useState(false)
   const bannerVariant = getBannerVariant(characterState)
   const isRemoved = characterState === 'removed'
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
       if (e.key === 'r' || e.key === 'R') {
-        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
         if (e.shiftKey) {
-          // Shift+R: cycle through states
           setCharacterState(prev => {
             const i = STATES.indexOf(prev)
             return STATES[(i + 1) % STATES.length]
           })
         } else {
-          // R: toggle panel visibility
           setShowToggle(prev => !prev)
         }
+      }
+      if (e.key === 'c' || e.key === 'C') {
+        setIsCreator(prev => !prev)
       }
     }
     window.addEventListener('keydown', handler)
@@ -95,11 +97,11 @@ export default function ChatPage() {
               creatorName="Honeybadger"
               characterState={characterState}
             />
-            {bannerVariant && <DormancyBanner variant={bannerVariant} />}
+            {bannerVariant && <DormancyBanner variant={bannerVariant} isCreator={isCreator} />}
             <ChatMessages />
             {isRemoved ? (
               <div className="flex items-center justify-center px-m py-m bg-page-bg border-t border-white-10 shrink-0 md:bg-transparent">
-                <span className="text-[13px] text-white-40">This character is no longer available.</span>
+                <span className="text-xs text-white-40">Messaging isn&apos;t available for this character.</span>
               </div>
             ) : (
               <ChatBar />
@@ -117,8 +119,12 @@ export default function ChatPage() {
           style={{ animation: 'fade-in 0.15s ease-out' }}
         >
           <span className="text-xxs font-semibold text-text-dim uppercase tracking-[0.8px] mb-xxs">
-            State · <span className="text-text-xxsmall normal-case">R toggle · Shift+R cycle</span>
+            State · <span className="text-text-xxsmall normal-case">R toggle · Shift+R cycle · C creator</span>
           </span>
+          <label className="flex items-center gap-xxs text-xs text-text-small cursor-pointer mb-xxs">
+            <input type="checkbox" checked={isCreator} onChange={() => setIsCreator(prev => !prev)} className="cursor-pointer" />
+            Creator view
+          </label>
           {STATES.map((state) => (
             <button
               key={state}

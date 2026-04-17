@@ -103,14 +103,14 @@ export default function HeaderSection({ onSectionVisible }: { onSectionVisible: 
             <p className="text-text-xsmall text-xxs uppercase tracking-[0.8px] mb-xs">SPICY Toggle</p>
             <div className="flex items-center gap-m mb-xs">
               {/* off */}
-              <div className="flex flex-col items-center gap-[2px]">
+              <div className="flex flex-col items-center gap-xxxs">
                 <span className="text-xxs font-medium tracking-widest text-white-50">SPICY</span>
                 <div className="w-[36px] h-[14px] border border-white-50 rounded-full relative">
                   <div className="absolute top-[2px] left-[2px] w-[8px] h-[8px] rounded-full bg-white-50"/>
                 </div>
               </div>
               {/* on */}
-              <div className="flex flex-col items-center gap-[2px]">
+              <div className="flex flex-col items-center gap-xxxs">
                 <span className="text-xxs font-medium tracking-widest text-status-alert">SPICY</span>
                 <div className="w-[36px] h-[14px] border border-status-alert bg-status-alert rounded-full relative">
                   <div className="absolute top-[2px] right-[2px] w-[8px] h-[8px] rounded-full bg-white"/>

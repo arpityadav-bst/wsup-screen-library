@@ -57,7 +57,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
   return (
     <div className="h-[56px] md:border-b md:border-white-10 flex items-center px-xs shrink-0 md:bg-none bg-gradient-to-b from-black to-transparent">
       {/* Back */}
-      <Link href="/explore" className="p-[10px] rounded-full hover:bg-white-10 transition-colors shrink-0">
+      <Link href="/explore" className="p-icon-btn rounded-full hover:bg-white-10 transition-colors shrink-0">
         <BackIcon />
       </Link>
 
@@ -72,7 +72,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
       </div>
 
       {/* Name + creator */}
-      <div className="flex flex-col gap-[2px] flex-1 min-w-0">
+      <div className="flex flex-col gap-xxxs flex-1 min-w-0">
         <div className="flex items-center gap-xs">
           <h2 className="text-text-title font-medium text-sm leading-tight truncate">{characterName}</h2>
           {isRemoved && (
@@ -81,7 +81,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
             </span>
           )}
         </div>
-        <div className="flex items-center gap-[4px]">
+        <div className="flex items-center gap-xxs">
           <span className="text-xs text-text-body leading-tight">by</span>
           <Link href="#" className="text-xs text-white underline leading-tight whitespace-nowrap">{creatorName}</Link>
           <ChevronSmall />
@@ -91,7 +91,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
       {/* Right actions */}
       <div className="flex items-center shrink-0">
         {/* Call — warm gradient mask */}
-        <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
+        <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors">
           <div style={{
             width: 20, height: 20,
             backgroundImage: 'var(--icon-gradient-warm)',
@@ -102,7 +102,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
           }} />
         </button>
         {/* Gallery — white 70% mask */}
-        <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors">
+        <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors">
           <div style={{
             width: 20, height: 20,
             backgroundColor: 'var(--white-90)',
@@ -115,7 +115,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
 
         {/* Game — dot badge + coachmark */}
         <div className="relative isolate">
-          <button className="relative p-[10px] rounded-full hover:bg-white-10 transition-colors">
+          <button className="relative p-icon-btn rounded-full hover:bg-white-10 transition-colors">
             <GameIcon />
             <span className="absolute top-[6px] right-[6px] w-[8px] h-[8px] rounded-full bg-status-alert animate-pulse" />
           </button>
@@ -127,7 +127,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
           )}
         </div>
 
-        <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors text-white-90">
+        <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90">
           <DotsVerticalIcon />
         </button>
       </div>

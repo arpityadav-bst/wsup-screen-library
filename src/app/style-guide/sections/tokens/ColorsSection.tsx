@@ -117,6 +117,10 @@ export default function ColorsSection({ onSectionVisible }: { onSectionVisible: 
         { name: 'forms-disabled-bg', hex: '#888888' },
       ]} />
 
+      <ColorGrid label="Profile" swatches={[
+        { name: 'profile-sheet-bg', hex: '#1a1a1a' },
+      ]} />
+
       <ColorGrid label="Coachmark" swatches={[
         { name: 'coachmark-bg', hex: '#1e1d2e' },
       ]} />
@@ -147,7 +151,7 @@ export default function ColorsSection({ onSectionVisible }: { onSectionVisible: 
       <div>
         <SubLabel>Black Alpha</SubLabel>
         <div className="flex flex-wrap gap-2">
-          {[5,10,20,30,40,50,60,70,80,90].map(n => (
+          {[5,10,20,30,40,50,55,60,70,80,90].map(n => (
             <AlphaSwatch key={n} name={`black-${n}`} color={`rgba(0,0,0,${n/100})`} onLight />
           ))}
         </div>

@@ -2,8 +2,8 @@
 
 export default function ChatBar() {
   return (
-    <div className="relative px-[16px] md:px-[48px] py-[12px] shrink-0 md:bg-gradient-to-b md:from-transparent md:to-black-40">
-      <div className="bg-chat-ai-bubble rounded-[20px] p-[10px] flex items-center gap-s">
+    <div className="relative px-m md:px-2xxxl py-s shrink-0 md:bg-gradient-to-b md:from-transparent md:to-black-40">
+      <div className="bg-chat-ai-bubble rounded-[20px] p-icon-btn flex items-center gap-s">
         {/* Left: auto-suggest + sparkle + input */}
         <div className="flex items-center gap-s flex-1 min-w-0">
           <button className="w-5 h-5 rounded-full bg-white-10 flex items-center justify-center shrink-0 hover:bg-white-20 transition-colors">
@@ -21,7 +21,7 @@ export default function ChatBar() {
           />
         </div>
         {/* Right: image + mic + gift */}
-        <div className="flex items-center gap-[16px] shrink-0">
+        <div className="flex items-center gap-m shrink-0">
           <button className="hover:opacity-80 transition-opacity">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/icons/icon-image.svg" alt="" width={16} height={16} />

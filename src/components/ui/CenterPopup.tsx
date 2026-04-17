@@ -43,7 +43,7 @@ export default function CenterPopup({ open, onClose, title, subtitle, maxWidth =
             </div>
             <button
               onClick={onClose}
-              className="p-[10px] rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer shrink-0"
+              className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer shrink-0"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

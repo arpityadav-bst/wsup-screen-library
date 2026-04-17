@@ -1,7 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import { Section, SubLabel, Tag } from '../../helpers'
 import DormantCharacterCard from '@/components/profile/DormantCharacterCard'
+import ReviveConfirmSheet from '@/components/profile/ReviveConfirmSheet'
+import EmptyState from '@/components/ui/EmptyState'
+import CreditFeeAccordion from '@/components/ui/CreditFeeAccordion'
+import Button from '@/components/ui/Button'
 
 const STATE_BADGES: { label: string; bg: string; text: string; border: string; tag: string; icon?: React.ReactNode }[] = [
   {
@@ -31,6 +36,9 @@ const STATE_BADGES: { label: string; bg: string; text: string; border: string; t
 ]
 
 export default function LifecycleSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
+  const [reviveOpen, setReviveOpen] = useState(false)
+  const [reviveLowOpen, setReviveLowOpen] = useState(false)
+
   return (
     <Section id="Lifecycle" title="Lifecycle" onVisible={onSectionVisible}>
 
@@ -72,7 +80,7 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
       <div className="w-full max-w-[480px]">
         <SubLabel>Needs Attention Cards</SubLabel>
         <div className="grid grid-cols-2 gap-s">
-          <DormantCharacterCard name="Mika" img="/chars/char10.webp" stateType="inactive" chats="18.1K" daysUntilRemoval={42} />
+          <DormantCharacterCard name="Mika" img="/chars/char10.webp" stateType="inactive" chats="18.1K" lastChatDaysAgo={42} />
           <DormantCharacterCard name="Harlo" img="/chars/char11.webp" stateType="under-review" chats="21.8K" />
         </div>
       </div>
@@ -80,8 +88,8 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
       <div className="w-full max-w-[480px]">
         <SubLabel>Needs Attention — Review States</SubLabel>
         <div className="grid grid-cols-2 gap-s">
-          <DormantCharacterCard name="Joo Jaekyung" img="/chars/char12.webp" stateType="moderation" chats="48.4K" daysUntilRemoval={38} />
-          <DormantCharacterCard name="Roblox Story" img="/chars/char13.webp" stateType="rejected" chats="90.4K" daysUntilRemoval={38} />
+          <DormantCharacterCard name="Joo Jaekyung" img="/chars/char12.webp" stateType="moderation" chats="48.4K" lastChatDaysAgo={38} />
+          <DormantCharacterCard name="Roblox Story" img="/chars/char13.webp" stateType="rejected" chats="90.4K" lastChatDaysAgo={38} />
         </div>
       </div>
 
@@ -90,6 +98,61 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
         <div className="grid grid-cols-2 gap-s">
           <DormantCharacterCard name="Class 1A MHA" img="/chars/char15.webp" stateType="removed" chats="19.7K" />
         </div>
+      </div>
+
+      {/* Empty States */}
+      <div className="w-full max-w-[480px]">
+        <SubLabel>Empty States (per dashboard tab)</SubLabel>
+        <div className="flex flex-col gap-s border border-white-10 rounded-card overflow-hidden">
+          <EmptyState message="No active characters" />
+          <div className="h-px bg-white-10" />
+          <EmptyState message="Nothing needs attention" />
+          <div className="h-px bg-white-10" />
+          <EmptyState message="No removed characters" />
+        </div>
+      </div>
+
+      {/* Credit Fee Accordion */}
+      <div className="w-full max-w-[480px]">
+        <SubLabel>Credit Fee Accordion (shared component)</SubLabel>
+        <div className="p-m border border-white-10 rounded-card">
+          <CreditFeeAccordion />
+        </div>
+      </div>
+
+      {/* ReviveConfirmSheet */}
+      <div className="w-full max-w-[480px]">
+        <SubLabel>Revival Confirmation (tap to open)</SubLabel>
+        <div className="flex gap-s">
+          <Button variant="secondary" size="s" onClick={() => setReviveOpen(true)}>
+            Sufficient credits
+          </Button>
+          <Button variant="secondary" size="s" onClick={() => setReviveLowOpen(true)}>
+            Insufficient credits
+          </Button>
+        </div>
+        <ReviveConfirmSheet
+          open={reviveOpen}
+          onClose={() => setReviveOpen(false)}
+          onConfirm={() => setReviveOpen(false)}
+          characterName="Joo Jaekyung"
+          characterImg="/chars/char12.webp"
+          stateType="moderation"
+          reason="IP/Trademark"
+          credits={20}
+          userBalance={120}
+        />
+        <ReviveConfirmSheet
+          open={reviveLowOpen}
+          onClose={() => setReviveLowOpen(false)}
+          onConfirm={() => setReviveLowOpen(false)}
+          characterName="Roblox Story"
+          characterImg="/chars/char13.webp"
+          stateType="rejected"
+          reason="IP/Trademark"
+          credits={20}
+          userBalance={8}
+        />
       </div>
 
     </Section>

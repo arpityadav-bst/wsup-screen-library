@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import FilterPills from '@/components/ui/FilterPills'
+import CreditFeeAccordion from '@/components/ui/CreditFeeAccordion'
+import EmptyState from '@/components/ui/EmptyState'
 import type { FilterPill } from '@/components/ui/FilterPills'
 import DormantCharacterCard from './DormantCharacterCard'
 import type { DormantCharacter } from './DormantCharacterCard'
@@ -32,7 +34,6 @@ export default function MyCharactersDashboard({
   onStatesInfo,
 }: MyCharactersDashboardProps) {
   const [filter, setFilter] = useState('All')
-  const [creditFaqOpen, setCreditFaqOpen] = useState(false)
 
   const actionableChars = needsAttentionChars.filter(c => c.stateType !== 'removed')
   const removedChars = needsAttentionChars.filter(c => c.stateType === 'removed')
@@ -50,6 +51,14 @@ export default function MyCharactersDashboard({
 
   return (
     <div className="px-m md:px-4xl py-m flex flex-col gap-xl">
+      {/* Page header */}
+      <div className="flex flex-col gap-xxs">
+        <h1 className="text-lg font-semibold text-text-title">My Characters</h1>
+        <p className="text-xs text-text-dim">
+          {activeChars.length} active, {actionableChars.length} dormant, {removedChars.length} removed
+        </p>
+      </div>
+
       {/* Filter pills + info icon */}
       <div className="flex items-center gap-xs">
         <div className="flex-1 min-w-0">
@@ -74,10 +83,10 @@ export default function MyCharactersDashboard({
       {showNeedsAttention && actionableChars.length > 0 && (
         <div className="flex flex-col gap-s">
           <div className="flex items-center gap-xs">
-            <svg className="w-l h-l text-status-warning shrink-0" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" />
-              <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" />
-              <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" />
+            <svg className="w-l h-l text-text-dim shrink-0" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" />
+              <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" />
+              <line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" />
             </svg>
             <span className="text-sm font-semibold text-text-title">Needs Attention</span>
             <span className="inline-flex items-center justify-center min-w-[20px] h-l px-xs bg-white-10 rounded-pill text-xxs font-semibold text-text-small">
@@ -86,31 +95,11 @@ export default function MyCharactersDashboard({
           </div>
 
           {/* Info banner */}
-          <p className="p-s bg-status-warning/[0.08] border border-status-warning/[0.15] rounded-card text-xs leading-relaxed text-text-small">
-            Review and revive these characters to keep them active, or they will be removed.
+          <p className="p-s bg-white-05 border border-white-10 rounded-card text-xs leading-relaxed text-text-small">
+            These characters are not currently shown in explore, search, or category pages. Existing chats continue normally.
           </p>
 
-          {/* Credit cost FAQ accordion */}
-          <div>
-            <button
-              onClick={() => setCreditFaqOpen(!creditFaqOpen)}
-              className="flex items-center gap-xxs bg-transparent border-none cursor-pointer p-0 text-text-dim hover:text-text-small transition-colors"
-            >
-              <span className="text-xs">Why does this cost credits?</span>
-              <svg
-                className="w-s h-s transition-transform"
-                style={{ transform: creditFaqOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-            {creditFaqOpen && (
-              <p className="mt-xs text-xs leading-relaxed text-text-small">
-                Every revival goes through a content review to keep the platform safe for everyone. The 20-credit fee helps us maintain fast, high-quality reviews so your character can get back online quickly. Credits are deducted only when you submit your edits.
-              </p>
-            )}
-          </div>
+          <CreditFeeAccordion />
 
           {/* Actionable cards */}
           {actionableChars.length > 0 && (
@@ -145,6 +134,9 @@ export default function MyCharactersDashboard({
           </div>
         </div>
       )}
+      {showActive && !showNeedsAttention && !showRemoved && activeChars.length === 0 && (
+        <EmptyState message="No active characters" />
+      )}
 
       {/* Divider before removed */}
       {showRemoved && removedChars.length > 0 && ((showActive && activeChars.length > 0) || (showNeedsAttention && actionableChars.length > 0)) && (
@@ -166,6 +158,14 @@ export default function MyCharactersDashboard({
             ))}
           </div>
         </div>
+      )}
+      {showRemoved && !showActive && !showNeedsAttention && removedChars.length === 0 && (
+        <EmptyState message="No removed characters" />
+      )}
+
+      {/* Needs Attention empty state */}
+      {showNeedsAttention && !showActive && !showRemoved && actionableChars.length === 0 && (
+        <EmptyState message="Nothing needs attention" />
       )}
 
     </div>

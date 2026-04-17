@@ -11,6 +11,9 @@ import BottomNavSection from './components/BottomNavSection'
 import OverlaysSection from './components/OverlaysSection'
 import FilterPillsSection from './components/FilterPillsSection'
 import LifecycleSection from './components/LifecycleSection'
+import ProfileCardsSection from './components/ProfileCardsSection'
+import ProfileOverlaysSection from './components/ProfileOverlaysSection'
+import UIUtilitiesSection from './components/UIUtilitiesSection'
 
 export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -26,6 +29,9 @@ export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: 
       <OverlaysSection onSectionVisible={onSectionVisible} />
       <LifecycleSection onSectionVisible={onSectionVisible} />
       <BottomNavSection onSectionVisible={onSectionVisible} />
+      <ProfileCardsSection onSectionVisible={onSectionVisible} />
+      <ProfileOverlaysSection onSectionVisible={onSectionVisible} />
+      <UIUtilitiesSection onSectionVisible={onSectionVisible} />
     </>
   )
 }

@@ -6,7 +6,7 @@ interface SpicyToggleProps {
 
 export default function SpicyToggle({ spicy, onToggle, className = '' }: SpicyToggleProps) {
   return (
-    <div className={`flex flex-col items-center gap-[2px] cursor-pointer ${className}`} onClick={onToggle}>
+    <div className={`flex flex-col items-center gap-xxxs cursor-pointer ${className}`} onClick={onToggle}>
       <span className={`text-xxs font-medium tracking-widest transition-colors ${spicy ? 'text-status-alert' : 'text-white-50'}`}>
         SPICY
       </span>

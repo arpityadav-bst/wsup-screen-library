@@ -59,7 +59,7 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
             </div>
             <div className="flex items-center justify-between px-l py-s border-b border-white-10">
               <p className="font-semibold text-base text-text-title">Sheet Title</p>
-              <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
+              <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -89,7 +89,7 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
           <TokenRow token="bg-profile-sheet-bg" desc="#1a1a1a solid" />
           <TokenRow token="rounded-t-popup" desc="24px top corners" />
           <TokenRow token="z-[60]" desc="Above BottomNav (z-50)" />
-          <TokenRow token="Close icon" desc="p-[10px] rounded-full hover:bg-white-10 text-white-90" />
+          <TokenRow token="Close icon" desc="p-icon-btn rounded-full hover:bg-white-10 text-white-90" />
         </div>
       </div>
 
@@ -100,7 +100,7 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
           <div className="w-[320px] bg-profile-sheet-bg rounded-popup border border-white-10 shadow-popup overflow-hidden">
             <div className="flex items-center justify-between px-l py-s border-b border-white-10">
               <p className="font-semibold text-base text-text-title">Popup Title</p>
-              <button className="p-[10px] rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
+              <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
@@ -146,7 +146,7 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
           <div className="w-[320px] bg-profile-sheet-bg border border-white-10 rounded-popup shadow-popup overflow-hidden">
             <div className="flex items-start justify-between pt-m px-xl">
               <p className="font-semibold text-base text-text-title">Action title?</p>
-              <button className="p-[10px] -mr-[10px] -mt-xxs rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
+              <button className="p-icon-btn -mr-icon-btn -mt-xxs rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

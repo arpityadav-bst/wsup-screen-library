@@ -18,7 +18,7 @@ export default function Coachmark({ characterName, onDismiss }: CoachmarkProps) 
     <div className="absolute top-full right-0 mt-xs w-[220px] bg-coachmark-bg border border-accent rounded-card shadow-button z-50">
       {/* Caret */}
       <div className="absolute -top-[10px] right-[17px]" style={{ width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderBottom: '10px solid var(--accent)' }} />
-      <div className="absolute -top-[8px] right-[18px]" style={{ width: 0, height: 0, borderLeft: '9px solid transparent', borderRight: '9px solid transparent', borderBottom: '9px solid var(--coachmark-bg)' }} />
+      <div className="absolute -top-xs right-[18px]" style={{ width: 0, height: 0, borderLeft: '9px solid transparent', borderRight: '9px solid transparent', borderBottom: '9px solid var(--coachmark-bg)' }} />
 
       <div className="p-s">
         {/* Label + dismiss */}

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import CreditButton from '@/components/ui/CreditButton'
 import Popover from '@/components/ui/Popover'
-import Button from '@/components/ui/Button'
 import BadgeTooltip from '@/components/ui/BadgeTooltip'
 import { DormantMenuPopoverItems } from './CharacterMenuSheet'
 import ReviveConfirmSheet from './ReviveConfirmSheet'
@@ -18,7 +17,7 @@ export interface DormantCharacter {
   stateType: CharacterStateType
   reason?: string
   chats: string
-  daysUntilRemoval?: number
+  lastChatDaysAgo?: number
 }
 
 interface DormantCharacterCardProps extends DormantCharacter {
@@ -38,40 +37,40 @@ const BADGE_CONFIG: Record<CharacterStateType, {
     label: 'Inactive',
     bg: 'bg-black-50', text: 'text-white-60', border: 'border-white-10',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
-    tooltip: 'No new conversations in 30 days. Existing users can still chat. Revive to get back into distribution.',
+    tooltip: 'This character hasn\'t had new conversations in 30 days. It\'s not shown in explore or search. Existing users can still chat.',
   },
   moderation: {
     label: 'Policy Review',
     bg: 'bg-status-warning/[0.20]', text: 'text-status-warning', border: 'border-status-warning/[0.30]',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>,
-    tooltip: 'This character was flagged for a content policy concern. Edit and resubmit to address the issue.',
+    tooltip: 'This character is being reviewed against our content policy. It\'s not shown in explore or search. Existing users can still chat.',
     accentColor: '#ffc32a', // status-warning
   },
   'under-review': {
     label: 'Under Review',
     bg: 'bg-forms-focus-border/[0.15]', text: 'text-forms-focus-border', border: 'border-forms-focus-border/[0.30]',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
-    tooltip: 'Your edits are being reviewed. This typically takes 24–48 hours. No action needed.',
+    tooltip: 'Your edits are being reviewed. This usually takes a few minutes. No action needed.',
     accentColor: '#82a1ff', // forms-focus-border
   },
   rejected: {
     label: 'Rejected',
     bg: 'bg-status-alert/[0.15]', text: 'text-status-alert', border: 'border-status-alert/[0.30]',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>,
-    tooltip: 'Your submitted edits didn\'t pass review. Revise and resubmit through the edit character flow.',
+    tooltip: 'This character did not meet our content policy. The reason is shown on the card. You can edit and re-submit through the revival flow if you choose.',
     accentColor: '#de5a48', // status-alert
   },
   removed: {
     label: 'Removed',
     bg: 'bg-status-alert/[0.25]', text: 'text-status-alert', border: 'border-status-alert/[0.30]',
     icon: <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>,
-    tooltip: 'This character has been permanently removed. Contact support if you believe this was made in error.',
+    tooltip: 'This character has been removed from the platform. Contact support with questions.',
     accentColor: '#de5a48', // status-alert
   },
 }
 
 export default function DormantCharacterCard({
-  name, img, stateType, reason, chats, daysUntilRemoval, onMenu,
+  name, img, stateType, reason, chats, lastChatDaysAgo, onMenu,
 }: DormantCharacterCardProps) {
   const router = useRouter()
   const [popoverOpen, setPopoverOpen] = useState(false)
@@ -152,8 +151,8 @@ export default function DormantCharacterCard({
             </svg>
             {chats}
           </span>
-          {daysUntilRemoval && !isRemoved && !isUnderReview && (
-            <span className="text-xs font-medium text-status-warning">{daysUntilRemoval}d left</span>
+          {lastChatDaysAgo != null && !isRemoved && (
+            <span className="text-xs text-white-50">Last chatted {lastChatDaysAgo}d ago</span>
           )}
         </div>
 
@@ -162,15 +161,20 @@ export default function DormantCharacterCard({
           <CreditButton label="Revive" credits={20} size="s" variant="secondary" fullWidth onClick={() => setReviveOpen(true)} />
         )}
         {isRemoved && (
-          <Button variant="secondary" size="s" fullWidth>
-            Support
-          </Button>
+          <div className="flex flex-col gap-xxs">
+            <p className="text-xs text-white-50">No longer on the platform</p>
+            <a href="mailto:support@wsup.ai" className="text-xs text-white-50 hover:text-white-70 transition-colors no-underline hover:underline">Contact support</a>
+          </div>
         )}
       </div>
       <ReviveConfirmSheet
         open={reviveOpen}
         onClose={() => setReviveOpen(false)}
         onConfirm={() => { setReviveOpen(false); router.push('/edit-character') }}
+        characterName={name}
+        characterImg={img}
+        stateType={stateType}
+        reason={reason}
         credits={20}
       />
     </div>

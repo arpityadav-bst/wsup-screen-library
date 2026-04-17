@@ -41,6 +41,26 @@ export default function UtilitiesSection({ onSectionVisible }: { onSectionVisibl
       </div>
 
       <div>
+        <SubLabel>Scroll &amp; Layout Utilities</SubLabel>
+        <div className="flex flex-col gap-s text-xs text-text-body bg-white-05 border border-white-10 rounded-card p-m">
+          {[
+            ['.scroll-hide', 'Hides scrollbar (Firefox + WebKit). Use on any scrollable container.'],
+            ['.scroll-thumb-vertical', 'Custom 2px vertical scrollbar thumb. Use with useVerticalScrollbar hook.'],
+            ['.scroll-thumb-horizontal', 'Custom horizontal scrollbar thumb. Use with useHorizontalScrollbar hook.'],
+            ['.center-content-pad', 'Responsive center padding: md:px-4xl. Use on content areas.'],
+            ['.avatar-ring', 'Purple gradient ring for avatar borders. 2px ring with avatar token color.'],
+            ['.bio-fade', 'Bottom fade mask for truncated bio text. Gradient mask from white to transparent.'],
+            ['.token-highlight', 'Pulse animation for style guide token highlighting.'],
+          ].map(([cls, desc]) => (
+            <div key={cls} className="flex items-start justify-between gap-m py-xxs border-b border-white-05 last:border-0">
+              <code className="text-secondary text-xs shrink-0">{cls}</code>
+              <span className="text-text-xsmall text-right">{desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
         <SubLabel>Gradient Reference</SubLabel>
         <div className="flex flex-wrap gap-6 items-start">
           <div className="flex flex-col gap-2">

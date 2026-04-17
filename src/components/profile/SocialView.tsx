@@ -88,7 +88,7 @@ export default function SocialView({ open, initialTab, onClose, followers, follo
       <div className="absolute inset-0 bg-page-bg z-10 flex flex-col">
         {/* Sidebar back header — no border (tabs below have it) */}
         <div className="flex items-center px-xs shrink-0 h-3xxxl">
-          <button onClick={onClose} className="p-[10px] rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
+          <button onClick={onClose} className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer">
             <svg width="20" height="20" viewBox="0 0 16.8333 13.5" fill="none">
               <path d="M6.97727 0.5L0.5 6.75M0.5 6.75L6.97727 13M0.5 6.75H16.3333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

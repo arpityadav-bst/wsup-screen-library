@@ -58,7 +58,7 @@ function DesktopConfirm({ open, onClose, onConfirm, title, description, confirmL
           <p className="font-semibold text-base text-text-title">{title}</p>
           <button
             onClick={onClose}
-            className="p-[10px] -mr-[10px] -mt-xxs rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer"
+            className="p-icon-btn -mr-icon-btn -mt-xxs rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

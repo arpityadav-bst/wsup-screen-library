@@ -109,7 +109,7 @@ export default function BottomNav() {
           <Link
             key={label}
             href={href}
-            className="flex flex-col items-center gap-[6px] py-[12px] flex-1 min-w-0"
+            className="flex flex-col items-center gap-[6px] py-s flex-1 min-w-0"
             style={active ? { backgroundImage: activeGradient } : undefined}
           >
             <Icon active={active} />

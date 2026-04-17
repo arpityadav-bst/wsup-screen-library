@@ -44,7 +44,7 @@ export default function EditCharacterPage() {
 
         {/* Mobile header — matches profile header style */}
         <div className="flex md:hidden items-center h-3xxxl px-xs shrink-0 bg-page-bg border-b border-white-10">
-          <button onClick={() => window.history.back()} className="p-[10px] rounded-pill hover:bg-white-10 transition-colors text-white-90 shrink-0 border-none bg-transparent cursor-pointer">
+          <button onClick={() => window.history.back()} className="p-icon-btn rounded-pill hover:bg-white-10 transition-colors text-white-90 shrink-0 border-none bg-transparent cursor-pointer">
             <svg width="20" height="20" viewBox="0 0 16.8333 13.5" fill="none">
               <path d="M6.97727 0.5L0.5 6.75M0.5 6.75L6.97727 13M0.5 6.75H16.3333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -54,7 +54,7 @@ export default function EditCharacterPage() {
 
         {/* Desktop header */}
         <div className="hidden md:flex items-center h-3xxxl px-xs shrink-0 bg-page-bg border-b border-white-10">
-          <Link href="/profile" className="p-[10px] rounded-pill hover:bg-white-10 transition-colors text-white-90 shrink-0 no-underline flex items-center justify-center">
+          <Link href="/profile" className="p-icon-btn rounded-pill hover:bg-white-10 transition-colors text-white-90 shrink-0 no-underline flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 16.8333 13.5" fill="none">
               <path d="M6.97727 0.5L0.5 6.75M0.5 6.75L6.97727 13M0.5 6.75H16.3333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

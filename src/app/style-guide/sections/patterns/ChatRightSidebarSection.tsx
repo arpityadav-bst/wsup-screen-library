@@ -15,21 +15,21 @@ export default function ChatRightSidebarSection({ onSectionVisible }: { onSectio
             {/* Decorative glows */}
             <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 0% 100%, rgba(123,76,255,0.10) 0%, transparent 55%), radial-gradient(ellipse at 100% 30%, rgba(255,89,236,0.10) 0%, transparent 55%)' }} />
             {/* Info overlay */}
-            <div className="relative z-10 flex flex-col items-center gap-[10px] px-xl pt-xl pb-xxxl">
+            <div className="relative z-10 flex flex-col items-center gap-icon-btn px-xl pt-xl pb-xxxl">
               <h2 className="text-base font-medium text-white text-center">Character Name</h2>
               {/* Stats */}
-              <div className="flex items-center gap-[10px]">
-                <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[2px] pl-[6px] pr-[8px] py-[4px] rounded-[20px]">
+              <div className="flex items-center gap-icon-btn">
+                <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-xxxs pl-[6px] pr-xs py-xxs rounded-[20px]">
                   <div className="w-4 h-4 rounded-sm bg-white-10 shrink-0" />
                   <span className="text-xxs text-white-70 tracking-[0.8px]">3K Chats</span>
                 </div>
-                <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-[2px] pl-[6px] pr-[8px] py-[4px] rounded-[20px]">
+                <div className="backdrop-blur-[32px] bg-black-70 flex items-center gap-xxxs pl-[6px] pr-xs py-xxs rounded-[20px]">
                   <div className="w-4 h-4 rounded-sm bg-white-10 shrink-0" />
                   <span className="text-xxs text-white-70 tracking-[0.8px]">#219 Rank</span>
                 </div>
               </div>
               {/* Tags */}
-              <div className="flex flex-wrap items-center justify-center gap-[8px]">
+              <div className="flex flex-wrap items-center justify-center gap-xs">
                 {['Neon', 'Music', 'Girl'].map(tag => (
                   <span key={tag} className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10">{tag}</span>
                 ))}
@@ -39,7 +39,7 @@ export default function ChatRightSidebarSection({ onSectionVisible }: { onSectio
               {/* CTA */}
               <button className="w-[140px] bg-accent hover:bg-accent-hover rounded-pill py-[10px] text-sm font-semibold text-white transition-colors">Chat</button>
               {/* Creator */}
-              <div className="flex items-center gap-[4px]">
+              <div className="flex items-center gap-xxs">
                 <span className="text-xs text-white">by</span>
                 <span className="text-xs text-white underline">Creator</span>
                 <svg width="5" height="8" viewBox="0 0 5 8" fill="none"><path d="M1 1l3 3-3 3" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -78,10 +78,10 @@ export default function ChatRightSidebarSection({ onSectionVisible }: { onSectio
             ['text-xxs text-white-70 tracking-[0.8px] whitespace-nowrap', 'Stat value + label text'],
             ['backdrop-blur-[32px] bg-white-10 border border-white-10 rounded-[24px] px-[10px] py-[2px] text-xxs', 'Tag pill'],
             ['w-[140px] bg-accent rounded-pill py-[10px] text-sm font-semibold', 'Chat CTA — fixed 140px width, centered'],
-            ['grid grid-cols-2 gap-[12px] px-[24px] pb-[24px]', '"You May Also Like" grid'],
+            ['grid grid-cols-2 gap-s px-xl pb-xl', '"You May Also Like" grid'],
             ['style={{ aspectRatio: "9/16" }} rounded-[12px] overflow-hidden', 'Related character card — 9:16 portrait'],
             ['group-hover:scale-[1.04] transition-transform duration-300', 'Subtle zoom on hover for related cards'],
-            ['label-xs px-[24px] pt-[24px] pb-[12px]', '"You May Also Like" section label'],
+            ['label-xs px-xl pt-xl pb-s', '"You May Also Like" section label'],
           ].map(([cls, label]) => (
             <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
               <TokenCell value={cls} />
