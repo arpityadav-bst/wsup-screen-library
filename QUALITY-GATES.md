@@ -140,6 +140,27 @@ Think like a UX designer at every step. Before implementing anything, check how 
 
 ---
 
+## GATE 8 — UX REVIEW (THINK LIKE A DESIGNER)
+
+After every change — before saying "done" — look at what you built as a UX designer would. Not a developer checking if code compiles, but a designer checking if the experience is right.
+
+**Ask yourself:**
+- [ ] **Is it readable?** Can a user instantly understand what they're looking at? If an icon or illustration is abstract or ambiguous at the rendered size, it fails. (Learned: SVG illustrations were unreadable at 48px)
+- [ ] **Is the spacing balanced?** No double gaps from nested padding. No elements floating too far from related content. Group related things tightly. (Learned: button was 64px away from its label due to nested py-4xl + gap-m)
+- [ ] **Is it tappable on mobile?** Links need visible underlines, not hover-only. Buttons need adequate hit targets. Touch has no hover state. (Learned: Contact support link was invisible on mobile)
+- [ ] **Does it make sense at all viewport sizes?** Text that fits on desktop may wrap on 2-col mobile. Test mentally at 180px card width. (Learned: "Last chatted 34d ago" wrapped at mobile widths)
+- [ ] **Is every piece of information clear without context?** If you need surrounding context to understand a value (like "34d" meaning "last chatted 34 days ago"), it's not clear enough.
+- [ ] **Is the hierarchy right?** Primary info should be largest/brightest, secondary should recede via color not size. Don't use size to demote meaningful data.
+- [ ] **Does empty state make sense?** If there are zero items, only show what's relevant to that state. Don't leak empty states from other tabs/sections.
+
+**This is not optional.** Every visual change gets a UX review before it ships. The designer should never have to point out spacing issues, unreadable icons, or mobile problems — you catch them yourself.
+
+**When to run this gate:**
+- BEFORE: Read QUALITY-GATES.md at the start of every WSUP task to prime your thinking
+- AFTER: Run all 8 gates after completing the change, with Gate 8 as the final visual sanity check
+
+---
+
 ## THRESHOLDS SUMMARY
 
 | What | Threshold | Action |
@@ -179,9 +200,16 @@ Note: These greps catch classNames but NOT inline styles. For inline styles, man
 
 ---
 
+## WHEN TO RUN
+
+- **BEFORE every WSUP task:** Read this file first. Prime your brain with the gates before writing any code.
+- **AFTER every WSUP change:** Run all 8 gates. Gate 8 (UX Review) is the final check — look at what you built as a designer, not a developer.
+- **This applies to both Claude and VDA.** No exceptions, no shortcuts.
+
 ## REMEMBER
 
 - **"Same edit"** means the component file, style guide section, and VDA decision are updated together. Not "same session" — SAME EDIT.
 - A visual change is NOT complete until all 3 are updated.
 - If you say "done" before all gates pass, you are wrong.
 - VDA follows these same gates when building screens autonomously.
+- **The designer should never have to catch UX issues.** Spacing, readability, mobile behavior, empty state logic — you catch these yourself at Gate 8. If the designer points it out, you failed the gate.
