@@ -48,7 +48,7 @@ export default function ProfilePage() {
   const [dormantMenuType, setDormantMenuType] = useState('inactive')
   const { scrollRef, thumbProps } = useVerticalScrollbar()
 
-  // Data state toggle — D to show/hide, Shift+D to cycle
+  // Data state toggle — R to show/hide, Shift+R to cycle
   const DATA_MODES = ['full', 'active-only', 'dormant-only', 'removed-only', 'empty'] as const
   type DataMode = typeof DATA_MODES[number]
   const DATA_LABELS: Record<DataMode, string> = {
@@ -64,7 +64,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
-      if (e.key === 'd' || e.key === 'D') {
+      if (e.key === 'r' || e.key === 'R') {
         if (e.shiftKey) {
           setDataMode(prev => {
             const i = DATA_MODES.indexOf(prev)
@@ -250,13 +250,13 @@ export default function ProfilePage() {
 
       <BottomNav />
 
-      {/* Data toggle — D to show/hide, Shift+D to cycle */}
+      {/* Data toggle — R to show/hide, Shift+R to cycle */}
       {showDataToggle && (
         <div className="fixed bottom-m right-m z-[70] flex flex-col gap-xxs bg-secondary-surface backdrop-blur-popup rounded-card p-s shadow-big border border-white-10"
           style={{ animation: 'fade-in 0.15s ease-out' }}
         >
           <span className="text-xxs font-semibold text-text-dim uppercase tracking-[0.8px] mb-xxs">
-            Data · <span className="text-text-xxsmall normal-case">D toggle · Shift+D cycle</span>
+            Data · <span className="text-text-xxsmall normal-case">R toggle · Shift+R cycle</span>
           </span>
           {DATA_MODES.map((mode) => (
             <button

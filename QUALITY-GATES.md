@@ -125,6 +125,21 @@ Note: `decisions.md` is per-edit (atomic with the change). `session-logs.md` is 
 
 ---
 
+## GATE 7 — UX CONSISTENCY
+
+Think like a UX designer at every step. Before implementing anything, check how similar things already work in the project and follow the same pattern.
+
+- [ ] **Interactions:** If a keyboard shortcut exists for a similar feature (e.g., R key for dev togglers), use the same key — don't invent a new one
+- [ ] **Visual patterns:** If links, buttons, badges, empty states, or cards have an established style, use it — don't create a variation
+- [ ] **Copy patterns:** If the project uses a specific tone (descriptive, not prescriptive), follow it in every new string
+- [ ] **Layout patterns:** If similar content is laid out a certain way on other pages, match it
+- [ ] **State logic:** If zero data means "show CTA only" (not CTA + empty states from other tabs leaking through), make sure the logic is clean
+- [ ] **Dev tools:** All dev togglers use the same panel style, same key pattern (R toggle, Shift+R cycle), same position (fixed bottom-right)
+
+**How to apply:** Before writing any UI code, ask: "How does this already work elsewhere in WSUP?" If there's a precedent, follow it. If there isn't, you're establishing one — make it intentional and document it.
+
+---
+
 ## THRESHOLDS SUMMARY
 
 | What | Threshold | Action |

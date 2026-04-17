@@ -148,7 +148,7 @@ export default function MyCharactersDashboard({
           </div>
         </div>
       )}
-      {showActive && !showNeedsAttention && !showRemoved && activeChars.length === 0 && (
+      {showActive && !showNeedsAttention && !showRemoved && activeChars.length === 0 && totalCount > 0 && (
         <EmptyState message="No active characters" />
       )}
 
@@ -173,12 +173,12 @@ export default function MyCharactersDashboard({
           </div>
         </div>
       )}
-      {showRemoved && !showActive && !showNeedsAttention && removedChars.length === 0 && (
+      {showRemoved && !showActive && !showNeedsAttention && removedChars.length === 0 && totalCount > 0 && (
         <EmptyState message="No removed characters" />
       )}
 
       {/* Needs Attention empty state */}
-      {showNeedsAttention && !showActive && !showRemoved && actionableChars.length === 0 && (
+      {showNeedsAttention && !showActive && !showRemoved && actionableChars.length === 0 && totalCount > 0 && (
         <EmptyState message="Nothing needs attention" />
       )}
 
