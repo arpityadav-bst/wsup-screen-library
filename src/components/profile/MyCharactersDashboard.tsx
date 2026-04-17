@@ -83,10 +83,7 @@ export default function MyCharactersDashboard({
       {/* Zero characters — brand new creator */}
       {totalCount === 0 && (
         <div className="flex flex-col items-center justify-center py-4xl gap-m text-center">
-          <svg className="w-xxl h-xxl text-white-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          <p className="text-sm text-text-dim">Create your first character</p>
+          <EmptyState message="Create your first character" variant="create" />
           <Button variant="primary" size="m" onClick={() => window.location.href = '/edit-character'}>
             Create Character
           </Button>
@@ -149,7 +146,7 @@ export default function MyCharactersDashboard({
         </div>
       )}
       {showActive && !showNeedsAttention && !showRemoved && activeChars.length === 0 && totalCount > 0 && (
-        <EmptyState message="No active characters" />
+        <EmptyState message="No active characters" variant="no-active" />
       )}
 
       {/* Divider before removed */}
@@ -174,12 +171,12 @@ export default function MyCharactersDashboard({
         </div>
       )}
       {showRemoved && !showActive && !showNeedsAttention && removedChars.length === 0 && totalCount > 0 && (
-        <EmptyState message="No removed characters" />
+        <EmptyState message="No removed characters" variant="no-removed" />
       )}
 
       {/* Needs Attention empty state */}
       {showNeedsAttention && !showActive && !showRemoved && actionableChars.length === 0 && totalCount > 0 && (
-        <EmptyState message="Nothing needs attention" />
+        <EmptyState message="Nothing needs attention" variant="all-good" />
       )}
 
     </div>
