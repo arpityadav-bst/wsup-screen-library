@@ -6,6 +6,7 @@ import DormantCharacterCard from '@/components/profile/DormantCharacterCard'
 import ReviveConfirmSheet from '@/components/profile/ReviveConfirmSheet'
 import EmptyState from '@/components/ui/EmptyState'
 import CreditFeeAccordion from '@/components/ui/CreditFeeAccordion'
+import ButtonComp from '@/components/ui/Button'
 import Button from '@/components/ui/Button'
 
 const STATE_BADGES: { label: string; bg: string; text: string; border: string; tag: string; icon?: React.ReactNode }[] = [
@@ -109,6 +110,20 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
           <EmptyState message="Nothing needs attention" />
           <div className="h-px bg-white-10" />
           <EmptyState message="No removed characters" />
+        </div>
+      </div>
+
+      {/* Zero Characters — new creator CTA */}
+      <div className="w-full max-w-[480px]">
+        <SubLabel>Zero Characters (new creator)</SubLabel>
+        <div className="border border-white-10 rounded-card overflow-hidden">
+          <div className="flex flex-col items-center justify-center py-4xl gap-m text-center">
+            <svg className="w-xxl h-xxl text-white-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            <p className="text-sm text-text-dim">Create your first character</p>
+            <ButtonComp variant="primary" size="m">Create Character</ButtonComp>
+          </div>
         </div>
       </div>
 

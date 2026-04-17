@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useVerticalScrollbar from '@/hooks/useVerticalScrollbar'
 import Header from '@/components/shared/Header'
 import Sidebar from '@/components/shared/Sidebar'
@@ -47,6 +47,46 @@ export default function ProfilePage() {
   const [dormantMenuChar, setDormantMenuChar] = useState<string | null>(null)
   const [dormantMenuType, setDormantMenuType] = useState('inactive')
   const { scrollRef, thumbProps } = useVerticalScrollbar()
+
+  // Data state toggle — D to show/hide, Shift+D to cycle
+  const DATA_MODES = ['full', 'active-only', 'dormant-only', 'removed-only', 'empty'] as const
+  type DataMode = typeof DATA_MODES[number]
+  const DATA_LABELS: Record<DataMode, string> = {
+    'full': 'Full Data',
+    'active-only': 'Active Only',
+    'dormant-only': 'Dormant Only',
+    'removed-only': 'Removed Only',
+    'empty': 'Zero Characters',
+  }
+  const [dataMode, setDataMode] = useState<DataMode>('full')
+  const [showDataToggle, setShowDataToggle] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      if (e.key === 'd' || e.key === 'D') {
+        if (e.shiftKey) {
+          setDataMode(prev => {
+            const i = DATA_MODES.indexOf(prev)
+            return DATA_MODES[(i + 1) % DATA_MODES.length]
+          })
+        } else {
+          setShowDataToggle(prev => !prev)
+        }
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
+
+  const activeCharsData = dataMode === 'empty' || dataMode === 'dormant-only' || dataMode === 'removed-only' ? [] : CHARACTERS
+  const needsAttentionData = dataMode === 'empty' || dataMode === 'active-only'
+    ? []
+    : dataMode === 'removed-only'
+      ? NEEDS_ATTENTION_CHARACTERS.filter(c => c.stateType === 'removed')
+      : dataMode === 'dormant-only'
+        ? NEEDS_ATTENTION_CHARACTERS.filter(c => c.stateType !== 'removed')
+        : NEEDS_ATTENTION_CHARACTERS
 
   const tabs = [
     { label: 'Characters', count: CHARACTERS.length + NEEDS_ATTENTION_CHARACTERS.length },
@@ -125,8 +165,8 @@ export default function ProfilePage() {
               <ProfileTabBar tabs={tabs} active={activeTab} onChange={setActiveTab} />
               {activeTab === 'Characters' ? (
                 <MyCharactersDashboard
-                  activeChars={CHARACTERS}
-                  needsAttentionChars={NEEDS_ATTENTION_CHARACTERS}
+                  activeChars={activeCharsData}
+                  needsAttentionChars={needsAttentionData}
                   onCharMenu={(name) => { setCharMenuChar(name); setCharMenuOpen(true) }}
                   onDormantMenu={(name, stateType) => { setDormantMenuChar(name); setDormantMenuType(stateType); setDormantMenuOpen(true) }}
                   onStatesInfo={() => setStatesSheetOpen(true)}
@@ -209,6 +249,30 @@ export default function ProfilePage() {
       <CharacterStatesSheet open={statesSheetOpen} onClose={() => setStatesSheetOpen(false)} />
 
       <BottomNav />
+
+      {/* Data toggle — D to show/hide, Shift+D to cycle */}
+      {showDataToggle && (
+        <div className="fixed bottom-m right-m z-[70] flex flex-col gap-xxs bg-secondary-surface backdrop-blur-popup rounded-card p-s shadow-big border border-white-10"
+          style={{ animation: 'fade-in 0.15s ease-out' }}
+        >
+          <span className="text-xxs font-semibold text-text-dim uppercase tracking-[0.8px] mb-xxs">
+            Data · <span className="text-text-xxsmall normal-case">D toggle · Shift+D cycle</span>
+          </span>
+          {DATA_MODES.map((mode) => (
+            <button
+              key={mode}
+              onClick={() => setDataMode(mode)}
+              className={`text-left px-s py-xxs rounded-button text-xs cursor-pointer border-none transition-colors ${
+                dataMode === mode
+                  ? 'bg-accent text-text-title font-medium'
+                  : 'bg-transparent text-text-small hover:bg-white-10'
+              }`}
+            >
+              {DATA_LABELS[mode]}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

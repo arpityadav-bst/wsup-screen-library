@@ -4,6 +4,7 @@ import { useState } from 'react'
 import FilterPills from '@/components/ui/FilterPills'
 import CreditFeeAccordion from '@/components/ui/CreditFeeAccordion'
 import EmptyState from '@/components/ui/EmptyState'
+import Button from '@/components/ui/Button'
 import type { FilterPill } from '@/components/ui/FilterPills'
 import DormantCharacterCard from './DormantCharacterCard'
 import type { DormantCharacter } from './DormantCharacterCard'
@@ -78,6 +79,19 @@ export default function MyCharactersDashboard({
           </button>
         )}
       </div>
+
+      {/* Zero characters — brand new creator */}
+      {totalCount === 0 && (
+        <div className="flex flex-col items-center justify-center py-4xl gap-m text-center">
+          <svg className="w-xxl h-xxl text-white-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <p className="text-sm text-text-dim">Create your first character</p>
+          <Button variant="primary" size="m" onClick={() => window.location.href = '/edit-character'}>
+            Create Character
+          </Button>
+        </div>
+      )}
 
       {/* Needs Attention section */}
       {showNeedsAttention && actionableChars.length > 0 && (
