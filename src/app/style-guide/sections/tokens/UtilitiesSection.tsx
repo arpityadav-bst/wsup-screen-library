@@ -14,6 +14,11 @@ export default function UtilitiesSection({ onSectionVisible }: { onSectionVisibl
             <Tag>label-xs</Tag>
             <span className="text-text-xsmall text-xs">10px · medium · text-small · tracked · uppercase</span>
           </div>
+          <div className="flex items-center gap-4 bg-white-05 border border-white-10 rounded-card px-5 py-4">
+            <a href="#" className="link" onClick={(e) => e.preventDefault()}>Inline text link</a>
+            <Tag>.link</Tag>
+            <span className="text-text-xsmall text-xs">text-secondary · underline · decoration-white-20 · hover:decoration-white-40</span>
+          </div>
           <div className="flex flex-wrap gap-6 items-start">
             <div className="flex flex-col gap-2">
               <div className="w-[150px] h-[100px] glass rounded-card flex items-center justify-center">

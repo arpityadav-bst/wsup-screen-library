@@ -153,9 +153,9 @@ function StatesContent() {
         <p className="text-sm text-text-small">Have questions?</p>
         <p className="text-xs text-text-xxsmall leading-relaxed mt-xxs">
           Visit our{' '}
-          <a href="https://help.wsup.ai" className="text-secondary no-underline hover:underline">help center</a>
+          <a href="https://help.wsup.ai" className="link">help center</a>
           {' '}or{' '}
-          <a href="mailto:support@wsup.ai" className="text-secondary no-underline hover:underline">contact support</a>
+          <a href="mailto:support@wsup.ai" className="link">contact support</a>
           {' '}for more information.
         </p>
       </div>

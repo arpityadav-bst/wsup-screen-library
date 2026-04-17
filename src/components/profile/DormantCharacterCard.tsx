@@ -162,7 +162,7 @@ export default function DormantCharacterCard({
         {isRemoved && (
           <div className="flex flex-col gap-xxs">
             <p className="text-xs text-white-50">No longer on the platform</p>
-            <a href="mailto:support@wsup.ai" className="text-xs text-secondary underline underline-offset-2 decoration-white-20 hover:decoration-white-40 transition-colors">Contact support</a>
+            <a href="mailto:support@wsup.ai" className="text-xs link">Contact support</a>
           </div>
         )}
       </div>

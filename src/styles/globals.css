@@ -64,6 +64,11 @@
     @apply font-medium text-text-small tracking-[0.8px] uppercase;
   }
 
+  /* Inline text link — secondary blue, always underlined, subtle decoration */
+  .link {
+    @apply text-secondary underline underline-offset-2 decoration-white-20 hover:decoration-white-40 transition-colors;
+  }
+
   /* ── Layout tokens ───────────────────────────────────────────── */
 
   /* Center area content padding for layout type 2 (header + left sidebar + center + right sidebar) */

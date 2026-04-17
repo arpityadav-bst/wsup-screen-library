@@ -78,7 +78,7 @@ export default function DormancyBanner({ variant, isCreator }: DormancyBannerPro
           </div>
           <p className="text-xs font-medium leading-none text-white-60">
             {config.mobileText}
-            {showReviveLink && <a href="/edit-character" className="ml-xs text-secondary no-underline hover:underline">Revive</a>}
+            {showReviveLink && <a href="/edit-character" className="ml-xs link">Revive</a>}
           </p>
           <button
             onClick={() => setDismissed(true)}
@@ -98,7 +98,7 @@ export default function DormancyBanner({ variant, isCreator }: DormancyBannerPro
         </div>
         <p className={`text-xs font-normal leading-snug flex-1 ${config.textColor}`}>
           {config.text}
-          {showReviveLink && <a href="/edit-character" className="ml-xs text-secondary no-underline hover:underline">Revive</a>}
+          {showReviveLink && <a href="/edit-character" className="ml-xs link">Revive</a>}
         </p>
         <button
           onClick={() => setDismissed(true)}
