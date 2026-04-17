@@ -142,19 +142,18 @@ export default function DormantCharacterCard({
 
       {/* Bottom strip */}
       <div className="p-s border-t border-white-05 flex flex-col gap-xs">
-        <p className="font-semibold text-xs text-text-title truncate">{name}</p>
-
-        <div className="flex items-center justify-between">
-          <span className="inline-flex items-center gap-xxs text-text-xsmall text-xs">
+        <div className="flex items-center justify-between gap-xs">
+          <p className="font-semibold text-xs text-text-title truncate min-w-0">{name}</p>
+          <span className="inline-flex items-center gap-xxs text-text-xsmall text-xs shrink-0">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
             </svg>
             {chats}
           </span>
-          {lastChatDaysAgo != null && !isRemoved && (
-            <span className="text-xs text-white-50">Last chatted {lastChatDaysAgo}d ago</span>
-          )}
         </div>
+        {lastChatDaysAgo != null && !isRemoved && (
+          <p className="text-xs text-white-40">Last chatted {lastChatDaysAgo}d ago</p>
+        )}
 
         {/* CTA — varies by state */}
         {!isRemoved && !isUnderReview && (
@@ -163,7 +162,7 @@ export default function DormantCharacterCard({
         {isRemoved && (
           <div className="flex flex-col gap-xxs">
             <p className="text-xs text-white-50">No longer on the platform</p>
-            <a href="mailto:support@wsup.ai" className="text-xs text-white-50 hover:text-white-70 transition-colors no-underline hover:underline">Contact support</a>
+            <a href="mailto:support@wsup.ai" className="text-xs text-secondary underline underline-offset-2 decoration-white-20 hover:decoration-white-40 transition-colors">Contact support</a>
           </div>
         )}
       </div>
