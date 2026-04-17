@@ -82,12 +82,11 @@ export default function MyCharactersDashboard({
 
       {/* Zero characters — brand new creator */}
       {totalCount === 0 && (
-        <div className="flex flex-col items-center justify-center py-4xl gap-m text-center">
-          <EmptyState message="Create your first character" variant="create" />
+        <EmptyState message="Create your first character" variant="create">
           <Button variant="primary" size="m" onClick={() => window.location.href = '/edit-character'}>
             Create Character
           </Button>
-        </div>
+        </EmptyState>
       )}
 
       {/* Needs Attention section */}
