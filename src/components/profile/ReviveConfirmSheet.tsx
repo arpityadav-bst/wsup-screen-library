@@ -53,23 +53,13 @@ function ReviveContent({
         </div>
       )}
 
-      {/* Cost + balance */}
-      <div className="flex flex-col gap-xxs p-s rounded-card bg-white-05 border border-white-10">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-text-small">Revival fee</span>
-          <span className="inline-flex items-center gap-xxs text-xs font-medium text-text-subtitle">
-            <Image src="/credit.png" alt="credits" width={14} height={14} className="object-contain" />
-            {cost}
-          </span>
-        </div>
-        <div className="h-px bg-white-05" />
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-text-small">Your balance</span>
-          <span className={`inline-flex items-center gap-xxs text-xs font-medium ${hasEnough ? 'text-text-subtitle' : 'text-status-alert'}`}>
-            <Image src="/credit.png" alt="credits" width={14} height={14} className="object-contain" />
-            {balance}
-          </span>
-        </div>
+      {/* Revival fee */}
+      <div className="flex items-center justify-between p-s rounded-card bg-white-05 border border-white-10">
+        <span className="text-xs text-text-small">Revival fee</span>
+        <span className="inline-flex items-center gap-xxs text-xs font-medium text-text-subtitle">
+          <Image src="/credit.png" alt="credits" width={14} height={14} className="object-contain" />
+          {cost}
+        </span>
       </div>
 
       {/* Explanation */}
