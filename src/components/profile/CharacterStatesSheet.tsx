@@ -23,6 +23,7 @@ const STATE_CARDS: StateCardData[] = [
     pillText: '#6ec97e',
     description: 'Your character is live on wsup.ai. It appears in explore pages, category pages, and search results. Anyone can discover and start chatting with it.',
     checklist: [
+      { text: 'Applies only to public characters', allowed: true },
       { text: 'Visible on explore and search', allowed: true },
       { text: 'New users can discover it', allowed: true },
       { text: 'Existing users can chat', allowed: true },
