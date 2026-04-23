@@ -3,12 +3,14 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import ChevronIcon from '@/components/ui/ChevronIcon'
+import ExternalLinkIcon from '@/components/ui/ExternalLinkIcon'
 
 interface CreditHeroProps {
   total: number
   rewarded: number
   purchased: number
   onTransactionHistory?: () => void
+  onManageSubscription?: () => void
 }
 
 function CoinIcon({ size = 16 }: { size?: number }) {
@@ -17,7 +19,7 @@ function CoinIcon({ size = 16 }: { size?: number }) {
   )
 }
 
-export default function CreditHero({ total, rewarded, purchased, onTransactionHistory }: CreditHeroProps) {
+export default function CreditHero({ total, rewarded, purchased, onTransactionHistory, onManageSubscription }: CreditHeroProps) {
   const pillStyle: React.CSSProperties = {
     border: '1.5px solid transparent',
     backgroundImage: 'linear-gradient(var(--credit-bg), var(--credit-bg)), linear-gradient(135deg, var(--credit-gold), var(--credit-orange))',
@@ -77,14 +79,23 @@ export default function CreditHero({ total, rewarded, purchased, onTransactionHi
         </div>
       )}
 
-      {/* Transaction History */}
-      <button
-        onClick={onTransactionHistory}
-        className="link text-xs mt-m inline-flex items-center gap-xxxs bg-transparent border-none cursor-pointer"
-      >
-        Transaction History
-        <ChevronIcon direction="right" size={12} />
-      </button>
+      {/* Account links */}
+      <div className="flex items-center gap-m mt-m">
+        <button
+          onClick={onTransactionHistory}
+          className="link text-xs inline-flex items-center gap-xxxs bg-transparent border-none cursor-pointer"
+        >
+          Transaction History
+          <ChevronIcon direction="right" size={12} />
+        </button>
+        <button
+          onClick={onManageSubscription}
+          className="link text-xs inline-flex items-center gap-xxxs bg-transparent border-none cursor-pointer"
+        >
+          Manage subscription
+          <ExternalLinkIcon size={12} className="shrink-0" />
+        </button>
+      </div>
     </div>
   )
 }

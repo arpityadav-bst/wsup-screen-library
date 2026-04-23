@@ -1,8 +1,10 @@
 type BadgeVariant = 'success' | 'warning' | 'alert' | 'neutral'
+type BadgeSize = 'sm' | 'md'
 
 interface BadgeProps {
   children: React.ReactNode
   variant?: BadgeVariant
+  size?: BadgeSize
   icon?: React.ReactNode
 }
 
@@ -13,9 +15,14 @@ const VARIANT_STYLES: Record<BadgeVariant, string> = {
   neutral: 'bg-white-08 border-white-10 text-text-small',
 }
 
-export default function Badge({ children, variant = 'neutral', icon }: BadgeProps) {
+const SIZE_STYLES: Record<BadgeSize, string> = {
+  sm: 'px-xxs py-[1px] text-xxs',
+  md: 'px-xs py-xxxs text-xxs',
+}
+
+export default function Badge({ children, variant = 'neutral', size = 'md', icon }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center gap-xxs self-start px-xs py-xxxs rounded-pill border text-xxs font-medium ${VARIANT_STYLES[variant]}`}>
+    <span className={`inline-flex items-center gap-xxs self-start rounded-pill border font-medium whitespace-nowrap ${SIZE_STYLES[size]} ${VARIANT_STYLES[variant]}`}>
       {icon}
       {children}
     </span>

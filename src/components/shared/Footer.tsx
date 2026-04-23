@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import ExternalLinkIcon from '@/components/ui/ExternalLinkIcon'
 
 const columns = [
   {
@@ -75,13 +76,6 @@ const policies = [
   'Contact Us',
   'Complaints Policy',
 ]
-
-const ExternalLinkIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className="ml-1 shrink-0">
-    <path d="M5.25 3H10.5C10.78 3 11 3.22 11 3.5V8.75" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.3" strokeLinecap="round"/>
-    <path d="M3 11L10.5 3.5" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.3" strokeLinecap="round"/>
-  </svg>
-)
 
 export default function Footer() {
   return (

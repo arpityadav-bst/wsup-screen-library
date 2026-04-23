@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import ExternalLinkIcon from '@/components/ui/ExternalLinkIcon'
 
 // ── Icons ────────────────────────────────────────────────────────────────────
 
@@ -20,13 +21,6 @@ const ChevronDown = () => (
 const ChevronUp = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <path d="M5 12l5-5 5 5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-)
-
-const ExternalLinkIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 14 14" fill="none" className="ml-1 shrink-0">
-    <path d="M5.25 3H10.5C10.78 3 11 3.22 11 3.5V8.75" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.3" strokeLinecap="round"/>
-    <path d="M3 11L10.5 3.5" stroke="currentColor" strokeOpacity="0.7" strokeWidth="1.3" strokeLinecap="round"/>
   </svg>
 )
 
@@ -103,7 +97,7 @@ function NavRow({ label, external = false }: { label: string; external?: boolean
       className="h-[84px] flex items-center justify-between px-m border-t border-white-10 hover:bg-white-05 transition-colors"
     >
       <span className="text-text-subtitle font-semibold text-base">{label}</span>
-      {external ? <ExternalLinkIcon /> : <ChevronRight />}
+      {external ? <ExternalLinkIcon size={20} /> : <ChevronRight />}
     </Link>
   )
 }

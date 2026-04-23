@@ -4,27 +4,18 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import BottomSheet from '@/components/ui/BottomSheet'
 import CenterPopup from '@/components/ui/CenterPopup'
-import CreditPackRow from '@/components/ui/CreditPackRow'
 import CreditsSummaryPill from '@/components/ui/CreditsSummaryPill'
 import Button from '@/components/ui/Button'
 import Checkbox from '@/components/ui/Checkbox'
 import ChevronIcon from '@/components/ui/ChevronIcon'
 import ResultVariantToggle from '@/components/ui/ResultVariantToggle'
-import BuyCreditsResultStep, { type ResultVariant } from '@/components/ui/BuyCreditsResultStep'
+import BuyCreditsResultStep, { type ResultVariant, type ResultMode } from '@/components/ui/BuyCreditsResultStep'
+import BuyCreditsPackagesStep, { type CreditPack, applyMonthlyBonus } from '@/components/ui/BuyCreditsPackagesStep'
+import type { PackMode } from '@/components/ui/PackModeToggle'
 
 interface BuyCreditsSheetProps {
   open: boolean
   onClose: () => void
-}
-
-interface CreditPack {
-  id: string
-  name: string
-  credits: number
-  rate: string
-  price: string
-  priceAmount: string
-  featured?: boolean
 }
 
 const PACKS: CreditPack[] = [
@@ -37,12 +28,10 @@ const PACKS: CreditPack[] = [
 type Step = 'packages' | 'payment' | 'scan' | 'result'
 
 const CURRENT_BALANCE = 10 // mock existing balance; production: from user state
+const DEFAULT_MODE: PackMode = 'monthly'
+const DEFAULT_SELECTED_ID = 'stack'
 
-const BG_GRADIENTS = `
-  radial-gradient(circle at 0% 60%, rgba(103,94,255,0.10) 0%, rgba(103,94,255,0) 60%),
-  radial-gradient(circle at 100% 30%, rgba(255,89,236,0.10) 0%, rgba(255,89,236,0) 60%),
-  radial-gradient(circle at 0% 0%, rgba(255,189,78,0.10) 0%, rgba(255,189,78,0) 60%)
-`
+const SURFACE_CLASS = 'bg-profile-sheet-bg bg-surface-premium' // solid base + gradient overlay — see Overlays > Surface styles
 
 function StepHeader({ title, onBack, onClose }: { title: string; onBack?: () => void; onClose: () => void }) {
   return (
@@ -69,27 +58,6 @@ function StepHeader({ title, onBack, onClose }: { title: string; onBack?: () => 
         </svg>
       </button>
     </div>
-  )
-}
-
-function PackagesStep({ onSelect, onClose }: { onSelect: (pack: CreditPack) => void; onClose: () => void }) {
-  return (
-    <>
-      <StepHeader title="Buy credits" onClose={onClose} />
-      <div className="flex-1 flex flex-col gap-xs px-l pb-l">
-        {PACKS.map((pack) => (
-          <CreditPackRow
-            key={pack.id}
-            name={pack.name}
-            credits={pack.credits}
-            rate={pack.rate}
-            price={pack.price}
-            featured={pack.featured}
-            onSelect={() => onSelect(pack)}
-          />
-        ))}
-      </div>
-    </>
   )
 }
 
@@ -190,9 +158,42 @@ function FinishInAppStep({ pack, onBack, onClose, onComplete }: { pack: CreditPa
   )
 }
 
-function FlowBody({ step, pack, setStep, setPack, onClose, scanVariant, resultVariant }: { step: Step; pack: CreditPack | null; setStep: (s: Step) => void; setPack: (p: CreditPack) => void; onClose: () => void; scanVariant: 'qr' | 'app'; resultVariant: ResultVariant }) {
+interface FlowBodyProps {
+  step: Step
+  pack: CreditPack | null
+  mode: PackMode
+  setMode: (m: PackMode) => void
+  selectedId: string | null
+  setSelected: (id: string) => void
+  setStep: (s: Step) => void
+  setPack: (p: CreditPack) => void
+  onClose: () => void
+  scanVariant: 'qr' | 'app'
+  resultVariant: ResultVariant
+  resultMode: ResultMode
+}
+
+function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep, setPack, onClose, scanVariant, resultVariant, resultMode }: FlowBodyProps) {
   if (step === 'packages') {
-    return <PackagesStep onSelect={(p) => { setPack(p); setStep('payment') }} onClose={onClose} />
+    return (
+      <BuyCreditsPackagesStep
+        packs={PACKS}
+        mode={mode}
+        onModeChange={setMode}
+        selectedPackId={selectedId}
+        onSelectPack={(p) => { setSelected(p.id); setPack(p) }}
+        onOneTimeBuy={(p) => { setPack(p); setStep('payment') }}
+        onMonthlyContinue={() => {
+          const selected = PACKS.find(p => p.id === selectedId)
+          if (selected) {
+            const { credits } = applyMonthlyBonus(selected)
+            setPack({ ...selected, credits })
+            setStep('result')
+          }
+        }}
+        header={<StepHeader title="Buy credits" onClose={onClose} />}
+      />
+    )
   }
   if (step === 'payment' && pack) {
     return <PaymentStep pack={pack} onBack={() => setStep('packages')} onClose={onClose} onContinue={() => setStep('scan')} />
@@ -207,6 +208,7 @@ function FlowBody({ step, pack, setStep, setPack, onClose, scanVariant, resultVa
       <BuyCreditsResultStep
         pack={pack}
         variant={resultVariant}
+        mode={resultMode}
         currentBalance={CURRENT_BALANCE}
         onClose={onClose}
         onRetry={() => setStep('packages')}
@@ -220,13 +222,19 @@ function FlowBody({ step, pack, setStep, setPack, onClose, scanVariant, resultVa
 export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps) {
   const [step, setStep] = useState<Step>('packages')
   const [pack, setPack] = useState<CreditPack | null>(null)
+  const [mode, setMode] = useState<PackMode>(DEFAULT_MODE)
+  const [selectedId, setSelectedId] = useState<string | null>(DEFAULT_SELECTED_ID)
   const [resultVariant, setResultVariant] = useState<ResultVariant>('success') // production: set by payment callback
   const [showToggle, setShowToggle] = useState(false)
+
+  const resultMode: ResultMode = mode === 'monthly' ? 'subscription' : 'one-time'
 
   useEffect(() => {
     if (!open) {
       setStep('packages')
       setPack(null)
+      setMode(DEFAULT_MODE)
+      setSelectedId(DEFAULT_SELECTED_ID)
       setShowToggle(false)
     }
   }, [open])
@@ -247,18 +255,22 @@ export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps)
     return () => window.removeEventListener('keydown', handler)
   }, [open, step])
 
-  const surfaceStyle = { backgroundImage: BG_GRADIENTS }
+  const bodyProps = {
+    step, pack, mode, setMode, selectedId, setSelected: setSelectedId,
+    setStep, setPack, onClose, resultVariant, resultMode,
+  }
+
   return (
     <>
-      <BottomSheet open={open} onClose={onClose} zIndex={80} surfaceStyle={surfaceStyle}>
+      <BottomSheet open={open} onClose={onClose} zIndex={80} surfaceClassName={SURFACE_CLASS}>
         <div className="overflow-y-auto scroll-hide flex flex-col min-h-[497px]">
-          <FlowBody step={step} pack={pack} setStep={setStep} setPack={setPack} onClose={onClose} scanVariant="app" resultVariant={resultVariant} />
+          <FlowBody {...bodyProps} scanVariant="app" />
         </div>
       </BottomSheet>
 
-      <CenterPopup open={open} onClose={onClose} maxWidth="382px" zIndex={80} surfaceStyle={surfaceStyle}>
+      <CenterPopup open={open} onClose={onClose} maxWidth="382px" zIndex={80} surfaceClassName={SURFACE_CLASS}>
         <div className="flex flex-col min-h-[497px]">
-          <FlowBody step={step} pack={pack} setStep={setStep} setPack={setPack} onClose={onClose} scanVariant="qr" resultVariant={resultVariant} />
+          <FlowBody {...bodyProps} scanVariant="qr" />
         </div>
       </CenterPopup>
 

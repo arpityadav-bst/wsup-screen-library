@@ -228,6 +228,18 @@ const config: Config = {
         'mobile': '414px',
         'desktop': '1440px',
       },
+
+      // ─── Surface / background image tokens ─────────────────
+      // Pair with bg-profile-sheet-bg. The gradient layers on top of the solid.
+      backgroundImage: {
+        // Premium/transactional surface — purple + pink + gold radial glows.
+        // Used on BuyCreditsSheet. Pair with bg-profile-sheet-bg as the base.
+        'surface-premium': `
+          radial-gradient(circle at 0% 60%, rgba(103,94,255,0.10) 0%, rgba(103,94,255,0) 60%),
+          radial-gradient(circle at 100% 30%, rgba(255,89,236,0.10) 0%, rgba(255,89,236,0) 60%),
+          radial-gradient(circle at 0% 0%, rgba(255,189,78,0.10) 0%, rgba(255,189,78,0) 60%)
+        `,
+      },
     },
   },
   plugins: [],
