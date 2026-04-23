@@ -4,6 +4,26 @@ Run this checklist after EVERY visual change, component edit, or token change in
 
 ---
 
+## CHANGE-SCOPE TRIAGE (run before anything else)
+
+Not every change needs all 8 gates. Classify the change first, then run the matching gate set. This prevents ceremony bloat on small tweaks.
+
+| Scope | Examples | Mandatory gates | Skip by default |
+|---|---|---|---|
+| **Tweak** | Fix a padding, reword a label, swap an icon, adjust spacing, fix a bug | 1 (tokens), 7 (consistency), 8 (UX review) | 2, 3, 4, 5, 6 |
+| **Component edit** | New prop/variant, changed visual of existing component, refactor inline → reusable | add 2 (reuse), 5 (style guide) if visual language changed | 3, 4 unless duplication appears |
+| **New component or new pattern** | A brand new shared component, a new responsive overlay, a new screen | **ALL 8 gates** | — |
+
+**Rules for the triage itself:**
+- When in doubt, go up one level, not down — a "tweak" that turns into a pattern is worse than an over-audited tweak
+- Gate 8 (UX review) is *always* on, regardless of scope — a designer's eye never hurts
+- If your change touches 2+ files, it's almost certainly not a Tweak
+- If you find yourself extracting a component mid-edit, stop — you've crossed into "New component" territory, run all 8 gates
+
+**Why this exists:** Most sessions are iterations on established patterns, not pattern-establishing work. Running the full 8 gates on every one-line padding fix is bureaucracy that burns time without catching real issues.
+
+---
+
 ## GATE 1 — TOKENIZED
 
 Before finishing any edit, scan all class values in the changed code:
@@ -129,6 +149,8 @@ Note: `decisions.md` is per-edit (atomic with the change). `session-logs.md` is 
 
 Think like a UX designer at every step. Before implementing anything, check how similar things already work in the project and follow the same pattern.
 
+**Figma is a reference, not a final rule.** When a Figma value (text size, font weight, color, radius) conflicts with a codified rule in `taste.md` or `decisions.md`, the WSUP taste rule wins. Always cross-reference before writing tokens. Recurring examples: Figma shows `font-semibold` buttons — taste says `font-medium`. Figma shows 10px subcopy — taste says 12px minimum. Adapt the spec, don't pixel-match it.
+
 - [ ] **Interactions:** If a keyboard shortcut exists for a similar feature (e.g., R key for dev togglers), use the same key — don't invent a new one
 - [ ] **Visual patterns:** If links, buttons, badges, empty states, or cards have an established style, use it — don't create a variation
 - [ ] **Copy patterns:** If the project uses a specific tone (descriptive, not prescriptive), follow it in every new string
@@ -152,6 +174,28 @@ After every change — before saying "done" — look at what you built as a UX d
 - [ ] **Is every piece of information clear without context?** If you need surrounding context to understand a value (like "34d" meaning "last chatted 34 days ago"), it's not clear enough.
 - [ ] **Is the hierarchy right?** Primary info should be largest/brightest, secondary should recede via color not size. Don't use size to demote meaningful data.
 - [ ] **Does empty state make sense?** If there are zero items, only show what's relevant to that state. Don't leak empty states from other tabs/sections.
+
+### Gate 8.3 — Text emphasis hierarchy
+
+Scan every text element on the screen top-down. Does each element's opacity/color class match its semantic role?
+
+WSUP's hierarchy (from `taste.md`):
+- `text-text-title` (100%) — names, section headings, primary values
+- `text-text-subtitle` (80%) — data values, active states
+- `text-text-body` (70%) — body copy, descriptions, readable sentences
+- `text-text-small` (60%) — secondary labels, captions, meta labels
+- `text-text-xsmall` (50%) — metadata, stat labels, low-priority info
+- `text-text-dim` (40%) — de-emphasized metadata
+- `text-text-xxsmall` (30%) — legal, copyright, footer-fine-print ONLY
+
+**Red flags:**
+- Body/readable copy at 40% or below ("too dim to read comfortably")
+- Metadata or captions at 100% white ("competing with the primary")
+- Informational footnotes at 30% (reserved for legal only)
+- Sibling elements with the same semantic role but different opacities
+- Primary value de-emphasized by using 70% when it should be 100%
+
+**How to apply:** Before shipping, mentally tag every text element by role (title/body/label/meta/legal), then verify the class matches. Common drift: "let me make this just a bit dimmer" ends up at 30% when it should be 50%. If a caveat/hint is meaningful enough to show, it's probably a 40-50% text, not a 30%.
 
 **This is not optional.** Every visual change gets a UX review before it ships. The designer should never have to point out spacing issues, unreadable icons, or mobile problems — you catch them yourself.
 

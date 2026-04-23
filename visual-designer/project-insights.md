@@ -1,5 +1,5 @@
 # Visual Designer — Project Insights
-Last updated: 2026-04-17
+Last updated: 2026-04-22
 
 WSUP-specific observations and screen-level learnings. Updated as new screens are built.
 
@@ -123,3 +123,45 @@ Two new sections added: Lifecycle (components tab) and Dormancy Banner (patterns
 **Token audit: zero new tokens**
 - `text-[10px]` → `text-xxs`, `text-[13px]` → `text-xs`, `text-[15px]` → `text-sm`
 - `gap-[6px]` → `gap-xxs`, `gap-[4px]` → `gap-xxs`, `h-[1px]` → `h-px`
+
+---
+
+## Credit/Monetization Flow (Session 12)
+
+**CreditSidebar is the hub for all credit-related UI.** It contains the balance hero, buy-credits promo, streak rewards, daily rewards, creator rewards, and one-time rewards. Triggered from the header credit button on every page.
+
+**Low-credits reminder on explore:**
+- `LowCreditsBanner` surfaces at the top of the Explore page when credit balance is below threshold (currently hardcoded: 10 credits / 3 replies for demo)
+- Subtle status-alert tint (10% bg, 30% border) + pulsing red dot — urgent but not alarming
+- "Add credits" Button primary opens CreditSidebar via `window.dispatchEvent(new CustomEvent('wsup:open-credit-sidebar'))` — Header listens and sets `creditsOpen` state
+- Dismissible per-session (local state in component)
+
+**Buy flow architecture (3-step, one sheet):**
+- CreditSidebar → Buy Credits promo widget → click → BuyCreditsSheet opens on top of the sidebar at z-index 70
+- **Step 1 — Packages:** 4 tiers, pick one to advance. No back button (first step).
+- **Step 2 — Payment method:** shows credits summary pill (◆ 1000 / ₹ 520), single payment option "Pay with wsup app" (pre-selected), secure-payment + SSL-encryption micro-logos, primary CTA "Continue to pay in app", T&C checkbox (pre-checked). Back arrow → step 1.
+- **Step 3 — viewport-aware terminal step:**
+  - *Desktop (CenterPopup):* "Scan to pay" — credits summary, QR card (232×232 white, 148×148 QR from `/qr-placeholder.png`), Back/Cancel glass buttons 50/50. User scans with phone.
+  - *Mobile (BottomSheet):* "Finish in the app" — app row (wsup logo + name + credits/price), Primary "Open wsup app →" button (deep-link), Secondary "Don't have it? Get the app" (app store fallback). No QR — user is already on the phone.
+  - Split handled via `scanVariant: 'qr' | 'app'` prop on FlowBody; BottomSheet wrapper passes `"app"`, CenterPopup passes `"qr"`. Steps 1 and 2 remain identical across viewports.
+- All 3 steps share the same sheet shell — shell renders once, body changes per step. Closing the sheet from any step resets state to step 1.
+- Sidebar stays open underneath — user can dismiss sheet and return to credit management, or close sidebar entirely
+
+**Credit pricing tiers (4, progressive, INR):**
+- Handful of Credits — 350 credits / ₹210.00
+- **Stack of Credits — 1000 / ₹520.00 (featured — best value)**
+- Bag of Credits — 1800 / ₹1050.00
+- Chest of Credits — 4000 / ₹2150.00
+
+Names follow a natural-object progression (hand → stack → bag → chest). Rate-per-rupee varies by tier to make Stack genuinely the best deal — not arbitrary marketing. Any future pricing screen should follow this "one clearly-featured pack" principle.
+
+**Visual treatment of the featured pack:**
+- Card background: pink/blue radial gradients (stand-alone row glow)
+- Buy button: golden gradient (#f4da5c → #e48949 → #c65720), golden border, dark text
+- Non-featured packs: translucent glass button (bg-white-10), white/80 text, neutral card border
+
+**Widget promo card (inside CreditSidebar):**
+- Dark card + orange/yellow radial gradients
+- 3D bag illustration (`/credit-bags.png`) overflowing top-right — money sack with coins + smaller coin jar
+- `min-h-[104px]` on the card to prevent button-hiding during hydration
+- Primary Button 180×40, text "Buy Credits" with cart icon + chevron

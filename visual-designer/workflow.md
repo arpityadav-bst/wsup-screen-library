@@ -1,7 +1,55 @@
 # Visual Designer — Workflow
-Last updated: 2026-04-17
+Last updated: 2026-04-22
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
+
+---
+
+## Response & Process Cadence (DEFAULT TO LEAN)
+
+Most WSUP tasks are iterations on established patterns, not pattern-establishing work. Ceremony scales down accordingly.
+
+**Default response format:**
+- State the change in 1-2 sentences
+- Test path (where to look, what to click)
+- Flags only if there's a real trade-off to surface
+- **No gate-by-gate status tables.** No routing-check tables. Those belong in the knowledge files, not the chat reply
+- Expand only when the task *genuinely* calls for a decision from the user (big trade-off, rejected Figma detail, etc.)
+
+**Default process:**
+- Triage the change scope per QUALITY-GATES.md before starting. Run only the gates that apply
+- Parallelize reads. Don't read → write → read → write → read. Batch.
+- Skip verify-curls after trivial edits — TypeScript and Tailwind fail loudly if something's broken. One server check at the end is enough
+- Don't re-read a file you just wrote to "confirm" the edit. The Edit tool already confirmed
+- Don't extract at Gate 3's "2+ usages" signal unless a 3rd usage is visible within 2 sessions. Inline is fine for might-stay-at-2 patterns
+
+**Default knowledge-file writes:**
+- `decisions.md` + `session-logs.md` — these are the baseline, always
+- Everything else — *earned* per the Minimal-routing default in VDA-HEALTH-CHECK. No "demonstrating routing" by forcing entries into every file each session
+
+**When to escalate back to full ceremony:**
+- Pattern-establishing work (first of its kind)
+- Designer explicitly corrects a taste/architecture choice (new principle needs taste.md)
+- A rule reaches 2+ consumers (promotion to knowledge-base.md)
+- A session reveals a recurring gap (log in evolution.md)
+
+**The guiding question before every task: "Is this a tweak, a component edit, or a new pattern?" Match the ceremony to the answer. When in doubt, escalate one level — but don't default to max.**
+
+## Architectural Work vs Taste Calibration (Different Modes)
+
+Sessions cluster into two distinct types of work. Treat them differently.
+
+**Architectural work** (structure, reuse, decomposition):
+- Examples: extracting a component, fixing stacking contexts, wiring CustomEvents, refactoring a shared pattern
+- Expect: first-pass correctness when the gates are run upfront. Iteration usually signals a missed constraint.
+- Approach: think it through, propose the plan briefly, then ship. If you iterate 3+ times on the same architectural change, something was missed in the setup.
+
+**Taste calibration** (color, weight, size, spacing, hierarchy):
+- Examples: picking the right muted-tier for a section title, choosing between `label-xs` and `text-sm`, deciding border vs no border, spacing between siblings
+- Expect: 3-5 rounds of iteration. There is no "correct" answer to find — there are only trade-offs to resolve against the designer's eye.
+- Approach: **propose 2-3 named, distinct options up front** (e.g., "A: label-xs uppercase / B: text-sm medium body / C: text-xs semibold body"). Let the designer compare them as peers. Avoid the "try one, get a reaction, try another, get a reaction" loop — that burns rounds without giving the designer a framework to decide.
+
+**Why this matters:** treating taste-calibration like architectural work (expecting first-pass correctness) creates frustration. Treating architectural work like taste-calibration (expecting iteration) wastes time. Recognize which mode you're in and adjust.
 
 ---
 

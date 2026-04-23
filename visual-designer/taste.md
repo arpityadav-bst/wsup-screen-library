@@ -1,5 +1,5 @@
 # Visual Designer — Taste Profile
-Last updated: 2026-04-17
+Last updated: 2026-04-22
 
 The designer's aesthetic instincts, corrections, and workflow. This IS the reference when no screenshot is provided.
 
@@ -23,6 +23,48 @@ The designer's aesthetic instincts, corrections, and workflow. This IS the refer
 - Name vs description: same size is okay if name is `font-semibold` and description is `font-normal`
 - Status labels (like "Active Persona") should be clearly non-interactive — uses `text-text-dim` or `label-xs`, never the same color as clickable links
 - Section labels are always muted (`text-text-small` 60%) — they orient, they don't compete
+
+### CTA size reflects the action's role, not just the container type
+- A codified rule like "Card CTAs use size S" applies to the context it was established in (multi-CTA grids with density competition), not universally
+- When a CTA is the **primary reason a user opened the screen**, it deserves visual weight proportional to its role — `size="m"` or larger, even if a sibling "card CTA" rule defaults to S
+- Before applying a sizing rule, check: *is this a competing-CTA grid (density matters) or a primary-action row (discoverability matters)?* The answer changes the default.
+- Conservative sizing hurts discoverability for primary actions. A Claim button on a reward row should invite the tap — not look incidental.
+- Rule-scope check: when a rule seems to apply, check where it was codified and whether the original constraints still hold in the new context. Narrow rules that don't translate.
+
+### Hierarchy is relational — map before changing
+- Every text element's visual weight (size, color, opacity, weight, case) is a **relative position** in a hierarchy, not an absolute property
+- Before changing any text's token, map the full hierarchy for the screen: what sits above this element (its parent/section), what sits below it (its sub-items), what sits beside it (siblings at the same level)
+- A change that makes ONE element "look right" often breaks its relationships with neighbors — sub-labels become more prominent than their section title, section titles clash with sub-item content, sibling elements with identical semantic roles get different opacities
+- **Rule:** when adjusting one element, verify the adjacent ones still form a coherent ladder. If the section title drops, sub-labels and sub-items need to drop too (or they'll shout louder than their parent). If a subcopy brightens, check that body copy is still brighter.
+- Common trap: treating each element as an isolated token choice instead of a position in a system. The question isn't "what color should this text be?" — it's "what color does this text need to be given its parent is X% and its children are Y%?"
+
+### Right device, right action — viewport-aware flow endings
+- Don't ask a user on mobile to scan a QR code from the same device. They'd need to point the phone at itself. A QR ends a desktop flow (jump to phone), but it ends a mobile flow as dead weight.
+- On mobile: replace QR with a direct deep-link button ("Open wsup app →") + a secondary "Get the app" link for non-installers
+- On desktop: QR code is the correct affordance (user is on laptop/desktop, phone is out of the flow)
+- Implementation: keep the flow shell identical, swap only the terminal step's body per viewport. Steps 1 and 2 stay device-agnostic because they're inputs, not actions
+
+### Warnings are informative, not alarming
+- Status banners that surface a user's state ("you're running low", "this is about to expire") should be factual with a small visual accent, not aggressive
+- Use the status color as a tint (10% bg, 30% border) + a single colored indicator (dot, icon), never a fully saturated surface
+- The action button uses the app's primary accent (purple), NOT the status color — because the action is neutral ("buy more", "renew"), while the indicator communicates urgency
+- Banners include context, not just state: "10 credits left · about 3 replies" beats "10 credits left" alone — the translation to user-visible impact is what creates urgency the right way
+- Banner tone doesn't escalate with threshold — 2 credits and 10 credits use the same styling. Parent decides when to show. Changing the banner's appearance at thresholds creates UI inconsistency and adds noise
+
+### Multi-step flows stay in one surface
+- A purchase/confirmation flow with 2+ screens should render as ONE sheet with internal step state, not a chain of dismiss/re-open modals
+- The shell (background, border, shadow, shape) stays identical across steps — only the body content transitions
+- Back arrows appear only on non-first steps; close button always present
+- Closing the flow from any step fully dismisses AND resets state to step 1 for next open
+- **The sheet height stays fixed across all steps.** If step 2 has less content than step 1, the sheet does NOT shrink — the header position must not jump between navigations. Empty space inside is better than a moving back arrow. Use `min-h-[Xpx]` on the content wrapper + `flex-1` on step bodies to distribute space naturally; for content that should stick to bottom (CTAs, Back/Cancel), use `mt-auto`
+- Rationale: users perceive a single coherent task, not a gauntlet of unrelated popups. The visual continuity is the UX — and stable controls are part of that continuity.
+
+### Selection lists show the recommendation
+- When showing pricing tiers, plans, or any list of options where one is "best" — give that one unique styling, not a subtle "best value" badge
+- The featured option gets a distinctive button treatment (gradient, color shift, whatever separates it visually) AND ambient differentiation (background glow, border accent) — *both*, not either
+- A label like "BEST VALUE" on top of otherwise-identical rows is a developer's shortcut. Users scan for the visually primary option first, label second
+- All-equal presentation = paralysis. One clear primary + supporting options = decision
+- Non-featured options stay clean and readable — they're legit alternatives, not also-rans. Translucent glass button (white/10) reads as "available" without competing
 
 ### Consistency is non-negotiable
 - If a pattern exists, use it. Don't create variants.

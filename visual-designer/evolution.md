@@ -1,5 +1,5 @@
 # Visual Designer — Evolution
-Last updated: 2026-04-17
+Last updated: 2026-04-22
 
 The VDA's self-awareness engine. Tracks growth, identifies gaps, triggers autonomous research, and drives self-improvement. This file is how the agent evolves itself.
 
@@ -121,7 +121,7 @@ The agent MUST research when:
 | Designs without reference | Attempted | Profile desktop — accepted structure, refinements pending |
 | Anticipates corrections before they happen | Not yet | Needs Gate 8 internalized — catch UX issues before designer |
 | Produces zero-correction screens | Not yet | Target milestone — requires passing all 8 gates without designer corrections |
-| Runs quality gates autonomously | Not yet | 8 gates established Session 10 — agent must run them without being reminded |
+| Runs quality gates autonomously | Partial | Session 11: failed — shipped edit, user asked "did you pass gates?", answer was no. Session 12: passed — read QUALITY-GATES.md before coding, ran all 8 gates proactively. Two-session trajectory — not yet consistent, but the shift happened when it became a user expectation |
 | Catches UX issues before designer | Not yet | Gate 8 — spacing, readability, mobile, edge states. 4+ failures in Session 10 |
 | Self-maintains knowledge files | Not yet | Freshness check, purpose filter, self-audit protocol added Session 10 |
 | Self-identifies gaps from session data | Yes | Spacing gap detected at 8+ corrections — triggered first research cycle |
@@ -151,6 +151,9 @@ Gaps are detected from recurring corrections in session-logs.md.
 | Illustration readability | 1 | Visual | NEW (Session 10) — SVG illustrations too abstract at 48px. Emoji replaced them. Test readability at rendered size. |
 | Mobile-first affordances | 2+ | Interaction | NEW (Session 10) — hover:underline invisible on mobile. Always-visible underlines needed. .link utility class created. |
 | Empty state logic | 1 | UX | NEW (Session 10) — tab empty states leaked into zero-characters view. State logic must be exclusive. |
+| Knowledge-file routing | 2 | Process | NEW (Session 12) — When logging learnings, agent dumped everything into decisions.md instead of routing taste→taste.md, rules→knowledge-base.md, why→reasonings.md, WSUP-specifics→project-insights.md. User had to ask "are we putting the right data in the right place?" Added Routing Check to VDA-HEALTH-CHECK to make this a recurring self-check |
+| Viewport affordance check | 1 | UX/Architecture | NEW (Session 15) — Shipped a QR code as the terminal step on both mobile and desktop. Designer caught that a mobile user would be pointing the phone at itself. Watch for: does the *action* this screen asks for make sense on the user's current device? Not every screen needs a viewport split, but every screen's terminal action should be validated against the target device |
+| Figma-parity over taste-rule priority | 2 | Process/Taste | NEW (Session 17) — Shipped values that matched Figma pixel-perfect but violated WSUP taste rules. Session 11: button used `font-semibold` because Figma said so, but taste.md says buttons are `font-medium`. Session 17: receipt line used `text-xxs` (10px) because Figma showed tiny text, but taste.md minimum for subcopy is 12px. Root cause: defaulted to pixel-matching the spec instead of *adapting* it. **Mitigation:** before writing any text-size/font-weight/color token, cross-reference taste.md. If Figma and taste disagree, taste wins. Gate 7 tightened with this rule. |
 
 When a gap is resolved (zero corrections for 3 consecutive sessions), move it to Resolved Gaps below.
 

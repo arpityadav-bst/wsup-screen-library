@@ -1,5 +1,5 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-04-17
+Last updated: 2026-04-22
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
 
@@ -99,6 +99,9 @@ These are hard requirements, not guidelines. Every WSUP edit must pass all gates
 - ~~80px bottom padding~~ OBSOLETE — BottomSheet is now z-[60] above BottomNav z-50, so pb-m is sufficient. The 80px rule was a hack for when sheets rendered behind the nav bar.
 - Content-sized sheets (Menu, Logout) should NOT fill a fixed height — only scrollable sheets (Bio, Badges) use `fillHeight`
 - When a tab bar sits below SubpageHeader, turn off the header's border to avoid a double line
+- **Responsive overlay pattern = CONFIRMED DEFAULT (3+ consumers as of Session 12).** Any modal overlay that needs to render on both mobile and desktop uses `BottomSheet` + `CenterPopup` as siblings, sharing content via a render function. Never dual-render one component. Current consumers: CharacterStatesSheet, ConfirmSheet, BuyCreditsSheet.
+- Stacking overlays: when an overlay needs to appear *above* another overlay (e.g., a package popup on top of an already-open sidebar), pass `zIndex={70}` to BottomSheet/CenterPopup and render as a sibling of the outer overlay (Fragment), not a child. Children inherit the parent's stacking context and can't escape it.
+- **Never render a modal/sheet as a child of any `position: fixed/absolute/relative` element that has a `z-index`.** That ancestor creates a stacking context — the modal's z-index becomes RELATIVE to the ancestor's, not global. Symptom: another fixed element at a lower z-index (e.g., BottomNav z-50) paints on top of your modal because DOM order wins within the same global z-layer. Fix: the component that owns the modal state returns a Fragment — `<header>...</header><MyModal />` — so the modal lives at document root. This bit us with Header nesting CreditSidebar, which nested BuyCreditsSheet — three layers of trapped stacking contexts all defeated by BottomNav's simple z-50.
 
 ## Icons
 

@@ -1,7 +1,184 @@
 # Visual Designer — Session Logs
-Last updated: 2026-04-17
+Last updated: 2026-04-22
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 17 — 2026-04-22 (Polish Pass — Mobile Regressions, Architecture Lift, Checkbox Extraction)
+**Scope:** Iteration phase — no new patterns, just refinements and one architectural cleanup. Lean workflow active.
+
+**What shipped:**
+- Fixed three mobile regressions: CreditSidebar capped at 365px (→ full-width mobile), BottomSheet gradient seam at drag handle (→ added `surfaceClassName`/`surfaceStyle` props so consumers can push custom bg through the entire surface), BottomNav rendering above sheets (root cause: Header's `fixed z-50` trapped nested CreditSidebar's z-60 in a sub-stacking context — moved CreditSidebar + BuyCreditsSheet to Fragment-sibling of `<header>`)
+- Lifted BuyCreditsSheet out of CreditSidebar to Header. Two CustomEvents now: `wsup:open-credit-sidebar` opens the balance hub, `wsup:open-buy-credits` opens the purchase flow directly. LowCreditsBanner's "Add credits" now skips the sidebar detour
+- Extracted `Checkbox` component (Gate 3 at 2 usages: payment-method indicator + T&C toggle). `variant: 'primary' | 'success'`. Tick SVG refined — thinner stroke (1.75), 14×14 in 16×16 box
+- FinishInAppStep redesigned — 96px app icon centered vertically, buttons pinned to bottom via `mt-auto` (designer feedback: too much empty space with horizontal card)
+- PaymentStep payment-method row: swapped `/logo.png` (invisible wordmark on white bg) → `/app-icon.png`
+- LowCreditsBanner: mobile text stacks vertically instead of wrapping mid-phrase
+- Close icon on LowCreditsBanner standardized: 16px + `strokeLinejoin="round"` per the codified close-icon rule
+
+**Genuine learnings:**
+- The "Fragment-sibling escape" pattern extended — three layers of nesting (Header → CreditSidebar → BuyCreditsSheet) all defeated by a simple BottomNav z-50. Added to `knowledge-base.md`: *never render a modal/sheet as a child of any positioned + z-indexed element.*
+- Two-CustomEvent pattern scales — `wsup:open-credit-sidebar` and `wsup:open-buy-credits` show the pattern handles multiple cross-component triggers cleanly. Still single-owner (Header), still zero prop-drilling.
+- Wordmark (`/logo.png`) vs app-icon (`/app-icon.png`) is a semantic fit question, not just asset availability — wrong asset on the wrong surface = invisible.
+
+**Corrections received:** ~10, all polish iterations (none were pattern regressions). Trend: session became iteration-heavy rather than pattern-establishing. Healthy direction.
+
+**Routing:**
+- decisions.md — 4 entries (Checkbox extraction, BuyCreditsSheet event lift, Header Fragment, /app-icon.png vs /logo.png)
+- knowledge-base.md — stacking-context rule expanded
+- No taste.md / reasonings.md entries (no new principles, existing ones cover this)
+- No project-insights.md (flow is documented)
+- No evolution.md (no maturity-marker change)
+
+---
+
+## Session 16 — 2026-04-22 (BuyCreditsSheet — Result Step: Success + Failure)
+**Scope:** Component edit — added a terminal result step to an established flow. Gates 1, 2, 5, 7, 8.
+
+Designer pointed out that after the user pays in the wsup app and returns to web, they need to know whether the top-up succeeded. Added a `result` step with two variants (`success` | `failure`). Success = green check, "Credits added", `+X credits · Y total` pill, "Back to chat →" CTA, receipt note. Failure = red X, "Payment failed", explanatory text, "Try again" CTA restarts at packages, "Contact support" link.
+
+Style guide gets a Success/Failure toggle above the Step 4 preview so reviewers can flip between states. FinishInAppStep "Open wsup app" button now advances to `result` (success by default) for demo; in production, the result variant would be set by a payment webhook/callback.
+
+Also swapped `/logo.png` → `/app-icon.png` in FinishInAppStep (designer added the proper app icon asset).
+
+**Routing (lean default):** decisions.md + session-logs.md only. No new taste/reasonings/knowledge-base entries — the patterns here (status-tinted icons, terminal state, step extension) all follow existing principles.
+
+---
+
+## Session 15 — 2026-04-22 (BuyCreditsSheet — Viewport-Split Terminal Step)
+**Screen:** BuyCreditsSheet step 3 bifurcates — QR on desktop, deep-link on mobile
+**Mode:** Designer-led UX critique + wireframe for mobile variant
+
+**Context:** Designer spotted the core UX flaw in step 3: a QR code on a mobile device asks the user to scan themselves. The QR's job is to bridge desktop→phone — useless when the user is already on the phone. Designer provided a mobile wireframe: "Finish in the app" with a direct deep-link button + app-store fallback.
+
+**The design decision (routed to taste.md):**
+New principle: *"Right device, right action — viewport-aware flow endings."* Input steps (pick a pack, confirm payment) are device-agnostic because they're selections. Action steps (complete the task) often need to be device-specific because the *available affordances* differ. QR = desktop's bridge to phone. Deep-link = mobile's direct action. Same flow, same shell, terminal step branches.
+
+**Built:**
+- `BuyCreditsSheet.tsx` — renamed existing ScanStep → ScanQRStep; added new FinishInAppStep (wsup app card, "Open wsup app →" primary button, "Don't have it? Get the app" secondary); FlowBody gains `scanVariant: 'qr' | 'app'` prop; BottomSheet passes "app", CenterPopup passes "qr"
+- Style guide `BuyCreditsSheetShowcase.tsx` — now shows both step 3 variants side-by-side (Desktop QR + Mobile deep-link) with a note on why they differ
+
+**Rejected wireframe detail:** The wireframe showed a purple-pink gradient on the "Open wsup app" button. Chose Button primary (solid accent) instead — same reasoning as Sessions 12-13. Brand gradient is already used for the featured pack in step 1; adding another gradient here would compete for attention. Logged in decisions.md.
+
+**Routing (per check #9):**
+- taste.md — new principle "Right device, right action"
+- decisions.md — 3 entries: the viewport split, prop-based vs split-FlowBody, button-style consistency
+- project-insights.md — step 3 doc updated to reflect viewport branch
+- reasonings.md — NOT updated; taste principle carries the why
+- knowledge-base.md — NOT updated; viewport-specific-step pattern has one consumer
+- session-logs.md — this entry, design-focused
+- evolution.md — NOT updated
+
+**Corrections:** 0 yet. One from previous session surfaced retrospectively: the QR step was shipping universally without considering mobile affordance. Designer caught it after seeing the flow live. Logged in evolution.md active gaps as something to watch: *"viewport affordance check — does this screen's action make sense on the target device?"*
+
+---
+
+## Session 14 — 2026-04-22 (Low Credits Reminder on Explore)
+**Screen:** Explore page gets a new dismissible banner when credits are running low
+**Mode:** Wireframe-directed (no pixel Figma), designer asked me to translate to WSUP theme
+
+**Context:** Designer provided a rough wireframe showing a "10 credits left · about 3 replies" strip with "Add credits" CTA at top of explore page. The wireframe used red tint + gradient purple button. The design question: what's the WSUP-native version of this?
+
+**The design decision (routed to taste.md):**
+A warning that informs, not alarms. Subtle `status-alert/[0.10]` bg + `/[0.30]` border + pulsing red dot communicates "your state matters" without screaming. The "Add credits" button uses Button primary (accent purple), NOT the wireframe's gradient — because the *action* is neutral (buy more), while the *state* is urgent. Conflating the two with a gradient button muddies the tone. Also: banner tone doesn't escalate at lower credits (2 vs 10 look identical) — parent decides visibility, banner looks the same. Inconsistent styling at thresholds adds noise.
+
+**Built:**
+- `src/components/shared/LowCreditsBanner.tsx` — props: credits, estimatedReplies, onAddCredits. Default action dispatches `wsup:open-credit-sidebar` CustomEvent. Dismissible per-session.
+- `Header.tsx` — gains useEffect listener for `wsup:open-credit-sidebar`; decouples banner from sidebar state management without prop-drilling or context
+- Explore page: banner rendered above CategoryTabs with credits=10, estimatedReplies=3 for demo
+- Style guide: new `LowCreditsBannerSection` under Patterns tab, 2 threshold previews + behavior docs
+
+**Routing (per VDA-HEALTH-CHECK #9):**
+- taste.md — new principle "Warnings are informative, not alarming"
+- decisions.md — 3 entries: button-style choice (primary not gradient), CustomEvent for cross-component action, context copy principle
+- project-insights.md — credit flow documentation extended with the banner
+- knowledge-base.md — NOT updated (first consumer of the CustomEvent cross-cutting pattern; needs a 2nd before it's a confirmed default)
+- reasonings.md — NOT updated (taste principle carries the why)
+- evolution.md — NOT updated
+
+**Corrections:** 0 so far.
+
+---
+
+## Session 13 — 2026-04-22 (Buy Credits Flow — Payment + QR Steps)
+**Screen:** BuyCreditsSheet evolves from single-screen package picker to 3-step flow
+**Mode:** Figma-directed feature build; gates + routing check both primed before starting
+
+**Context:** Session 12 built the package selector. Designer asked: what happens when someone clicks Buy? Two new Figma specs — a payment-method review screen, then a QR-to-download-app screen. The design question wasn't "how do I build three modals" — it was "how does this feel like one task."
+
+**The design decision (routed to reasonings.md + taste.md):**
+Three screens sharing an identical shell, each a stage in one purchase task. The designer's Figma made this explicit — same rounded-popup, same gradient bg, same sheet proportions on every step. Building as separate sheets would have been a code-clean but UX-broken solution: every dismiss + re-open cycle fragments the user's sense of momentum. Users think "I'm buying credits," not "I clicked through three modals." Resolved: one `BuyCreditsSheet` with internal `step` state (`packages` | `payment` | `scan`), back navigation via `setStep`, close resets state. See taste.md "Multi-step flows stay in one surface" and reasonings.md "On Multi-Step Flows Inside One Sheet."
+
+**Built:**
+- `CreditsSummaryPill` — shared pill showing credit icon + amount + price, used on steps 2 and 3
+- `BuyCreditsSheet` refactored — 3 step renderers (PackagesStep, PaymentStep, ScanStep), shared StepHeader with back arrow, gradient bg once in parent
+- Style guide: OverlaysSection shows all 3 steps as stacked preview boxes with the shared shell pattern explained
+- QR placeholder downloaded from Figma to `/public/qr-placeholder.png` (3.9KB, real QR pattern)
+
+**Routing report (per VDA-HEALTH-CHECK Routing Check):**
+- decisions.md — 3 entries: single-sheet-vs-3-sheets choice, CreditsSummaryPill extraction (Gate 3 at 2), Button-component threshold (carried from previous session, not duplicated)
+- taste.md — new principle "Multi-step flows stay in one surface"
+- reasonings.md — new "On Multi-Step Flows Inside One Sheet" section with the full WHY
+- project-insights.md — Buy flow architecture section expanded to document all 3 steps
+- knowledge-base.md — NOT updated (one consumer of "sheet with step state" so far; promote to confirmed-pattern only at 2+ consumers)
+- evolution.md — NOT updated this session (no maturity marker change; routing discipline now holding)
+- workflow.md — NOT updated
+
+No implementation-detail bloat in decisions.md this time. The check from Session 12 is working.
+
+**Corrections:** 1 from designer — header back-arrow was jumping between steps because each step's natural content height differed. Fixed with `min-h-[497px]` on the content wrapper (matches Figma) + `flex-1` on step bodies + `mt-auto` to push ScanStep's Back/Cancel to the bottom. The fix is now captured as a taste.md principle: "Multi-step flows keep fixed height across steps — the sheet doesn't shrink, empty space is better than a moving control."
+**Screen:** CreditSidebar → Buy Credits button opens package-selection sheet
+**Mode:** Figma-directed new feature — first session where gates ran BEFORE coding, not after
+
+**Context:** Buy Credits widget from Session 11 wasn't wired to anything. Designer asked for the package popup (Figma node 28594:43349). The interesting design question: how do you show 4 pricing tiers such that one is clearly the recommendation?
+
+**The design decision (captured in taste.md + reasonings.md):**
+The Figma spec answers this beautifully — the "Stack of Credits" pack gets unique visual treatment on BOTH dimensions: a golden gradient Buy button (not just a different color — a full gradient that feels premium) AND a pink/blue radial background glow on the row itself. The other three packs are clean, readable, tokenized — not demoted, just not primary. Users scan for the recommendation visually, before reading labels. A "BEST VALUE" badge would be a developer's shortcut — a label you write when you couldn't figure out how to show it visually.
+
+**Built:** CreditPackRow (reusable row with `featured` prop), BuyCreditsSheet (orchestrator using BottomSheet + CenterPopup). Added style guide showcase. Wired up from CreditSidebar.
+
+**What this session taught VDA (routed to the right files):**
+- taste.md — "Selection lists show the recommendation" principle (featured option gets unique button AND background, not a badge)
+- reasonings.md — "On Recommending One Option in a List" (why both treatments are needed) + "On Responsive Overlays" (why 3 consumers now confirms the pattern)
+- knowledge-base.md — Responsive overlay pattern promoted from "pattern" to "CONFIRMED DEFAULT" with 3 consumers
+- project-insights.md — WSUP credit flow documented: 4-tier INR pricing, Stack featured, buy flow opens above CreditSidebar
+- decisions.md — 3 entries (extraction, featured treatment, Button-component threshold)
+- evolution.md — "Runs quality gates autonomously" upgraded from Not yet → Partial. New gap logged: Knowledge-file routing (user had to ask why everything was going to decisions.md)
+
+**Gate discipline — first time passing all 8 proactively:**
+All 8 gates read before the build, checked during. The user's Session 11 "did you pass the gates?" question became the meta-learning: gates must be a starting ritual, not a finishing one.
+
+**Corrections received this session:** 1 — designer asked "are we routing data to the right knowledge files?" The answer was no. Fixed mid-session by pruning decisions.md, distributing content to taste/reasonings/knowledge-base/project-insights/evolution, and adding a Routing Check to VDA-HEALTH-CHECK so this gap doesn't recur.
+
+---
+
+## Session 11 — 2026-04-22 (Credit Sidebar — Buy Credits Widget Refinement)
+**Screen:** CreditSidebar drawer (right panel on Explore page)
+**Mode:** Figma-directed refinement against spec
+
+**Context:** User flagged the Buy Credits promo inside the credit sidebar as visually wrong. Pulled Figma spec (node 28585:42889). Real difference was the bag illustration — flat `credit-bag.png` was rendering as two brown "horn" shapes; Figma spec has a detailed 3D money sack with coins spilling out + a smaller coin jar beside it. User exported the bags group from Figma as `credit-bags.png` (471×303).
+
+**Changed:**
+- `CreditSidebar.tsx` — replaced `/credit-bag.png` with `/credit-bags.png`; reposition to `-right-[18px] -top-[8px] w-[170px] h-auto`; added `min-h-[104px]` to card to prevent button being hidden during hydration; swapped Next.js `<Image>` for plain `<img>` (intrinsic-size quirks); refactored inline `<button>` → `Button` component with `size="s"` + `w-[180px] h-[40px]` className override; fixed `font-semibold` → `font-medium` (was contradicting the established button-weight rule)
+- `WidgetsSection.tsx` — added "Buy Credits Promo" showcase with anatomy + preview
+- `decisions.md` — 5 new entries (bag illustration, min-h, plain img rationale, Button refactor, style guide sync)
+
+**Key learnings:**
+- Figma-shipped screens can drift from Figma over time — the button weight contradiction (font-semibold vs font-medium) was already in the codebase, caught only when gate-auditing
+- Next.js `<Image>` + `h-auto` on a card with `overflow-hidden` can hide siblings during hydration — plain `<img>` is safer for decorative overlays
+- `min-height` as a safety net on cards that rely on bag-overflow layouts prevents button-hiding regressions
+
+**Gates violated on this edit (retroactively closed):**
+- Gate 2 (reuse) — inline `<button>` refactored to `Button` component
+- Gate 5 (style guide sync) — Buy Credits added to WidgetsSection
+- Gate 6 (VDA learns) — decisions.md + session log written (this entry)
+- Gate 7 (UX consistency) — `font-semibold` → `font-medium` to match decisions.md rule
+- Gate 8 (UX review) — missed the button-hidden issue up front; user had to flag it
+
+**Process failure:** Shipped the first pass without running gates. User had to ask "did you pass quality gates?" — answer was no. All 8 gates now retroactively closed on this edit. Lesson reinforced: read QUALITY-GATES.md before every WSUP task, not after.
+
+**Corrections:** 3 (wrong bag image → fixed; button hidden → fixed via min-h + plain img; user flagged "container too slim" → fixed)
 
 ---
 

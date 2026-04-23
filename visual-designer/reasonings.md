@@ -1,5 +1,5 @@
 # Visual Designer — Designer's Reasonings
-Last updated: 2026-04-17
+Last updated: 2026-04-22
 
 The WHY behind the designer's decisions. Not what was chosen — why it was chosen. This file captures the designer's thinking process so the agent can reason the same way about new problems.
 
@@ -115,6 +115,59 @@ The 3-dot menu uses `menuOpen` state. On mobile, BottomSheet listens to it. On d
 
 **Never wrap fixed-position overlays in non-fixed parents.**
 `<div className="md:hidden"><BottomSheet /></div>` looks harmless but breaks `position: fixed`. The BottomSheet already handles its own `md:hidden`. Adding a wrapper clips it, breaks z-index, and can prevent event propagation. Same applies to any `fixed inset-0` overlay — SocialView, MyCardsView, modals.
+
+---
+
+## On Recommending One Option in a List (Session 12)
+
+**When a list of options has a "best" choice, the recommendation must be visible BEFORE reading.**
+In a 4-tier pricing list (Handful / Stack / Bag / Chest credits), users aren't comparison shopping — they're looking for guidance. The Figma spec gives the "Stack" pack a completely different button style (golden gradient) AND a different card background (pink/blue radial glow). Both. Not a badge, not bold text. The whole row becomes visually primary.
+
+**Why not a "BEST VALUE" label?**
+A label is what you write when you couldn't figure out how to show it visually. Users scan visual hierarchy in milliseconds — they read labels only after narrowing down. If the recommended option relies on label-reading to stand out, you've hidden it behind a cognitive step.
+
+**Why both button AND background?**
+The button alone is a CTA difference; the background alone is a "this row is special" cue. Together, the row reads as a single unified recommendation. One without the other feels half-designed — like the system is uncertain about its own recommendation.
+
+**Why don't the other options get demoted styling?**
+They stay clean, tokenized, readable. They are legit alternatives, not failed candidates. The designer's instinct: elevate the primary, don't diminish the rest. A user who wants more than 1000 credits should feel confident picking the "Chest" — not like they're buying a deprecated option.
+
+---
+
+## On Multi-Step Flows Inside One Sheet (Session 13)
+
+**Why a single sheet with an internal `step` state beats 3 separate sheet components.**
+
+The Buy Credits flow is 3 screens: pick a pack → review payment method → scan QR. I could build it as 3 `BuyCreditsSheet`, `PaymentMethodSheet`, `ScanToPaySheet` with callbacks threading state between them. It would work. But it would *feel wrong*.
+
+**The user's mental model is ONE task.** "I'm buying credits." The task has stages, but they're not separate events. Three distinct modal open/close cycles fragment that perception — each dismiss animation + re-open animation is a micro-reset of attention. The user's brain registers "this thing closed, now something else opened," not "I moved forward."
+
+**Visual continuity IS the UX.** The Figma spec has identical shell treatment on all 3 screens: same rounded-popup, same gradient background, same border, same shadow. That's not coincidence — it's the designer telling us these are the same surface at different states. Building as separate sheets would either duplicate the shell in 3 files (code smell) OR break the visual continuity (UX smell).
+
+**Back navigation is trivial with step state.** `setStep('packages')` is one line. Routing between 3 sheet components would mean preserving `selectedPack` state somewhere (parent? context?) and re-opening the previous sheet — more moving parts, more chances to drop state on the floor.
+
+**When to break this rule:** when the "steps" are actually separate concerns with independent triggers. E.g., a confirmation modal that can be opened from multiple places is its own sheet (ConfirmSheet) — because the task IS distinct. The rule is about task coherence, not about whether screens share state.
+
+---
+
+## On Responsive Overlays — Why Two Components Instead of One (Session 6 → 12)
+
+**Every responsive overlay in WSUP is built as two separate components: `BottomSheet` (mobile) + `CenterPopup` (desktop), shared content via a render function.**
+
+Why not a single overlay that restyles per breakpoint? Session 6 tried exactly that with BottomSheet and paid for it — invisible event listeners from the desktop Popover were intercepting taps on the mobile BottomSheet because both were mounted when menu state was open. CSS `hidden` doesn't stop React effects.
+
+The rule hardened through repeat application:
+- CharacterStatesSheet (Session 6) — two components, shared `StatesContent`
+- ConfirmSheet (Session 9) — extracted because two features needed the same responsive pattern
+- BuyCreditsSheet (Session 12) — third consumer; the pattern is now a confirmed default, not an exception
+
+**Why this keeps winning:**
+1. Each component is simple — BottomSheet is *only* a bottom sheet, CenterPopup is *only* a centered dialog. No viewport branching inside
+2. Event listeners, focus traps, and scroll locks are automatically viewport-isolated because the components are themselves viewport-gated
+3. Mobile and desktop UX often want *different* behavior (drag handle vs. click-outside, slide-up vs. fade-scale) — one component fighting two UX specs always loses
+4. Shared content stays DRY via a simple function prop — you lose nothing in code reuse
+
+**When to break this rule:** never, for modal overlays. Popovers that anchor to triggers are a different pattern (they stay single-component with viewport-specific positioning).
 
 ---
 
