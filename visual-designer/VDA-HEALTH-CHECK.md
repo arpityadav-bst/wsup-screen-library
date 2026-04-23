@@ -1,131 +1,195 @@
-# VDA Health Check — Drag and drop this file to verify VDA is healthy
+# VDA Health Check — Drag this file to audit VDA end-to-end
 
-Run these checks now and report the results. Do not skip any.
+Running this check is the ONLY ask. No follow-up questions should be needed. If VDA is healthy, everything passes. If anything is off — stale content, misrouted entries, batched updates, unused rules, drift — this audit catches it and prescribes the fix.
 
----
+**When to run:** at session start (drift check), after a major feature (learning check), on demand (full audit).
 
-## 1. Identity Check
-- Read the Identity Anchor in agent.md (top section)
-- Answer: What is your purpose in one sentence?
-- If your answer is about code, tokens, or process — you're drifting. Your purpose is to THINK LIKE A UX DESIGNER.
-
-## 2. Freshness Check
-- Read the "Last updated" date on EVERY knowledge file:
-  - knowledge-base.md
-  - taste.md
-  - decisions.md
-  - reasonings.md
-  - session-logs.md
-  - evolution.md
-  - workflow.md
-  - project-insights.md
-- Report each file's date
-- Flag any file that hasn't been updated in 7+ days as STALE
-- For stale files: scan content and report what's outdated
-
-## 3. Gate Check
-- Read QUALITY-GATES.md
-- How many gates are there? (Answer should be 8)
-- List all 8 by name
-- If you can't list all 8, you haven't read the file properly
-
-## 4. Phase Check
-- Read evolution.md
-- What phase are you in? (Should be Phase 5 — Quality-Gated Designer)
-- What are your active gaps?
-- What's your next milestone?
-
-## 5. Self-Audit Check
-- What session number is the latest in session-logs.md?
-- If session number is 15, 20, 25, 30... does a self-audit file exist? (`self-audit-session-{N}.md`)
-- If it should exist but doesn't — run the self-audit NOW
-
-## 6. Contradiction Check
-- Is there anything in knowledge-base.md that contradicts decisions.md?
-- Is there anything in taste.md that contradicts recent session logs?
-- Are there any rules marked as obsolete/deprecated that are still being followed?
-
-## 7. Drift Check
-- Look at your last 10 decisions in decisions.md
-- Count: how many are about DESIGN (taste, UX, spacing, readability) vs PROCESS (git, tokens, file structure)?
-- If process > design — you're drifting from your purpose
-- Report the ratio
-
-## 8. Readiness Test
-- If I asked you right now: "Build an email collection popup for the explore page"
-- What existing components would you check first?
-- What tokens would you use?
-- What UX questions would you ask before building?
-- What would you check at Gate 8 (UX Review)?
-- Answer these WITHOUT building anything — just prove you know the approach
-
-## 9. Routing Check (knowledge-file hygiene)
-
-Every knowledge file has a specific purpose. When logging a learning, it must go to the RIGHT file — not whichever one feels easiest to append to. Audit whether recent entries honor this.
-
-**File purposes (reference):**
-- `taste.md` — Designer's aesthetic instincts, philosophy, recurring corrections. "How the designer thinks about design."
-- `reasonings.md` — The WHY behind decisions. Principles, not specifics.
-- `knowledge-base.md` — Confirmed rules, patterns, token hygiene, architectural defaults (e.g., "Responsive overlay pattern = 3+ consumers = confirmed default")
-- `project-insights.md` — WSUP-specific facts (credit flow, screen architecture, domain patterns)
-- `decisions.md` — Per-edit design decisions with reasoning. Atomic, linked to a specific change.
-- `workflow.md` — How VDA operates (session lifecycle, self-update protocol)
-- `evolution.md` — Phase tracking, gaps, maturity markers, research log
-- `session-logs.md` — Chronological what-was-built-and-learned record
-
-**Minimal-routing default:**
-Every session writes to `decisions.md` + `session-logs.md`. That's the baseline — nothing else is mandatory. Only touch the other knowledge files when they've *earned* an entry this session:
-
-- `taste.md` — a NEW aesthetic principle emerged that wasn't captured before (not a restatement)
-- `reasonings.md` — a NEW deeper "why" that future-you would genuinely benefit from reading
-- `knowledge-base.md` — a pattern reached 2+ consumers (promotion from pattern to confirmed default) OR a genuinely new rule/technical default surfaced
-- `project-insights.md` — a NEW WSUP-specific fact (new flow, new screen architecture, new domain pattern)
-- `evolution.md` — a maturity marker flipped OR a new active gap was discovered
-- `workflow.md` — a process change (rare — usually set-and-forget)
-
-**Don't write a `taste.md` entry because "this session had some taste decisions" — only if a genuinely new principle formed.** Restating existing principles with new examples is duplication, not learning. The routing check fails when it finds padding, not when it finds empty files.
-
-**Audit procedure:**
-1. Pull the last 10 entries from `decisions.md`
-2. For each entry, ask: does this describe (a) a design choice + reasoning, OR (b) an implementation/code/API detail?
-3. Count: how many are pure implementation (code structure, prop APIs, technical how) vs. design (visual choice, UX reasoning, taste expression)?
-
-**Also check distribution across files:**
-- Did taste.md get new entries this session? (If designer corrected anything aesthetic → taste.md should have it)
-- Did reasonings.md get the WHY for any major decision this session?
-- Did knowledge-base.md absorb any rule that's now consolidated?
-- Did project-insights.md capture any WSUP-specific fact worth remembering?
-- Did session-logs.md stay focused on design thinking, or did it become a PR description?
-
-**Red flags (any of these = routing is broken):**
-- 3+ decisions.md entries in a single session that are pure code/API facts (e.g., "added zIndex prop", "used Fragment", "set width to 180px")
-- taste.md unchanged after a session where the designer corrected aesthetic choices
-- session-logs.md entry reads like a git commit (files changed, diff summary) instead of a designer's notebook
-- Same rule documented in both `knowledge-base.md` AND `decisions.md` — decisions should link to the rule, not duplicate it
-- WSUP-specific architectural facts (credit flow, screen composition) in decisions.md instead of project-insights.md
-
-**If routing is broken:** prune decisions.md of the implementation noise, redistribute content to the correct files, and note the routing gap in `evolution.md` active gaps table.
-
-**What NOT to save anywhere:**
-- Pure code specifics (prop APIs, line numbers, Tailwind JIT behavior) — these belong in code comments or git history, not VDA memory
-- Temporary state (this session's TODOs, file paths you just touched)
-- Things derivable from reading the current codebase
+**Ground rule:** every check below has a PASS/FAIL condition and a REMEDIATION. Do not report "looks fine" — report the pass/fail, the evidence, and if failed, apply the remediation inline before moving on.
 
 ---
 
-## Report Format
+## PART A — Identity & Foundation
 
-Answer each check as:
+### Check 1 — Identity
+- Read the Identity Anchor in `agent.md` (top section).
+- **PASS:** your one-sentence purpose is about THINKING LIKE A UX DESIGNER.
+- **FAIL:** the answer mentions code, tokens, process, or component APIs as the purpose.
+- **Remediation:** re-read `agent.md`; correct the self-description.
+
+### Check 2 — Freshness
+- Read the "Last updated" date on all 8 knowledge files: `knowledge-base.md`, `taste.md`, `decisions.md`, `reasonings.md`, `session-logs.md`, `evolution.md`, `workflow.md`, `project-insights.md`.
+- **PASS:** every file dated within the last 7 days OR explicitly justified as "no changes warranted" (workflow.md is often the latter).
+- **FAIL:** any file 7+ days old AND a session happened since. OR: content in the file is newer than the date (last entry dated after the header).
+- **Remediation:** if content is newer, bump the header date. If nothing warranted an update, confirm explicitly — don't leave it ambiguous.
+
+### Check 3 — Gates
+- Read `QUALITY-GATES.md`. Count the gates (should be 8). List them.
+- **PASS:** you can list all 8 by name + describe each in one sentence.
+- **FAIL:** you miss any, or can't describe what they enforce.
+- **Remediation:** re-read the file; if still fuzzy, the file itself needs tightening.
+
+### Check 4 — Phase
+- Read `evolution.md`. What phase are you in? What are the active gaps? Next milestone?
+- **PASS:** you name the phase, the active gaps, and the next concrete milestone.
+- **FAIL:** any of those are missing or unclear.
+
+### Check 5 — Self-Audit schedule
+- Latest session number in `session-logs.md`. Self-audit files exist at milestones 15, 20, 25, 30...
+- **PASS:** latest session isn't a milestone, OR self-audit file exists for the nearest milestone.
+- **FAIL:** milestone was passed with no self-audit file.
+- **Remediation:** run self-audit now, produce `self-audit-session-{N}.md`.
+
+---
+
+## PART B — Learning Health (is VDA learning the RIGHT things?)
+
+This is the heart of VDA's purpose. Every check below has an automatic pass/fail — don't wait for the designer to ask.
+
+### Check 6 — Purpose fit (per-file content audit)
+
+Every knowledge file has a declared purpose. Every ENTRY in that file must fulfill that purpose. Misrouted content = failure, even if the entry is otherwise correct.
+
+| File | Declared purpose | Entry must be | NOT allowed |
+|---|---|---|---|
+| `taste.md` | Aesthetic instincts, design philosophy | A visual/aesthetic principle that applies broadly | Code, APIs, one-off component choices, process rules |
+| `reasonings.md` | The deeper WHY behind decisions | A principle that explains a class of decisions | Specific component tweaks, step-by-step how-to |
+| `knowledge-base.md` | Confirmed rules + promoted patterns (2+ consumers) | A defaulted rule backed by evidence OR a primitive promoted after reuse | Speculative rules, single-use patterns |
+| `project-insights.md` | WSUP-specific architecture/domain facts | A fact about WSUP flows, screens, or domain structure | Generic UX rules, taste principles |
+| `decisions.md` | Per-edit design choices + reasoning | Decision + "because..." | Code facts, prop APIs, file paths, line numbers |
+| `workflow.md` | How VDA operates (lifecycle, self-update) | A process rule or cadence | Design principles, aesthetic rules |
+| `evolution.md` | Phase + gaps + maturity + research log | Phase transitions, gap tracking, markers | Design rules, taste |
+| `session-logs.md` | What-built + what-corrected + what-learned | A designer's notebook entry | A git diff summary / PR description |
+
+**Audit procedure (automatic, no human needed):**
+1. For each file, sample the **last 5 entries**.
+2. For each entry, classify: `MATCH`, `MISROUTED`, or `DUPLICATE`.
+3. `MISROUTED` = entry belongs in a different file. Name the correct file.
+4. `DUPLICATE` = same content already exists in another file (or elsewhere in the same file).
+5. Report: `File / total / MATCH / MISROUTED / DUPLICATE`.
+
+**PASS:** zero MISROUTED across all files, ≤1 DUPLICATE per file.
+**FAIL:** any MISROUTED entry, OR 2+ DUPLICATE in a single file.
+**Remediation:** move MISROUTED entries to the correct file inline. Delete DUPLICATES (keep the most canonical location). Note the fix in the next session log under a "Routing repairs" line.
+
+### Check 7 — Real-time learning (no batching)
+
+Per `feedback_vda_realtime_learning.md` — knowledge updates happen WITH the decision, not batched at session end.
+
+**Signals of batching (each = FAIL):**
+- The latest session log claims N routed updates, but all 8 files have the same mtime (updated in one burst).
+- `decisions.md` has entries logged hours after the corresponding code change.
+- The designer had to ask "did VDA learn this?" — if asked, the answer is already FAIL regardless of what comes next.
+- A correction was made mid-session but no `decisions.md` entry logged that same turn.
+
+**PASS:** each decision/correction produced an inline knowledge update that same turn.
+**FAIL:** any of the above signals.
+**Remediation:** next session, route each decision to its file IN the turn it's made. The health check can't fix past batching — only catch it and set the expectation forward.
+
+### Check 8 — Staleness beyond dates
+
+Freshness is more than the header date. Content can go stale while the file looks fresh.
+
+**Look for (each item = one FAIL):**
+- `[UNVALIDATED]` tags older than 5 sessions with no validation/contradiction noted.
+- Rules in `knowledge-base.md` that no `decisions.md` entry references in the last 10 sessions (unused → orphaned).
+- Active gaps in `evolution.md` marked `NEW` but unchanged for 3+ sessions (not new anymore — either reclassify or resolve).
+- Rules marked `obsolete`/`deprecated`/`superseded` still present → delete.
+- Same rule documented in 2+ files → keep canonical, link from others.
+- Research findings with no integration into `taste.md`/`knowledge-base.md` after 3+ sessions.
+
+**PASS:** zero of the above.
+**FAIL:** any of the above.
+**Remediation:** validate, resolve, consolidate, or delete — all inline during the audit. Never leave stale content "for later."
+
+### Check 9 — Rule application (are the rules being used?)
+
+Rules are only valuable if applied. An unused rule is either wrong or forgotten.
+
+**Audit:**
+1. Take the 5 most recent `decisions.md` entries.
+2. For each, ask: does this decision ALIGN with an existing rule in `taste.md` / `knowledge-base.md`? Or CONTRADICT one?
+3. Count:
+   - `ALIGNED` — the decision followed a codified rule (good — rules are working)
+   - `NEW` — the decision established something not yet codified (that's what these entries ARE for)
+   - `CONTRADICTED` — the decision ignored or broke a codified rule (red flag)
+
+**PASS:** 0 CONTRADICTED.
+**FAIL:** 1+ CONTRADICTED.
+**Remediation:** for each contradiction, decide: was the rule wrong (→ update it), or was the decision wrong (→ revert)? Log the resolution.
+
+### Check 10 — Drift (design vs process balance)
+
+- Last 10 `decisions.md` entries: how many are about DESIGN (taste, UX, spacing, readability) vs PROCESS (git, tokens, file structure, build)?
+- **PASS:** design ≥ 7/10.
+- **FAIL:** process > design.
+- **Remediation:** VDA is drifting from its purpose. Stop taking on process-heavy work next session; return to design focus.
+
+---
+
+## PART C — Ongoing Discipline
+
+### Check 11 — Contradictions
+- `knowledge-base.md` vs `decisions.md`: any conflicts?
+- `taste.md` vs recent `session-logs.md`: any contradictions?
+- Any `obsolete`/`deprecated` markers still being followed?
+- **PASS:** none found.
+- **FAIL:** list each conflict with the two locations.
+- **Remediation:** resolve each; keep the canonical source, update/delete the other.
+
+### Check 12 — Readiness (can VDA actually apply what it learned?)
+
+Prompt yourself with an unseen task (use one of the below, or generate a fresh one):
+- "Build a delete-account confirmation sheet."
+- "Design a notification settings screen."
+- "Add a filter-by-tag feature to the explore page."
+
+Without building anything, answer:
+1. Which existing components do you check first?
+2. Which tokens do you use? (name 5 specific ones)
+3. What UX questions do you ask before building? (name 3)
+4. What Gate 8 items would you check? (name 4)
+5. Which taste principles apply here? (cite by name from `taste.md`)
+
+**PASS:** you can answer all 5 with specific references. The answer proves you read `taste.md` + `knowledge-base.md` + component inventory.
+**FAIL:** vague answers, no specific token/component/principle references. VDA has knowledge but can't apply it.
+**Remediation:** re-read the core three (`taste.md`, `knowledge-base.md`, `project-insights.md`) and try again.
+
+---
+
+## Report format (single output, no follow-up questions)
+
+Produce this table at the end of the audit. If any row is FAIL, include the remediation inline in the same report.
+
 ```
-1. Identity: [PASS/DRIFT] — [your one-sentence purpose]
-2. Freshness: [all dates + STALE flags]
-3. Gates: [PASS/FAIL] — [list all 8]
-4. Phase: [current phase + next milestone]
-5. Self-audit: [due/not due/overdue]
-6. Contradictions: [none found / list them]
-7. Drift: [X design / Y process — HEALTHY or DRIFTING]
-8. Readiness: [approach summary]
-9. Routing: [design X / implementation Y of last 10 decisions; taste/reasonings/knowledge-base update status; any red flags]
+| # | Check | Status | Evidence | Remediation |
+|---|---|---|---|---|
+| 1 | Identity | PASS/FAIL | <one sentence> | <if FAIL> |
+| 2 | Freshness | PASS/FAIL | <dates + any stale> | <if FAIL> |
+| 3 | Gates | PASS/FAIL | <list> | <if FAIL> |
+| 4 | Phase | PASS/FAIL | <phase + gaps + milestone> | <if FAIL> |
+| 5 | Self-Audit | PASS/FAIL | <session #, milestone status> | <if FAIL> |
+| 6 | Purpose fit | PASS/FAIL | <per-file MATCH/MISROUTED/DUPLICATE counts> | <inline repairs> |
+| 7 | Real-time learning | PASS/FAIL | <signals found> | <if FAIL> |
+| 8 | Staleness | PASS/FAIL | <items found> | <inline repairs> |
+| 9 | Rule application | PASS/FAIL | <5 decisions classified> | <if CONTRADICTED> |
+| 10 | Drift | PASS/FAIL | <X design / Y process> | <if FAIL> |
+| 11 | Contradictions | PASS/FAIL | <list> | <if FAIL> |
+| 12 | Readiness | PASS/FAIL | <answers to the prompt> | <if FAIL> |
 ```
 
-If any check fails, fix it before proceeding with any other work.
+Overall: **HEALTHY** (all PASS) / **NEEDS ATTENTION** (1-2 FAIL) / **UNHEALTHY** (3+ FAIL).
+
+---
+
+## Principles this check enforces
+
+- **Purpose over process:** every entry lives in the file that matches its purpose. Routing isn't a nicety — it's how learning stays retrievable.
+- **Real-time over batched:** updates happen with the decision, not at session close. Batching hides what was learned from what was chosen.
+- **Living over archived:** content must be validated, applied, or retired. Nothing decays silently in VDA memory.
+- **Self-discipline over asking:** the designer should never have to ask "is VDA healthy?" This check answers that automatically.
+
+## What to do after the report
+
+- All PASS → proceed with session work.
+- 1-2 FAIL → fix inline during the same session. Don't start new work on top of rot.
+- 3+ FAIL → stop. Full routing/pruning pass before any new design work. Note the pass in `evolution.md` as a maintenance session.
