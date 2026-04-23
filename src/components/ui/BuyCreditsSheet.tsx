@@ -19,7 +19,7 @@ interface BuyCreditsSheetProps {
 }
 
 const PACKS: CreditPack[] = [
-  { id: 'handful', name: 'Handful of Credits', credits: 350, rate: '₹1 = 1.67 Credits', price: '₹210.00', priceAmount: '₹ 210' },
+  { id: 'handful', name: 'Handful of Credits', credits: 350, rate: '₹1 = 1.67 Credits', price: '₹210.00', priceAmount: '₹ 210', oneTimeOnly: true },
   { id: 'stack', name: 'Stack of Credits', credits: 1000, rate: '₹1 = 1.92 Credits', price: '₹520.00', priceAmount: '₹ 520', featured: true },
   { id: 'bag', name: 'Bag of Credits', credits: 1800, rate: '₹1 = 1.71 Credits', price: '₹1050.00', priceAmount: '₹ 1050' },
   { id: 'chest', name: 'Chest of Credits', credits: 4000, rate: '₹1 = 1.86 Credits', price: '₹2150.00', priceAmount: '₹ 2150' },

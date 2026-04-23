@@ -40,6 +40,13 @@ export default function TagsCardsSection({ onSectionVisible }: { onSectionVisibl
           <Badge variant="warning">Pending</Badge>
           <Badge variant="alert">Failed</Badge>
         </div>
+        <p className="text-text-xsmall text-xs mt-m mb-3"><code className="text-accent-light">{'size="sm"'}</code> — compact variant for dense contexts (inside tabs, inline labels). Same text size, tighter padding.</p>
+        <div className="flex flex-wrap gap-s items-center">
+          <Badge variant="neutral" size="sm">Neutral</Badge>
+          <Badge variant="success" size="sm">+10% credits</Badge>
+          <Badge variant="warning" size="sm">Pending</Badge>
+          <Badge variant="alert" size="sm">Failed</Badge>
+        </div>
       </div>
 
       <div>

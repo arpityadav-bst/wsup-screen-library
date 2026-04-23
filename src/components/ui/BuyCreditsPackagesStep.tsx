@@ -14,6 +14,7 @@ export interface CreditPack {
   price: string
   priceAmount: string
   featured?: boolean
+  oneTimeOnly?: boolean
 }
 
 function parsePrice(price: string): number {
@@ -49,6 +50,7 @@ export default function BuyCreditsPackagesStep({
   header,
 }: PackagesStepProps) {
   const isMonthly = mode === 'monthly'
+  const visiblePacks = isMonthly ? packs.filter(p => !p.oneTimeOnly) : packs
 
   return (
     <>
@@ -56,7 +58,7 @@ export default function BuyCreditsPackagesStep({
       <PackModeToggle mode={mode} onChange={onModeChange} />
       <div className="flex-1 flex flex-col gap-s px-l pt-l pb-l">
         <div className="flex flex-col gap-xs">
-          {packs.map((pack) => {
+          {visiblePacks.map((pack) => {
             const display = isMonthly ? applyMonthlyBonus(pack) : { credits: pack.credits, rate: pack.rate }
             return (
               <CreditPackRow
