@@ -9,6 +9,8 @@ import CreditsSummaryPill from '@/components/ui/CreditsSummaryPill'
 import Button from '@/components/ui/Button'
 import Checkbox from '@/components/ui/Checkbox'
 import ChevronIcon from '@/components/ui/ChevronIcon'
+import ResultVariantToggle from '@/components/ui/ResultVariantToggle'
+import BuyCreditsResultStep, { type ResultVariant } from '@/components/ui/BuyCreditsResultStep'
 
 interface BuyCreditsSheetProps {
   open: boolean
@@ -33,7 +35,6 @@ const PACKS: CreditPack[] = [
 ]
 
 type Step = 'packages' | 'payment' | 'scan' | 'result'
-type ResultVariant = 'success' | 'failure'
 
 const CURRENT_BALANCE = 10 // mock existing balance; production: from user state
 
@@ -189,53 +190,6 @@ function FinishInAppStep({ pack, onBack, onClose, onComplete }: { pack: CreditPa
   )
 }
 
-function ResultStep({ pack, variant, onClose, onRetry }: { pack: CreditPack; variant: ResultVariant; onClose: () => void; onRetry: () => void }) {
-  const isSuccess = variant === 'success'
-  return (
-    <>
-      <StepHeader title="" onClose={onClose} />
-      <div className="flex-1 flex flex-col items-center px-l pb-l text-center">
-        <div className="flex-1 flex flex-col items-center justify-center gap-m">
-          <div className={`size-[72px] rounded-full flex items-center justify-center ${isSuccess ? 'bg-status-success/[0.15] border border-status-success/[0.30]' : 'bg-status-alert/[0.15] border border-status-alert/[0.30]'}`}>
-            {isSuccess ? (
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-status-success">
-                <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            ) : (
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-status-alert">
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-          </div>
-          <h2 className="text-xl font-semibold text-text-title">
-            {isSuccess ? 'Credits added' : 'Payment failed'}
-          </h2>
-          {isSuccess ? (
-            <div className="inline-flex items-center px-m py-xs rounded-pill bg-status-success/[0.15] border border-status-success/[0.30]">
-              <span className="text-sm font-semibold text-status-success">+{pack.credits} credits · {pack.credits + CURRENT_BALANCE} total</span>
-            </div>
-          ) : (
-            <p className="text-sm text-text-body max-w-[280px]">Your card wasn&apos;t charged. Try again or contact support.</p>
-          )}
-        </div>
-        <div className="flex flex-col gap-s items-center w-full">
-          <Button fullWidth className="gap-xxs" onClick={isSuccess ? onClose : onRetry}>
-            <span>{isSuccess ? 'Back to chat' : 'Try again'}</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0">
-              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Button>
-          {isSuccess ? (
-            <p className="text-xs text-text-small">Receipt emailed to you@example.com</p>
-          ) : (
-            <a className="link text-xs">Contact support</a>
-          )}
-        </div>
-      </div>
-    </>
-  )
-}
-
 function FlowBody({ step, pack, setStep, setPack, onClose, scanVariant, resultVariant }: { step: Step; pack: CreditPack | null; setStep: (s: Step) => void; setPack: (p: CreditPack) => void; onClose: () => void; scanVariant: 'qr' | 'app'; resultVariant: ResultVariant }) {
   if (step === 'packages') {
     return <PackagesStep onSelect={(p) => { setPack(p); setStep('payment') }} onClose={onClose} />
@@ -249,7 +203,16 @@ function FlowBody({ step, pack, setStep, setPack, onClose, scanVariant, resultVa
       : <FinishInAppStep pack={pack} onBack={() => setStep('payment')} onClose={onClose} onComplete={() => setStep('result')} />
   }
   if (step === 'result' && pack) {
-    return <ResultStep pack={pack} variant={resultVariant} onClose={onClose} onRetry={() => setStep('packages')} />
+    return (
+      <BuyCreditsResultStep
+        pack={pack}
+        variant={resultVariant}
+        currentBalance={CURRENT_BALANCE}
+        onClose={onClose}
+        onRetry={() => setStep('packages')}
+        header={<StepHeader title="" onClose={onClose} />}
+      />
+    )
   }
   return null
 }
@@ -257,14 +220,32 @@ function FlowBody({ step, pack, setStep, setPack, onClose, scanVariant, resultVa
 export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps) {
   const [step, setStep] = useState<Step>('packages')
   const [pack, setPack] = useState<CreditPack | null>(null)
-  const [resultVariant] = useState<ResultVariant>('success') // production: set by payment callback
+  const [resultVariant, setResultVariant] = useState<ResultVariant>('success') // production: set by payment callback
+  const [showToggle, setShowToggle] = useState(false)
 
   useEffect(() => {
     if (!open) {
       setStep('packages')
       setPack(null)
+      setShowToggle(false)
     }
   }, [open])
+
+  useEffect(() => {
+    if (!open || step !== 'result') return
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      if (e.key === 'r' || e.key === 'R') {
+        if (e.shiftKey) {
+          setResultVariant(prev => prev === 'success' ? 'failure' : 'success')
+        } else {
+          setShowToggle(prev => !prev)
+        }
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [open, step])
 
   const surfaceStyle = { backgroundImage: BG_GRADIENTS }
   return (
@@ -280,6 +261,10 @@ export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps)
           <FlowBody step={step} pack={pack} setStep={setStep} setPack={setPack} onClose={onClose} scanVariant="qr" resultVariant={resultVariant} />
         </div>
       </CenterPopup>
+
+      {open && step === 'result' && showToggle && (
+        <ResultVariantToggle variant={resultVariant} onChange={setResultVariant} />
+      )}
     </>
   )
 }
