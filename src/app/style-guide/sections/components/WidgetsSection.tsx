@@ -1,10 +1,50 @@
 'use client'
 
 import { Section, SubLabel, PreviewBox, StateLabel, TokenCell } from '../../helpers'
+import Button from '@/components/ui/Button'
+import ChevronIcon from '@/components/ui/ChevronIcon'
 
 export default function WidgetsSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
     <Section id="Widgets" title="Widgets" onVisible={onSectionVisible}>
+
+      <div className="min-w-[440px] flex-1">
+        <SubLabel>Buy Credits Promo</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">Promo card shown inside <code className="text-accent-light">CreditSidebar</code>. Dark card with orange/yellow radial gradients + detailed bag illustration (<code className="text-accent-light">/credit-bags.png</code>) overflowing top-right. Primary Button at 180×40.</p>
+        <div className="flex flex-col gap-3">
+          <PreviewBox>
+            <div
+              className="relative rounded-card overflow-hidden p-m border border-white-20 flex flex-col gap-m min-h-[104px] w-[320px]"
+              style={{
+                backgroundImage: `
+                  radial-gradient(circle at 100% 100%, rgba(238,115,0,0.4) 0%, rgba(238,115,0,0) 70%),
+                  radial-gradient(circle at 0% 0%, rgba(255,209,83,0.2) 0%, rgba(255,209,83,0) 60%),
+                  linear-gradient(#171717, #171717)
+                `,
+              }}
+            >
+              <img
+                src="/credit-bags.png"
+                alt=""
+                className="absolute -right-[18px] -top-[8px] w-[170px] h-auto object-contain pointer-events-none select-none z-0"
+              />
+              <div className="relative z-10 flex flex-col gap-s max-w-[65%]">
+                <span className="text-[10px] font-medium tracking-[0.5px] uppercase text-white-50">+ Add more credits</span>
+                <Button size="s" className="gap-xxs w-[180px] h-[40px]">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                    <path d="M3 3h2l.4 2M7 13h10l3-8H5.4M7 13L5.4 5M7 13l-2 4h13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="9" cy="20" r="1.5" fill="currentColor" />
+                    <circle cx="17" cy="20" r="1.5" fill="currentColor" />
+                  </svg>
+                  <span>Buy Credits</span>
+                  <ChevronIcon direction="right" size={14} className="shrink-0" />
+                </Button>
+              </div>
+            </div>
+          </PreviewBox>
+          <StateLabel>Default</StateLabel>
+        </div>
+      </div>
 
       <div className="min-w-[440px] flex-1">
         <SubLabel>Generate Images</SubLabel>

@@ -94,6 +94,11 @@ export default function IconsTab({ onSectionVisible }: { onSectionVisible: (id: 
         </Section>
 
         <Section id="Status & Utility" title="Status & Utility Icons" onVisible={onSectionVisible}>
+          <div className="w-full p-s bg-white-05 rounded-card border border-white-10 text-xs text-text-body leading-relaxed mb-m">
+            <p className="font-semibold text-text-title mb-xxs">Shared icon components</p>
+            <p><code className="text-accent-light">{'<InfoIcon size={14} className="text-white-40" />'}</code> — info circle, used in SectionTitle + Streak + DormancyBanner</p>
+            <p><code className="text-accent-light">{'<ChevronIcon direction="down|up|left|right" size={12} />'}</code> — chevrons, used in toggles + link arrows + step headers</p>
+          </div>
           <div className="w-full grid grid-cols-6 gap-m">
             {([
               { name: 'Trend Up', svg: <svg width="18" height="18" viewBox="0 0 10 10" fill="none"><path d="M5 8.5V1.5M2 4.5l3-3 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>, sizes: '10', usage: 'TrendArrow, StatsRow, ProfileCharacterCard', color: 'text-status-success' },

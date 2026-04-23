@@ -1,14 +1,30 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SearchBar from '@/components/shared/SearchBar'
 import SpicyToggle from '@/components/shared/SpicyToggle'
+import CreditSidebar from '@/components/shared/CreditSidebar'
+import BuyCreditsSheet from '@/components/ui/BuyCreditsSheet'
 
 export default function Header() {
   const [spicy, setSpicy] = useState(false)
+  const [creditsOpen, setCreditsOpen] = useState(false)
+  const [buyOpen, setBuyOpen] = useState(false)
+
+  useEffect(() => {
+    const openSidebar = () => setCreditsOpen(true)
+    const openBuy = () => setBuyOpen(true)
+    window.addEventListener('wsup:open-credit-sidebar', openSidebar)
+    window.addEventListener('wsup:open-buy-credits', openBuy)
+    return () => {
+      window.removeEventListener('wsup:open-credit-sidebar', openSidebar)
+      window.removeEventListener('wsup:open-buy-credits', openBuy)
+    }
+  }, [])
 
   return (
+    <>
     <header className="fixed top-0 left-0 right-0 z-50 h-[60px] bg-page-bg border-b border-white-10 flex items-center px-m gap-m">
       {/* Logo */}
       <div className="shrink-0 w-auto md:w-[220px] pl-xs">
@@ -49,7 +65,7 @@ export default function Header() {
         </Link>
 
         {/* Credits */}
-        <button className="relative flex items-center hover:opacity-90 transition-opacity" style={{ height: '32px' }}>
+        <button onClick={() => setCreditsOpen(true)} className="relative flex items-center hover:opacity-90 transition-opacity" style={{ height: '32px' }}>
           {/* Pill background */}
           <div className="flex items-center rounded-full h-[28px]"
             style={{
@@ -77,5 +93,8 @@ export default function Header() {
         </button>
       </div>
     </header>
+    <CreditSidebar open={creditsOpen} onClose={() => setCreditsOpen(false)} />
+    <BuyCreditsSheet open={buyOpen} onClose={() => setBuyOpen(false)} />
+    </>
   )
 }

@@ -11,7 +11,7 @@ export default function SidebarSection({ onSectionVisible }: { onSectionVisible:
         <div className="bg-page-bg border border-white-10 rounded-card overflow-hidden w-[280px]">
           <div className="flex items-center justify-between px-xl py-s border-b border-white-10">
             <span className="label-xs">Recent Chats</span>
-            <button className="text-secondary text-xxs font-semibold tracking-[0.8px] flex items-center gap-xxs">
+            <button className="text-secondary text-xxs font-medium tracking-[0.8px] flex items-center gap-xxs">
               <svg width="11" height="11" viewBox="0 0 14 14" fill="none" className="shrink-0 relative -top-[1px]">
                 <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>

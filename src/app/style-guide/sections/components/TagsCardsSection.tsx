@@ -1,6 +1,7 @@
 'use client'
 
 import { Section, SubLabel, Tag } from '../../helpers'
+import Badge from '@/components/ui/Badge'
 
 export default function TagsCardsSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -27,6 +28,17 @@ export default function TagsCardsSection({ onSectionVisible }: { onSectionVisibl
             </span>
             <Tag>Accent tint</Tag>
           </div>
+        </div>
+      </div>
+
+      <div>
+        <SubLabel>Badge Component</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">Status badge for lightweight state indicators. Component: <code className="text-accent-light">{'<Badge>'}</code> in <code className="text-accent-light">src/components/ui/Badge.tsx</code>. Sentence case, `font-medium`, tinted bg + border per variant. Use for completion/verification state labels (&quot;Deposited&quot;, &quot;Verified&quot;, &quot;Failed&quot;, etc.).</p>
+        <div className="flex flex-wrap gap-s items-center">
+          <Badge variant="neutral">Neutral</Badge>
+          <Badge variant="success">Deposited</Badge>
+          <Badge variant="warning">Pending</Badge>
+          <Badge variant="alert">Failed</Badge>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { Section, SubLabel, PreviewBox, StateLabel } from '../../helpers'
+import BuyCreditsSheetShowcase from './BuyCreditsSheetShowcase'
 
 function TokenRow({ token, desc }: { token: string; desc: string }) {
   return (
@@ -170,6 +171,8 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
           <TokenRow token="Usages" desc="LogoutConfirmSheet, ReviveConfirmSheet" />
         </div>
       </div>
+
+      <BuyCreditsSheetShowcase />
 
       {/* BadgeTooltip */}
       <div className="min-w-[440px] flex-1">

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import InfoIcon from '@/components/ui/InfoIcon'
 
 export type BannerVariant = 'inactivity' | 'moderation' | 'removed'
 
@@ -23,13 +24,7 @@ const BANNER_CONFIG: Record<BannerVariant, {
     text: 'This character isn\'t currently listed publicly. You can keep chatting.',
     mobileText: 'Not listed — chat available',
     textColor: 'text-white-50',
-    icon: (
-      <svg className="w-m h-m text-white-40 shrink-0" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="12" cy="8" r="0.5" fill="currentColor" stroke="currentColor" strokeWidth="1" />
-      </svg>
-    ),
+    icon: <InfoIcon size={16} className="text-white-40 shrink-0" />,
   },
   moderation: {
     bg: 'bg-white-05',
@@ -37,13 +32,7 @@ const BANNER_CONFIG: Record<BannerVariant, {
     text: 'This character isn\'t currently listed publicly. You can keep chatting.',
     mobileText: 'Not listed — chat available',
     textColor: 'text-white-60',
-    icon: (
-      <svg className="w-m h-m text-white-50 shrink-0" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="12" cy="8" r="0.5" fill="currentColor" stroke="currentColor" strokeWidth="1" />
-      </svg>
-    ),
+    icon: <InfoIcon size={16} className="text-white-50 shrink-0" />,
   },
   removed: {
     bg: 'bg-white-05',
@@ -51,13 +40,7 @@ const BANNER_CONFIG: Record<BannerVariant, {
     text: 'This character is no longer on the platform. Your chat history is here for you to read.',
     mobileText: 'Removed — read-only',
     textColor: 'text-white-50',
-    icon: (
-      <svg className="w-m h-m text-white-50 shrink-0" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="12" cy="8" r="0.5" fill="currentColor" stroke="currentColor" strokeWidth="1" />
-      </svg>
-    ),
+    icon: <InfoIcon size={16} className="text-white-50 shrink-0" />,
   },
 }
 

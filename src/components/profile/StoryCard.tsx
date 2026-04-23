@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Button from '@/components/ui/Button'
 
 interface StoryCardProps {
   character: { name: string; avatar: string; img: string }
@@ -30,9 +31,7 @@ export default function StoryCard({ character, caption, likes, comments, date, t
             <img src={character.avatar} alt={character.name} className="w-[34px] h-[34px] rounded-full object-cover object-top shrink-0" />
             <span className="text-sm font-bold text-text-title drop-shadow-sm">{character.name}</span>
           </div>
-          <button className="px-s py-xxs rounded-pill border border-white-30 bg-white-10 backdrop-blur-bg text-xs font-semibold text-text-title cursor-pointer">
-            Chat
-          </button>
+          <Button variant="ghost" size="xs">Chat</Button>
         </div>
       </div>
 
@@ -66,15 +65,15 @@ export default function StoryCard({ character, caption, likes, comments, date, t
           </svg>
         </button>
 
-        {/* Enter This Story — S size primary button */}
-        <button className="ml-auto flex items-center gap-xxs px-m py-xs rounded-pill bg-accent text-sm font-semibold text-text-title cursor-pointer shrink-0">
+        {/* Enter This Story — primary */}
+        <Button size="s" className="ml-auto gap-xxs shrink-0">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Enter This Story
-        </button>
+        </Button>
 
         {/* 3-dot menu */}
         <button className="flex items-center justify-center bg-transparent border-none cursor-pointer px-xxs py-xxs text-accent-light shrink-0">

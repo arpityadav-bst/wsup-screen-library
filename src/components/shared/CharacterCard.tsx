@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatRank, formatCount } from '@/lib/cn'
+import Button from '@/components/ui/Button'
 
 interface Tag {
   label: string
@@ -73,9 +74,9 @@ export default function CharacterCard({
             <span className="shrink-0"><span className="text-text-subtitle font-semibold">{formatCount(chats)}</span> chats</span>
           </div>
           {/* Chat CTA — desktop hover only (hidden on mobile, no hover state) */}
-          <button className="hidden md:flex text-sm font-semibold text-white bg-accent hover:bg-accent-hover px-m py-xs rounded-pill opacity-0 translate-y-[6px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 leading-none shrink-0">
+          <Button size="s" className="hidden md:flex opacity-0 translate-y-[6px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 shrink-0">
             <span className="flex items-center gap-xxs">Chat <svg className="opacity-50 -translate-y-[1px]" width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
-          </button>
+          </Button>
         </div>
       </div>
     </Link>

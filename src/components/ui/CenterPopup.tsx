@@ -8,10 +8,13 @@ interface CenterPopupProps {
   title?: string
   subtitle?: string
   maxWidth?: string
+  zIndex?: number
+  surfaceClassName?: string
+  surfaceStyle?: React.CSSProperties
   children: React.ReactNode
 }
 
-export default function CenterPopup({ open, onClose, title, subtitle, maxWidth = '420px', children }: CenterPopupProps) {
+export default function CenterPopup({ open, onClose, title, subtitle, maxWidth = '420px', zIndex = 50, surfaceClassName, surfaceStyle, children }: CenterPopupProps) {
   useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -22,7 +25,7 @@ export default function CenterPopup({ open, onClose, title, subtitle, maxWidth =
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 hidden md:flex items-center justify-center">
+    <div className="fixed inset-0 hidden md:flex items-center justify-center" style={{ zIndex }}>
       {/* Backdrop */}
       <div
         onClick={onClose}
@@ -31,8 +34,8 @@ export default function CenterPopup({ open, onClose, title, subtitle, maxWidth =
       />
       {/* Card */}
       <div
-        className="relative bg-profile-sheet-bg rounded-popup border border-white-10 shadow-popup flex flex-col overflow-hidden w-full"
-        style={{ maxWidth, maxHeight: '80vh', animation: 'slide-up 0.24s cubic-bezier(0.32,0.72,0,1)' }}
+        className={`relative rounded-popup border border-white-10 shadow-popup flex flex-col overflow-hidden w-full ${surfaceClassName ?? 'bg-profile-sheet-bg'}`}
+        style={{ maxWidth, maxHeight: '80vh', animation: 'slide-up 0.24s cubic-bezier(0.32,0.72,0,1)', ...surfaceStyle }}
       >
         {/* Header */}
         {title && (

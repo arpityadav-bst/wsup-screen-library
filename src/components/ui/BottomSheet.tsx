@@ -9,10 +9,13 @@ interface BottomSheetProps {
   subtitle?: string
   maxHeight?: string
   fillHeight?: boolean
+  zIndex?: number
+  surfaceClassName?: string
+  surfaceStyle?: React.CSSProperties
   children: React.ReactNode
 }
 
-export default function BottomSheet({ open, onClose, title, subtitle, maxHeight = '82%', fillHeight = false, children }: BottomSheetProps) {
+export default function BottomSheet({ open, onClose, title, subtitle, maxHeight = '82%', fillHeight = false, zIndex = 60, surfaceClassName, surfaceStyle, children }: BottomSheetProps) {
   useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -23,7 +26,7 @@ export default function BottomSheet({ open, onClose, title, subtitle, maxHeight 
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[60] md:hidden">
+    <div className="fixed inset-0 md:hidden" style={{ zIndex }}>
       {/* Backdrop */}
       <div
         onClick={onClose}
@@ -32,8 +35,8 @@ export default function BottomSheet({ open, onClose, title, subtitle, maxHeight 
       />
       {/* Sheet */}
       <div
-        className="absolute bottom-0 left-0 right-0 bg-profile-sheet-bg rounded-t-popup border-t border-white-10 flex flex-col overflow-hidden shadow-big"
-        style={{ maxHeight, height: fillHeight ? maxHeight : undefined, animation: 'slide-up 0.28s cubic-bezier(0.32,0.72,0,1)' }}
+        className={`absolute bottom-0 left-0 right-0 rounded-t-popup border-t border-white-10 flex flex-col overflow-hidden shadow-big ${surfaceClassName ?? 'bg-profile-sheet-bg'}`}
+        style={{ maxHeight, height: fillHeight ? maxHeight : undefined, animation: 'slide-up 0.28s cubic-bezier(0.32,0.72,0,1)', ...surfaceStyle }}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-s pb-0 shrink-0">

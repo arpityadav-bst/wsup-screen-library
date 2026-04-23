@@ -7,15 +7,26 @@ interface CharacterMenuSheetProps {
   character: string | null
 }
 
+function PopoverMenuItem({ onClick, destructive, children }: { onClick: () => void; destructive?: boolean; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full px-m py-xs text-sm font-medium bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors ${destructive ? 'text-status-alert' : 'text-text-title'}`}
+    >
+      {children}
+    </button>
+  )
+}
+
 /** Popover content for desktop character 3-dot menu */
 export function CharacterMenuPopoverItems({ onClose }: { onClose: () => void }) {
   const router = useRouter()
   const stopLink = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation() }
   return (
     <div className="flex flex-col gap-xxs" onClick={stopLink}>
-      <button onClick={() => { onClose(); router.push('/edit-character') }} className="w-full px-m py-xs text-sm font-semibold text-text-title bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors">Edit</button>
-      <button onClick={onClose} className="w-full px-m py-xs text-sm font-semibold text-text-title bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors">Share</button>
-      <button onClick={onClose} className="w-full px-m py-xs text-sm font-semibold text-status-alert bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors">Delete</button>
+      <PopoverMenuItem onClick={() => { onClose(); router.push('/edit-character') }}>Edit</PopoverMenuItem>
+      <PopoverMenuItem onClick={onClose}>Share</PopoverMenuItem>
+      <PopoverMenuItem onClick={onClose} destructive>Delete</PopoverMenuItem>
     </div>
   )
 }
@@ -23,11 +34,10 @@ export function CharacterMenuPopoverItems({ onClose }: { onClose: () => void }) 
 /** Popover content for dormant/needs-attention character 3-dot menu */
 export function DormantMenuPopoverItems({ stateType, onClose }: { stateType: string; onClose: () => void }) {
   const showShare = stateType === 'inactive'
-  const btnBase = "w-full px-m py-xs text-sm font-semibold bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors"
   return (
     <div className="flex flex-col gap-xxs" onClick={(e) => { e.preventDefault(); e.stopPropagation() }}>
-      {showShare && <button onClick={onClose} className={`${btnBase} text-text-title`}>Share</button>}
-      <button onClick={onClose} className={`${btnBase} text-status-alert`}>Delete</button>
+      {showShare && <PopoverMenuItem onClick={onClose}>Share</PopoverMenuItem>}
+      <PopoverMenuItem onClick={onClose} destructive>Delete</PopoverMenuItem>
     </div>
   )
 }

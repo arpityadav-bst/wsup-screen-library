@@ -11,7 +11,7 @@ type Tab = typeof TABS[number]
 const NAV: Record<Tab, string[]> = {
   Tokens:     ['Colors', 'Typography', 'Spacing', 'Radius', 'Shadows', 'Blur', 'Utilities'],
   Components: ['Buttons', 'Forms', 'Tags & Cards', 'Coachmark', 'Character Card', 'Widgets', 'Category Tabs', 'Filter Pills', 'Overlays', 'Lifecycle', 'Bottom Nav', 'Profile Cards', 'Profile Overlays', 'UI Utilities'],
-  Patterns:   ['Header', 'Sidebar', 'Explore Description', 'FAQ Accordion', 'What is wsup.ai', 'Footer', 'Mobile Footer', 'Chat Header', 'Chat Messages', 'Chat Bar', 'Chat Right Sidebar', 'Dormancy Banner'],
+  Patterns:   ['Header', 'Sidebar', 'Explore Description', 'FAQ Accordion', 'What is wsup.ai', 'Footer', 'Mobile Footer', 'Chat Header', 'Chat Messages', 'Chat Bar', 'Chat Right Sidebar', 'Dormancy Banner', 'Low Credits Banner'],
   Icons:      ['Size Scale', 'Navigation', 'Actions', 'Social', 'Status & Utility', 'Nav (Sidebar & BottomNav)', 'Chat Bar & Messages', 'Image Assets', 'Color Rules'],
 }
 

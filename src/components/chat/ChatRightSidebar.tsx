@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import Button from '@/components/ui/Button'
 
 // ── Stat icons ────────────────────────────────────────────────────────────────
 
@@ -142,9 +143,9 @@ export default function ChatRightSidebar() {
           </p>
 
           {/* Chat CTA */}
-          <button className="w-[140px] bg-accent hover:bg-accent-hover rounded-pill py-[10px] text-sm font-semibold text-white transition-colors">
+          <Button size="m" className="w-[140px]">
             Chat
-          </button>
+          </Button>
 
           {/* Creator pill */}
           <div className="flex items-center gap-xxs">

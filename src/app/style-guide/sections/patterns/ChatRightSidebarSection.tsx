@@ -37,7 +37,7 @@ export default function ChatRightSidebarSection({ onSectionVisible }: { onSectio
               {/* Description */}
               <p className="text-sm text-white text-center leading-normal">Cyberpunk DJ who grew up in a musical family.</p>
               {/* CTA */}
-              <button className="w-[140px] bg-accent hover:bg-accent-hover rounded-pill py-[10px] text-sm font-semibold text-white transition-colors">Chat</button>
+              <button className="w-[140px] bg-accent hover:bg-accent-hover rounded-pill py-[10px] text-sm font-medium text-white transition-colors">Chat</button>
               {/* Creator */}
               <div className="flex items-center gap-xxs">
                 <span className="text-xs text-white">by</span>

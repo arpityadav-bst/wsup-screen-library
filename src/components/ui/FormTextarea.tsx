@@ -39,7 +39,7 @@ export default function FormTextarea({
           {label}{required && '*'}
         </label>
         {aiGenerate && (
-          <button className="text-xs font-semibold text-forms-focus-border bg-transparent border-none cursor-pointer p-0 hover:opacity-80 transition-opacity">
+          <button className="link text-xs bg-transparent border-none cursor-pointer p-0">
             Generate with AI
           </button>
         )}

@@ -11,6 +11,7 @@ import FooterMobile from '@/components/shared/FooterMobile'
 import BottomNav from '@/components/shared/BottomNav'
 import MobileSearchBar from '@/components/shared/MobileSearchBar'
 import GenerateImagesCard from '@/components/shared/GenerateImagesCard'
+import LowCreditsBanner from '@/components/shared/LowCreditsBanner'
 
 const characters = [
   {
@@ -108,6 +109,11 @@ export default function ExplorePage() {
 
           {/* Mobile search + spicy */}
           <MobileSearchBar />
+
+          {/* Low credits reminder */}
+          <div className="mb-m">
+            <LowCreditsBanner credits={10} estimatedReplies={3} />
+          </div>
 
           {/* Mobile generate images widget */}
           <GenerateImagesCard uid="mobile" className="md:hidden mb-m" />
