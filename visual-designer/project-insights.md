@@ -1,7 +1,45 @@
 # Visual Designer — Project Insights
-Last updated: 2026-04-22
+Last updated: 2026-04-23
 
 WSUP-specific observations and screen-level learnings. Updated as new screens are built.
+
+---
+
+## Credit flow architecture — extended with Patreon monthly (Session 18)
+
+**Two payment modes, two flow shapes:**
+
+| Mode | Flow | Provider | Bonus |
+|---|---|---|---|
+| One-time | Packages → Payment method → Scan (desktop) / Finish-in-app (mobile) → Result | WSUP mobile app | — |
+| Monthly | Packages → Result | Patreon (off-site auth + payment) | +10% credits (credits × 1.1, same price) |
+
+**Mode toggle:** underline tabs at the top of the Packages step. Monthly is default; Stack of Credits is pre-selected. Switching modes preserves the selected pack across toggles.
+
+**Bonus communication:**
+- Tab chip `+10% credits` (Monthly only) — discovery signal
+- Per-pack `~~1000~~ 1100` strikethrough — confirmation at the decision point
+- Per-row "+10% BONUS" badges were removed — redundant with the strikethrough
+
+**Trust boundary:** Patreon handles authentication + card + recurring billing. WSUP never touches card details for subscriptions. The flow's short shape reflects this — Monthly terminates at the provider handoff.
+
+**Manage subscription entry points (3 places):**
+1. `CreditSidebar` → "Manage subscription ⇗" next to "Transaction History"
+2. `BuyCreditsResultStep` subscription success → "Manage subscription ⇗" alongside the center confirmation pill
+3. `Header` credit pill → opens `CreditSidebar` (transitively)
+
+All three use the same `<ExternalLinkIcon>` to signal off-site navigation.
+
+---
+
+## Surface styles — premium vs default
+
+`src/components/ui/BottomSheet.tsx` and `CenterPopup.tsx` accept `surfaceClassName` to override the default `bg-profile-sheet-bg` surface.
+
+- **Default (all sheets):** solid `bg-profile-sheet-bg` (#1a1a1a). Used by ConfirmSheet, ReviveConfirmSheet, CharacterMenuSheet, Popover, BadgeTooltip.
+- **Premium (reserved):** `bg-profile-sheet-bg bg-surface-premium` — three-layer radial gradient (purple at top-left, pink at bottom-right, gold at top-left). Currently only used by BuyCreditsSheet.
+
+**Rule:** premium surface signals "transaction / reward / purchase moment." Do not use it for destructive, informational, or everyday sheets — overuse dilutes the signal. When in doubt: default.
 
 ---
 

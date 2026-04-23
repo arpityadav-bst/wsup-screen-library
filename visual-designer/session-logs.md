@@ -1,7 +1,54 @@
 # Visual Designer — Session Logs
-Last updated: 2026-04-22
+Last updated: 2026-04-23
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 18 — 2026-04-23 (Patreon Monthly Subscription Flow + Tabs Primitive)
+**Scope:** New pattern (Patreon subscription) + shared primitive extraction. All 8 gates apply.
+
+**What shipped:**
+- Monthly subscription mode on BuyCreditsSheet. Packages → Result (Patreon handles auth + payment off-site, skipping the WSUP-hosted Payment + Scan steps). One-time flow unchanged.
+- `+10% bonus credits` for monthly packs, shown as strikethrough `~~1000~~ 1100`. Rate recalculates. Tab chip teases "+10% credits" as the discovery signal.
+- `PackModeToggle` (One-time / Monthly underline tabs) and `BuyCreditsPackagesStep` extracted from BuyCreditsSheet.
+- `<Checkbox variant="success">` replaces a bespoke radio on pack selection — reuses the payment-method pattern already in the product.
+- "Manage subscription" link on subscription success, placed with the center confirmation pill (not below the primary CTA).
+- `ExternalLinkIcon` extracted from Footer + FooterMobile (was duplicated) → shared primitive. Now used by Footer, FooterMobile, CreditHero ("Manage subscription" next to "Transaction History"), and BuyCreditsResultStep.
+- `Tabs` + `Tab` compound primitive extracted. ProfileTabBar and PackModeToggle both compose it. Content-width underline, flush on the baseline.
+- `bg-surface-premium` Tailwind token — the three-layer radial gradient used on BuyCreditsSheet. Style guide Overlays section now documents default vs premium surface treatments.
+- `Badge` gains `size="sm"` variant for dense contexts (tab chip).
+- Billing frequency disclosure: "Billed monthly · Cancel anytime" under the Patreon CTA.
+
+**Corrections received:**
+- "Radio not visible on Stack of Credits" (bright gradient washed out the border) → changed to `bg-black-40 border-white-40` for contrast against any bg.
+- "Calculation seems wrong" → the +10% was labeled but not applied. Now actually recomputes credits and rate.
+- "Save 10% badge and +10% BONUS — what do you think UX-wise?" → recognized copy mismatch (save = price off, bonus = more credits). Dropped per-row badges, renamed tab chip "+10% credits" for accuracy.
+- "3 nested pill shapes — is that good UX?" → tried removing the outer container (broke tab grouping), reverted, then matched ProfileTabBar's underline-only pattern.
+- "We use tabs on profile — can't we make the toggle like tabs?" → matched the visual style but didn't extract a shared primitive. Later: "Why are these different? I thought we used the same component?" → extracted `<Tabs>` + `<Tab>` compound component.
+- "Highlighter should be on the baseline, strikethrough after the value, and use the same checkbox from payment method" → three fixes applied together.
+- "The receipt line / manage link should come alongside the center content" → moved manage link out of the CTA group and into the confirmation group.
+
+**Quality-gate violations caught during final audit:**
+- Gate 1 / 8.3: `text-[10px]` in Badge sm (fixed → `text-xxs`); `text-xxs` rate line and billing note (fixed → `text-xs` per the "12px min subcopy" taste rule). **Same gap as Session 17** — Figma-parity drifting against codified taste rules. Count +1 under that active gap.
+- Gate 4: `ProfileTabBar` + `PackModeToggle` both implemented the underline tabs pattern separately. Resolved mid-session by extracting `Tabs` primitive.
+
+**Genuine learnings (routed to the right files, not just decisions.md):**
+- `taste.md` — two new principles: "Strikethrough after the value, not before" and "Manage/meta links on success belong with the confirmation group, not the CTA."
+- `knowledge-base.md` — `Tabs` primitive promoted to confirmed default (2 consumers). `ExternalLinkIcon` confirmed (4 consumers).
+- `reasonings.md` — WHY behind the Patreon flow branching: mirrors the real trust boundary (off-site auth + payment).
+- `project-insights.md` — Patreon subscription flow and premium surface style added to the credit architecture.
+- `evolution.md` — active gap "Tabs pattern duplication" resolved; Figma-parity gap count bumped; no new gap categories.
+
+**Corrections distribution:** ~8 design corrections, all taste/UX level (none architectural). Iteration-heavy but moved into pattern work (Tabs extraction) mid-session.
+
+**Routing:**
+- decisions.md — 12 entries (design choices with reasoning, no code facts)
+- taste.md — 2 new principles
+- knowledge-base.md — Tabs + ExternalLinkIcon promoted to confirmed defaults
+- reasonings.md — Patreon flow rationale
+- project-insights.md — Patreon flow added to credit architecture
+- evolution.md — 1 gap resolved, 1 gap count bumped
 
 ---
 

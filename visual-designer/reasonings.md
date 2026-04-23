@@ -1,7 +1,25 @@
 # Visual Designer — Designer's Reasonings
-Last updated: 2026-04-22
+Last updated: 2026-04-23
 
 The WHY behind the designer's decisions. Not what was chosen — why it was chosen. This file captures the designer's thinking process so the agent can reason the same way about new problems.
+
+---
+
+## On flow shape following the trust boundary
+
+When integrating a third-party payment provider (Patreon, Stripe Checkout, Apple Pay), the flow's shape should mirror where the trust boundary actually sits. If the provider handles auth + payment off-site, the WSUP flow should terminate at "continue to provider" and resume at "result" — don't pad it with WSUP-hosted Payment Method / Scan steps that would add visual weight without functional purpose.
+
+For one-time purchases paid via the WSUP mobile app, the full flow (Packages → Payment method → Scan/Open app → Result) makes sense because every step has a real decision or affordance for the user. For Patreon monthly, the user's decision is ONE pack; everything after is Patreon's job. Compressing that into `Packages → Result` isn't laziness — it's fidelity to the real user task. Bureaucratic flow steps erode trust more than they build it.
+
+**How to apply:** before adding a step to a flow, ask: does this step expose a WSUP-owned decision or affordance? If no — and the next owner is an external provider — the step is padding.
+
+---
+
+## On labeling vs. showing the value
+
+"+10% BONUS" per pack was a LABEL for the benefit. `~~1000~~ 1100` SHOWS the benefit. When the underlying data is specific enough to speak for itself, skip the label. Labels are proxies — they fire when users can't reach the real data. The moment the real data is visible and comparable (strikethrough + new value), the label becomes noise competing for the same mental slot.
+
+Applies broadly: "NEW" badge next to a new feature that already has a bright accent treatment = redundant. "RECOMMENDED" on the already-featured pack = redundant. "REQUIRED" next to a field with an asterisk and red outline = redundant. Check whether the thing is already signaled, then decide if the label is adding or repeating.
 
 ---
 

@@ -1,5 +1,5 @@
 # Visual Designer — Evolution
-Last updated: 2026-04-22
+Last updated: 2026-04-23
 
 The VDA's self-awareness engine. Tracks growth, identifies gaps, triggers autonomous research, and drives self-improvement. This file is how the agent evolves itself.
 
@@ -153,7 +153,7 @@ Gaps are detected from recurring corrections in session-logs.md.
 | Empty state logic | 1 | UX | NEW (Session 10) — tab empty states leaked into zero-characters view. State logic must be exclusive. |
 | Knowledge-file routing | 2 | Process | NEW (Session 12) — When logging learnings, agent dumped everything into decisions.md instead of routing taste→taste.md, rules→knowledge-base.md, why→reasonings.md, WSUP-specifics→project-insights.md. User had to ask "are we putting the right data in the right place?" Added Routing Check to VDA-HEALTH-CHECK to make this a recurring self-check |
 | Viewport affordance check | 1 | UX/Architecture | NEW (Session 15) — Shipped a QR code as the terminal step on both mobile and desktop. Designer caught that a mobile user would be pointing the phone at itself. Watch for: does the *action* this screen asks for make sense on the user's current device? Not every screen needs a viewport split, but every screen's terminal action should be validated against the target device |
-| Figma-parity over taste-rule priority | 2 | Process/Taste | NEW (Session 17) — Shipped values that matched Figma pixel-perfect but violated WSUP taste rules. Session 11: button used `font-semibold` because Figma said so, but taste.md says buttons are `font-medium`. Session 17: receipt line used `text-xxs` (10px) because Figma showed tiny text, but taste.md minimum for subcopy is 12px. Root cause: defaulted to pixel-matching the spec instead of *adapting* it. **Mitigation:** before writing any text-size/font-weight/color token, cross-reference taste.md. If Figma and taste disagree, taste wins. Gate 7 tightened with this rule. |
+| Figma-parity over taste-rule priority | 3 | Process/Taste | Recurring (latest Session 18) — Session 11: `font-semibold` button vs `font-medium` taste rule. Session 17: `text-xxs` receipt violating 12px min. Session 18: dimmed rate line + billing note to `text-xxs` to look tighter, again violated 12px min — caught mid-audit via Gate 8.3, not real-time. Root cause: "smaller looks cleaner" instinct still overrides the codified rule. **Mitigation (existing):** cross-reference taste.md before any text-size/font-weight/color token. **New safeguard:** when about to shrink subcopy, explicitly ask "is this dropping below 12px?" before writing the class. |
 
 When a gap is resolved (zero corrections for 3 consecutive sessions), move it to Resolved Gaps below.
 
@@ -162,6 +162,7 @@ When a gap is resolved (zero corrections for 3 consecutive sessions), move it to
 |---|---|---|
 | Token hygiene | Learned token-first approach, zero violations since session 4 | Session 3–4 |
 | Label standardization | Adopted label-xs as universal standard | Session 4 |
+| Tabs pattern duplication | Extracted shared `<Tabs>` + `<Tab>` primitive in `src/components/ui/Tabs.tsx`. ProfileTabBar + PackModeToggle both compose it. Content-width underline, flush baseline, single source of truth. | Session 18 |
 
 ---
 

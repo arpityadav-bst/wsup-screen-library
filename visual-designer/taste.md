@@ -1,5 +1,24 @@
 # Visual Designer — Taste Profile
-Last updated: 2026-04-22
+Last updated: 2026-04-23
+
+### Comparison values sit AFTER the primary value, not before
+When showing a "was / now" pattern (strikethrough original → bonus), the struck-through original goes to the right of the real number, not between the label/icon and the real number. Placing it before creates dead space between the icon and the meaningful value. The eye should land on the icon, then the primary number, then (optionally) the comparison.
+*Example: `[icon] 1100 ~~1000~~` ✓ &nbsp; `[icon] ~~1000~~ 1100` ✗ (icon-to-value gap)*
+
+### Metadata and manage links live with the "what just happened" group, not with the CTA
+On success confirmations, a meta-action like "Manage subscription", "View receipt", or "Edit details" belongs near the confirmation pill (icon + title + pill), not underneath the primary CTA button. The CTA row is for decisive next actions; the confirmation group is for status + supporting info. Don't conflate them.
+*Example — subscription success layout:*
+```
+[✓ icon]
+Subscription active
+[+1100 credits/mo pill]
+Manage subscription ⇗        ← stays with confirmation
+
+──── spacer ────
+
+[Back to chat button]        ← primary CTA alone
+```
+
 
 The designer's aesthetic instincts, corrections, and workflow. This IS the reference when no screenshot is provided.
 

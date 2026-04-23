@@ -1,7 +1,37 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-04-22
+Last updated: 2026-04-23
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
+
+---
+
+## Tabs primitive — CONFIRMED DEFAULT (Session 18)
+
+`<Tabs>` + `<Tab>` compound component in `src/components/ui/Tabs.tsx` is the canonical underline-tabs primitive. Do not build a parallel implementation — compose the primitive.
+
+**Confirmed consumers (2+):**
+- `ProfileTabBar` — profile page content tabs with counts
+- `PackModeToggle` — buy-credits one-time / monthly with badge
+
+**Behavior codified in the primitive:**
+- Active state: `font-semibold text-text-title` + accent underline (h-xxxs rounded-pill)
+- Inactive state: `font-normal text-text-dim` (40%)
+- Underline MATCHES content width (inline-flex inner span, absolute underline with `left-0 right-0`) — not a fixed percentage
+- Underline sits flush on the container's `border-b` (padding lives on the inner span, not the button)
+- Container is `flex w-full border-b border-white-10` and accepts a `className` prop for sticky/bg overrides
+
+**When consuming:**
+- Pass `active` + `onClick` to each `Tab`
+- Children = label + optional inline content (badge, count, dot separator)
+- Do NOT wrap the primitive in an outer pill container — the underline IS the selection signal
+
+---
+
+## ExternalLinkIcon — CONFIRMED (Session 18)
+
+`src/components/ui/ExternalLinkIcon.tsx`. Diagonal-arrow icon used on any link that leaves the app (Footer policy links, CreditHero "Manage subscription", BuyCreditsResultStep subscription success). Props: `size` (default 12), `className` (default `ml-1 shrink-0`).
+
+**Rule:** whenever a link navigates to an external domain or a non-WSUP manage surface (e.g., Patreon billing portal), pair the link copy with `<ExternalLinkIcon />`. Internal navigation uses `<ChevronIcon direction="right" />`. Never duplicate the SVG inline.
 
 ---
 

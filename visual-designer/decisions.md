@@ -1,5 +1,5 @@
 # Visual Designer — Design Decisions
-Last updated: 2026-04-22
+Last updated: 2026-04-23
 
 Every design decision and its reasoning. New decisions are appended as screens are built.
 
@@ -7,6 +7,18 @@ Every design decision and its reasoning. New decisions are appended as screens a
 
 | Decision | Reasoning |
 |---|---|
+| Monthly subscription skips Payment + Scan steps | Patreon handles auth + payment off-site. The flow shape mirrors the real trust boundary — don't pad it with WSUP-hosted steps that do nothing |
+| +10% bonus shown via strikethrough `~~1000~~ 1100`, not per-row badges | Badges label the promise; strikethrough SHOWS the value. The real numbers do the selling |
+| Strikethrough original appears AFTER the primary value | Placing it before creates space between the credit icon and the meaningful number — icon adjacency matters |
+| Pack selection uses `<Checkbox variant="success">` (not a radio) | Matches the payment-method indicator already in the project. Reuse over semantic purity when visual pattern already exists |
+| Tab chip copy: "+10% credits" (not "Save 10%") | We don't discount the price — we add credits. "Save 10%" was inaccurate |
+| Per-row bonus badges removed from monthly packs | Tab chip teases, strikethrough confirms. Four repetitions of the same badge = noise, not emphasis |
+| "Manage subscription" link sits WITH the center confirmation pill | Belongs with "what just happened" group. Primary CTA stands alone at the bottom of success screens |
+| Premium surface (`bg-surface-premium`) reserved for transactional moments | BuyCreditsSheet only. All other sheets use solid `bg-profile-sheet-bg`. Over-using premium dilutes its meaning |
+| Tab underline matches content width via inline-flex inner span | Fixed 60% (old ProfileTabBar) looked off when content widths varied (Monthly+badge vs One-time). Content-sized underline adapts |
+| Tab padding lives on the inline span, not the button | Underline at span's bottom-0 sits flush with the container border-b. Padding on button pushed underline upward away from the baseline |
+| Dropped outer pill container on PackModeToggle | Three nested pills (outer + active + badge) competed visually. Matching ProfileTabBar's underline-only pattern eliminated the nesting |
+| Billing note "Billed monthly · Cancel anytime" | Recurring charges need explicit disclosure; users should never be surprised by a renewal |
 | 2-col character cards (mobile) | 3-col was too cramped, text truncated |
 | 3-col badge grid in sheet | 4-col truncated labels; 3-col lets text breathe |
 | `tracking-[0.8px]` for all 10px uppercase | Iterated from 0.2→0.7→0.8; uppercase at small size needs wide spacing for readability |
