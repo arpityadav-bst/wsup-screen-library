@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { SubLabel, PreviewBox, StateLabel } from '../../helpers'
 import CreditPackRow from '@/components/ui/CreditPackRow'
+import PackModeToggle from '@/components/ui/PackModeToggle'
+import Button from '@/components/ui/Button'
+import ExternalLinkIcon from '@/components/ui/ExternalLinkIcon'
 
 function TokenRow({ token, desc }: { token: string; desc: string }) {
   return (
@@ -42,8 +45,12 @@ function ShellHeader({ title, showBack }: { title: string; showBack?: boolean })
   )
 }
 
-function ResultPreview({ variant }: { variant: 'success' | 'failure' }) {
+function ResultPreview({ variant, mode }: { variant: 'success' | 'failure'; mode: 'one-time' | 'subscription' }) {
   const isSuccess = variant === 'success'
+  const isSub = mode === 'subscription'
+  const title = isSuccess ? (isSub ? 'Subscription active' : 'Credits added') : 'Payment failed'
+  const successPill = isSub ? '+1100 credits/mo' : '+1000 credits · 1010 total'
+  const failureCopy = isSub ? 'Your Patreon subscription wasn’t activated. Try again or contact support.' : 'Your card wasn’t charged. Try again or contact support.'
   return (
     <div className="w-[382px] bg-profile-sheet-bg border border-white-10 rounded-popup shadow-popup overflow-hidden" style={{ backgroundImage: SHELL_BG }}>
       <ShellHeader title="" />
@@ -60,13 +67,19 @@ function ResultPreview({ variant }: { variant: 'success' | 'failure' }) {
               </svg>
             )}
           </div>
-          <h2 className="text-xl font-semibold text-text-title">{isSuccess ? 'Credits added' : 'Payment failed'}</h2>
+          <h2 className="text-xl font-semibold text-text-title">{title}</h2>
           {isSuccess ? (
             <div className="inline-flex items-center px-m py-xs rounded-pill bg-status-success/[0.15] border border-status-success/[0.30]">
-              <span className="text-sm font-semibold text-status-success">+1000 credits · 1010 total</span>
+              <span className="text-sm font-semibold text-status-success">{successPill}</span>
             </div>
           ) : (
-            <p className="text-sm text-text-body max-w-[280px]">Your card wasn&apos;t charged. Try again or contact support.</p>
+            <p className="text-sm text-text-body max-w-[280px]">{failureCopy}</p>
+          )}
+          {isSuccess && isSub && (
+            <span className="link text-xs inline-flex items-center gap-xxxs">
+              Manage subscription
+              <ExternalLinkIcon size={12} className="shrink-0" />
+            </span>
           )}
         </div>
         <div className="flex flex-col gap-s items-center w-full">
@@ -74,9 +87,10 @@ function ResultPreview({ variant }: { variant: 'success' | 'failure' }) {
             {isSuccess ? 'Back to chat' : 'Try again'}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
-          {isSuccess ? (
+          {isSuccess && !isSub && (
             <p className="text-xs text-text-small">Receipt emailed to you@example.com</p>
-          ) : (
+          )}
+          {!isSuccess && (
             <span className="link text-xs">Contact support</span>
           )}
         </div>
@@ -87,24 +101,68 @@ function ResultPreview({ variant }: { variant: 'success' | 'failure' }) {
 
 export default function BuyCreditsSheetShowcase() {
   const [resultVariant, setResultVariant] = useState<'success' | 'failure'>('success')
+  const [packMode, setPackMode] = useState<'one-time' | 'monthly'>('monthly')
+  const [resultMode, setResultMode] = useState<'one-time' | 'subscription'>('subscription')
   return (
     <div className="min-w-[440px] flex-1">
-      <SubLabel>BuyCreditsSheet — 3-step flow (responsive)</SubLabel>
+      <SubLabel>BuyCreditsSheet — multi-step flow (responsive)</SubLabel>
       <div className="text-xs text-text-body mb-s leading-relaxed max-w-[520px]">
-        Single sheet with an internal <code className="text-accent-light">step</code> state: <code className="text-accent-light">packages</code> → <code className="text-accent-light">payment</code> → <code className="text-accent-light">scan</code>. Back navigation reverses the step; closing resets to step 1. Same sheet shell across all 3 steps — only the body changes. Opens from CreditSidebar → Buy Credits button.
+        Single sheet with an internal <code className="text-accent-light">step</code> state. <code className="text-accent-light">One-time</code> mode: <code className="text-accent-light">packages</code> → <code className="text-accent-light">payment</code> → <code className="text-accent-light">scan</code> → <code className="text-accent-light">result</code>. <code className="text-accent-light">Monthly</code> mode (Patreon): <code className="text-accent-light">packages</code> → <code className="text-accent-light">result</code> (Patreon handles its own payment). Monthly default, Stack of Credits pre-selected.
       </div>
 
-      <StepLabel>Step 1 — Packages</StepLabel>
+      <div className="flex items-center gap-xs mb-xxs mt-l">
+        <span className="text-text-small text-xxs uppercase tracking-[0.5px]">Step 1 — Packages</span>
+        <div className="flex gap-xxs ml-s">
+          <button
+            onClick={() => setPackMode('monthly')}
+            className={`px-s py-xxxs rounded-pill text-xxs font-medium border transition-colors ${packMode === 'monthly' ? 'bg-accent/[0.20] border-accent/[0.40] text-accent-light' : 'bg-transparent border-white-10 text-text-small'}`}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => setPackMode('one-time')}
+            className={`px-s py-xxxs rounded-pill text-xxs font-medium border transition-colors ${packMode === 'one-time' ? 'bg-accent/[0.20] border-accent/[0.40] text-accent-light' : 'bg-transparent border-white-10 text-text-small'}`}
+          >
+            One-time
+          </button>
+        </div>
+      </div>
       <PreviewBox>
         <div className="w-[382px] bg-profile-sheet-bg border border-white-10 rounded-popup shadow-popup overflow-hidden" style={{ backgroundImage: SHELL_BG }}>
           <ShellHeader title="Buy credits" />
-          <div className="flex flex-col gap-xs px-l pb-l">
-            <CreditPackRow name="Stack of Credits" credits={1000} rate="₹1 = 1.92 Credits" price="₹520.00" featured />
-            <CreditPackRow name="Bag of Credits" credits={1800} rate="₹1 = 1.71 Credits" price="₹1050.00" />
+          <div className="flex flex-col gap-s px-l pb-l">
+            <PackModeToggle mode={packMode} onChange={setPackMode} />
+            <div className="flex flex-col gap-xs">
+              <CreditPackRow
+                name="Stack of Credits"
+                credits={packMode === 'monthly' ? 1100 : 1000}
+                originalCredits={packMode === 'monthly' ? 1000 : undefined}
+                rate={packMode === 'monthly' ? '₹1 = 2.12 Credits' : '₹1 = 1.92 Credits'}
+                price={packMode === 'monthly' ? '₹520.00/mo' : '₹520.00'}
+                featured
+                selectable={packMode === 'monthly'}
+                selected={packMode === 'monthly'}
+              />
+              <CreditPackRow
+                name="Bag of Credits"
+                credits={packMode === 'monthly' ? 1980 : 1800}
+                originalCredits={packMode === 'monthly' ? 1800 : undefined}
+                rate={packMode === 'monthly' ? '₹1 = 1.89 Credits' : '₹1 = 1.71 Credits'}
+                price={packMode === 'monthly' ? '₹1050.00/mo' : '₹1050.00'}
+                selectable={packMode === 'monthly'}
+              />
+            </div>
+            {packMode === 'monthly' && (
+              <div className="pt-s">
+                <Button fullWidth className="gap-xxs">
+                  <span>Continue on Patreon</span>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </PreviewBox>
-      <StateLabel>4 packs (2 shown). Selecting one advances to Payment step.</StateLabel>
+      <StateLabel>{packMode === 'monthly' ? '4 packs (2 shown). Monthly is default — Stack pre-selected. Continue on Patreon skips Payment + Scan, jumps to Result.' : '4 packs (2 shown). Tap a pack row to advance straight to Payment step.'}</StateLabel>
 
       <StepLabel>Step 2 — Payment method</StepLabel>
       <PreviewBox>
@@ -170,8 +228,22 @@ export default function BuyCreditsSheetShowcase() {
       </PreviewBox>
       <StateLabel>Mobile only — user is already on phone. Deep-link directly (no QR). Fallback to app store if not installed.</StateLabel>
 
-      <div className="flex items-center gap-xs mb-xxs mt-l">
+      <div className="flex items-center gap-xs mb-xxs mt-l flex-wrap">
         <span className="text-text-small text-xxs uppercase tracking-[0.5px]">Step 4 — Result</span>
+        <div className="flex gap-xxs ml-s">
+          <button
+            onClick={() => setResultMode('subscription')}
+            className={`px-s py-xxxs rounded-pill text-xxs font-medium border transition-colors ${resultMode === 'subscription' ? 'bg-accent/[0.20] border-accent/[0.40] text-accent-light' : 'bg-transparent border-white-10 text-text-small'}`}
+          >
+            Subscription
+          </button>
+          <button
+            onClick={() => setResultMode('one-time')}
+            className={`px-s py-xxxs rounded-pill text-xxs font-medium border transition-colors ${resultMode === 'one-time' ? 'bg-accent/[0.20] border-accent/[0.40] text-accent-light' : 'bg-transparent border-white-10 text-text-small'}`}
+          >
+            One-time
+          </button>
+        </div>
         <div className="flex gap-xxs ml-s">
           <button
             onClick={() => setResultVariant('success')}
@@ -188,18 +260,22 @@ export default function BuyCreditsSheetShowcase() {
         </div>
       </div>
       <PreviewBox>
-        <ResultPreview variant={resultVariant} />
+        <ResultPreview variant={resultVariant} mode={resultMode} />
       </PreviewBox>
-      <StateLabel>Shown when user returns to web after finishing payment. Production: payment webhook/callback sets success vs failure. Back to chat closes sheet; Try again restarts at package selection.</StateLabel>
+      <StateLabel>Shown after payment. One-time copy: &quot;Credits added · +X · total Y&quot;. Subscription copy: &quot;Subscription active · +X credits/mo&quot;. Production: payment webhook sets variant; flow mode sets subscription vs one-time copy.</StateLabel>
 
       <div className="mt-m flex flex-col gap-xxs">
-        <TokenRow token="BuyCreditsSheet" desc="src/components/ui/BuyCreditsSheet.tsx — orchestrator with step state" />
-        <TokenRow token="CreditPackRow" desc="src/components/ui/CreditPackRow.tsx — used by step 1" />
-        <TokenRow token="CreditsSummaryPill" desc="src/components/ui/CreditsSummaryPill.tsx — shared by steps 2 & 3" />
+        <TokenRow token="BuyCreditsSheet" desc="src/components/ui/BuyCreditsSheet.tsx — orchestrator with step + mode state" />
+        <TokenRow token="PackModeToggle" desc="src/components/ui/PackModeToggle.tsx — one-time / monthly pill toggle" />
+        <TokenRow token="BuyCreditsPackagesStep" desc="src/components/ui/BuyCreditsPackagesStep.tsx — pack list with mode-aware interaction" />
+        <TokenRow token="CreditPackRow" desc="src/components/ui/CreditPackRow.tsx — selectable variant for monthly, bonus badge prop" />
+        <TokenRow token="BuyCreditsResultStep" desc="src/components/ui/BuyCreditsResultStep.tsx — success/failure + one-time/subscription copy" />
+        <TokenRow token="CreditsSummaryPill" desc="src/components/ui/CreditsSummaryPill.tsx — shared by steps 2 & 3 (one-time only)" />
         <TokenRow token="Width" desc="382px desktop, full-width mobile. Single sheet, not 3 separate modals" />
-        <TokenRow token="zIndex={70}" desc="Stacks above CreditSidebar (z-60)" />
-        <TokenRow token="Featured pack" desc="Stack of Credits — golden gradient button, pink/blue radial bg" />
-        <TokenRow token="Result states" desc="success (green check + total pill) and failure (red X + retry CTA) — toggle above" />
+        <TokenRow token="zIndex={80}" desc="Stacks above CreditSidebar (z-60)" />
+        <TokenRow token="Featured pack" desc="Stack of Credits — golden gradient button, pink/blue radial bg. Pre-selected by default in monthly mode" />
+        <TokenRow token="Monthly flow" desc="packages → result (Patreon handles auth + payment off-site). Skips payment + scan steps" />
+        <TokenRow token="One-time flow" desc="packages → payment → scan (QR desktop / app mobile) → result" />
       </div>
     </div>
   )

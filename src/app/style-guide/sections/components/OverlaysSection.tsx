@@ -44,9 +44,45 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
             <p className="font-semibold text-text-title mb-xxs">Rules</p>
             <p>Backdrop overlay = demands attention, blocks page (BottomSheet, CenterPopup, Confirmation).</p>
             <p>No backdrop = contextual, doesn&apos;t block (Popover).</p>
-            <p>All overlay surfaces use solid <code className="text-accent-light">bg-profile-sheet-bg</code> (#1a1a1a). No backdrop-blur on surfaces — frosted glass was abandoned due to click-through bugs.</p>
+            <p>Default surface is solid <code className="text-accent-light">bg-profile-sheet-bg</code> (#1a1a1a). Premium/transactional flows may layer <code className="text-accent-light">bg-surface-premium</code> on top — see Surface styles below.</p>
+            <p>No backdrop-blur on surfaces — frosted glass was abandoned due to click-through bugs.</p>
             <p>Mobile and desktop overlays are always separate components. Never dual-render in one tree.</p>
           </div>
+        </div>
+      </div>
+
+      {/* Surface styles */}
+      <div className="min-w-[440px] flex-1">
+        <SubLabel>Surface styles</SubLabel>
+        <div className="text-xs text-text-body mb-s leading-relaxed max-w-[520px]">
+          Two surface treatments available on BottomSheet + CenterPopup via the <code className="text-accent-light">surfaceClassName</code> prop. Default is solid. Premium adds radial glows for transactional/premium moments — use sparingly.
+        </div>
+
+        <div className="flex gap-m flex-wrap">
+          <div>
+            <PreviewBox>
+              <div className="w-[280px] h-[160px] bg-profile-sheet-bg rounded-popup border border-white-10 shadow-popup flex items-center justify-center">
+                <p className="text-sm text-text-body">Default surface</p>
+              </div>
+            </PreviewBox>
+            <StateLabel>Default — solid <code className="text-accent-light">bg-profile-sheet-bg</code>. Used by ConfirmSheet, ReviveConfirmSheet, CharacterMenuSheet, Popover, BadgeTooltip.</StateLabel>
+          </div>
+
+          <div>
+            <PreviewBox>
+              <div className="w-[280px] h-[160px] bg-profile-sheet-bg bg-surface-premium rounded-popup border border-white-10 shadow-popup flex items-center justify-center">
+                <p className="text-sm text-text-body">Premium surface</p>
+              </div>
+            </PreviewBox>
+            <StateLabel>Premium — <code className="text-accent-light">bg-profile-sheet-bg bg-surface-premium</code>. Purple + pink + gold radial glows. Used by BuyCreditsSheet. Reserve for transactional/reward moments.</StateLabel>
+          </div>
+        </div>
+
+        <div className="mt-m flex flex-col gap-xxs">
+          <TokenRow token="bg-profile-sheet-bg" desc="#1a1a1a — default solid surface. Used everywhere unless premium is warranted" />
+          <TokenRow token="bg-surface-premium" desc="3-layer radial gradient (purple/pink/gold). Layer on top of bg-profile-sheet-bg" />
+          <TokenRow token="surfaceClassName" desc="Prop on BottomSheet and CenterPopup. Overrides the default bg class. Pass both tokens together for premium" />
+          <TokenRow token="When premium" desc="BuyCreditsSheet. Signals transaction/reward. Never for destructive or neutral sheets" />
         </div>
       </div>
 

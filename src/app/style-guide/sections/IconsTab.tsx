@@ -98,6 +98,7 @@ export default function IconsTab({ onSectionVisible }: { onSectionVisible: (id: 
             <p className="font-semibold text-text-title mb-xxs">Shared icon components</p>
             <p><code className="text-accent-light">{'<InfoIcon size={14} className="text-white-40" />'}</code> — info circle, used in SectionTitle + Streak + DormancyBanner</p>
             <p><code className="text-accent-light">{'<ChevronIcon direction="down|up|left|right" size={12} />'}</code> — chevrons, used in toggles + link arrows + step headers</p>
+            <p><code className="text-accent-light">{'<ExternalLinkIcon size={12} />'}</code> — arrow-up-right, used in Footer links + CreditHero &ldquo;Manage subscription&rdquo;</p>
           </div>
           <div className="w-full grid grid-cols-6 gap-m">
             {([
