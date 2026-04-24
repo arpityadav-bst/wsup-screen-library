@@ -1,5 +1,5 @@
 # Visual Designer — Design Decisions
-Last updated: 2026-04-23
+Last updated: 2026-04-24
 
 Every design decision and its reasoning. New decisions are appended as screens are built.
 
@@ -7,6 +7,28 @@ Every design decision and its reasoning. New decisions are appended as screens a
 
 | Decision | Reasoning |
 |---|---|
+| Profile login copy extracted to `ProfileLoginGate` wrapper | Header + BottomNav both triggered the same LoginSheet with identical profile headline/subtitle. One wrapper, one copy source. Future profile-gated triggers compose ProfileLoginGate; ad-hoc triggers compose LoginSheet directly |
+| Mobile LoginSheet logo is 1.5× desktop (72px vs 48px) | Mobile has no competing chrome (no Header, no sidebar), so the floating logo carries more visual weight. On desktop the logo shares the panel with a 60% character image — a bigger logo would compete. Size scales to context |
+| Mobile image must NOT use backdrop-filter: blur on the full container | The first implementation applied backdrop-blur(60px) across inset-0 which blurred the character image itself into a color blob. Fix: remove full-container blur; use only a linear-gradient fade toward the bottom where the form sheet meets. The form sheet keeps its own `backdrop-blur-popup` for the intended surface-over-image effect |
+| Headlines in LoginSheet take no terminal punctuation | Titles, not sentences — applies uniformly ("Sign in to continue", "Let's dive into character creation", "Sign in to access your profile"). Subtitles keep periods since they ARE sentences |
+| Purchase subtitle: "So your credits go to the right account" (was "So we know which account to credit") | Literal accounting language ("credit" as verb) reads like a ledger. The rewrite keeps the same *why* but in plain user English — "credits go to the right account" is unambiguous and warmer |
+| Login gate is a PATTERN, not per-trigger modal copies | The LoginSheet component accepts `headline` + `subtitle` props so each *intent* can adapt copy. One component, N intents. Keeps copy close to the gated action instead of ballooning into separate sheets |
+| Purchase flow gates share ONE message across all 4 steps | User's intent throughout BuyCredits is the same — "credit me." One-time buy, monthly subscribe, pay-in-app, and open-wsup-app all show "Sign in to continue. So we know which account to credit." Splintering into per-step copy would say the same thing four different ways |
+| Login gate subtitle answers "why" directly, not marketing-speak | "So we know which account to credit" is literal and functional. Earlier draft "Top up your credits and keep the conversation going" sold the product instead of answering the question the gate raises. When a user is interrupted by a gate, they want to know why — not be pitched |
+| Gated action resumes itself post-sign-in (no re-click required) | User clicks "Continue on Patreon" → LoginSheet opens → user signs in → sheet closes AND flow advances to result. Making them tap Continue again would punish them for being unauthenticated — classic re-entry friction |
+| Sign-in handled by either email submit OR Google click (dev handoff) | Both paths call the same `onSignIn`. Flipping `isLoggedIn=true` is the only real effect. Production would swap in real OAuth + email flows — the shape of the contract stays the same |
+| AuthContext stores only isLoggedIn for now | Dev handoff project. No profile data, tokens, or session state — just a boolean. When real auth lands, context expands without the consumer API changing for isLoggedIn-only checks |
+| Header avatar swaps inline SVG geometric placeholder → profile-picture.jpg when logged in | Logged-out state keeps the generic geometric avatar (signal: you're a guest); logged-in state shows a real face (signal: this is your account). Same 32×32 slot, no layout shift |
+| Login sheet: desktop = 2-col modal (form left, image right); mobile = bottom sheet (image fades into form above) | The character image frames the brand/mood in both; layout adapts to the device's dominant axis. Don't try to shoehorn the desktop split into a stacked mobile layout — the image-above-form is the mobile idiom |
+| Desktop LoginSheet form uses 40/60 split + left-aligned content | Image is the hero at 60% — the face sells the product. Form at 40% is focused and scannable from top-left (natural reading entry). Center alignment reads as a utility modal; left alignment reads as a branded page moment |
+| Desktop LoginSheet uses the W mark only, not the full wordmark | The modal already brands itself through the character image on the right. Adding the wordmark makes the form panel busy; the W mark alone is enough to anchor identity |
+| ChatBar typing state: mic hidden, image replaced by send icon in bottom-right slot | Once the user starts typing, the intent shifts from "what do I want to do?" to "send this message." Voice and image become irrelevant; send becomes the primary affordance. Gift stays — it's a flex distinct from the send path. Send slots into image's position so the eye doesn't track a new location |
+| ChatBar expands to a 2-row composer on input focus | Progressive disclosure — options (model picker, reorganized media actions) only appear when the user is actively composing. Inactive state stays slim; active state surfaces controls at the moment they're relevant |
+| ChatBar stays expanded while input has a value | Collapsing after blur on a half-typed message would flicker the layout and hide the model picker mid-thought. Non-empty input == still composing |
+| Bulb-circle moves from row-1 (inactive) to row-2 (active, next to Claude pill) | Row 2 becomes the "generation context" group — bulb (auto-suggest) + model picker live together. Keeps row 1 focused on the message itself |
+| Image icon reflows from top-right to bottom-right when expanded | In inactive state, media actions are peers in a single row. When expanded, the right column mirrors the left's two-row structure — attach-image pairs with the model row, send-affordances (mic, gift) stay up top with the text |
+| Action buttons use `onMouseDown preventDefault` to keep input focused | Clicking the Claude pill or bulb in expanded state would otherwise blur the input and collapse the composer. Focus belongs to the message being composed |
+| Claude pill uses `rounded-pill` + `backdrop-blur-popup bg-black-30` + white-10 border | Distinct surface treatment (blurred dark chip) from the bubble — signals "this is a control I can tap to change the model", not decoration |
 | Monthly subscription skips Payment + Scan steps | Patreon handles auth + payment off-site. The flow shape mirrors the real trust boundary — don't pad it with WSUP-hosted steps that do nothing |
 | +10% bonus shown via strikethrough `~~1000~~ 1100`, not per-row badges | Badges label the promise; strikethrough SHOWS the value. The real numbers do the selling |
 | Strikethrough original appears AFTER the primary value | Placing it before creates space between the credit icon and the meaningful number — icon adjacency matters |

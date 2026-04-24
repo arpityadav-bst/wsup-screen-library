@@ -10,6 +10,7 @@ import ChatMessages from '@/components/chat/ChatMessages'
 import ChatBar from '@/components/chat/ChatBar'
 import ChatRightSidebar from '@/components/chat/ChatRightSidebar'
 import DormancyBanner from '@/components/chat/DormancyBanner'
+import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 
 const CHARACTER_IMAGE = '/chars/char5.webp'
 const CHARACTER_AVATAR = '/chars/avatars/char5.jpg'
@@ -113,33 +114,21 @@ export default function ChatPage() {
         <ChatRightSidebar />
       </main>
 
-      {/* State toggle — press R to show/hide, Shift+R to cycle states */}
-      {showToggle && (
-        <div className="fixed bottom-m right-m z-[70] flex flex-col gap-xxs bg-secondary-surface backdrop-blur-popup rounded-card p-s shadow-big border border-white-10"
-          style={{ animation: 'fade-in 0.15s ease-out' }}
-        >
-          <span className="text-xxs font-semibold text-text-dim uppercase tracking-[0.8px] mb-xxs">
-            State · <span className="text-text-xxsmall normal-case">R toggle · Shift+R cycle · C creator</span>
-          </span>
-          <label className="flex items-center gap-xxs text-xs text-text-small cursor-pointer mb-xxs">
-            <input type="checkbox" checked={isCreator} onChange={() => setIsCreator(prev => !prev)} className="cursor-pointer" />
-            Creator view
-          </label>
-          {STATES.map((state) => (
-            <button
-              key={state}
-              onClick={() => setCharacterState(state)}
-              className={`text-left px-s py-xxs rounded-button text-xs cursor-pointer border-none transition-colors ${
-                characterState === state
-                  ? 'bg-accent text-text-title font-medium'
-                  : 'bg-transparent text-text-small hover:bg-white-10'
-              }`}
-            >
-              {STATE_LABELS[state]}
-            </button>
-          ))}
-        </div>
-      )}
+      <DevStateToggle open={showToggle} title="State" hint="R toggle · Shift+R cycle · C creator">
+        <label className="flex items-center gap-xxs text-xs text-text-small cursor-pointer mb-xxs">
+          <input type="checkbox" checked={isCreator} onChange={() => setIsCreator(prev => !prev)} className="cursor-pointer" />
+          Creator view
+        </label>
+        {STATES.map((state) => (
+          <DevStateOption
+            key={state}
+            active={characterState === state}
+            onClick={() => setCharacterState(state)}
+          >
+            {STATE_LABELS[state]}
+          </DevStateOption>
+        ))}
+      </DevStateToggle>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import BottomSheet from '@/components/ui/BottomSheet'
 import CenterPopup from '@/components/ui/CenterPopup'
 import CreditsSummaryPill from '@/components/ui/CreditsSummaryPill'
@@ -9,9 +9,12 @@ import Button from '@/components/ui/Button'
 import Checkbox from '@/components/ui/Checkbox'
 import ChevronIcon from '@/components/ui/ChevronIcon'
 import ResultVariantToggle from '@/components/ui/ResultVariantToggle'
+import LoginSheet from '@/components/ui/LoginSheet'
+import { ScanQRStep, FinishInAppStep } from '@/components/ui/BuyCreditsScanSteps'
 import BuyCreditsResultStep, { type ResultVariant, type ResultMode } from '@/components/ui/BuyCreditsResultStep'
 import BuyCreditsPackagesStep, { type CreditPack, applyMonthlyBonus } from '@/components/ui/BuyCreditsPackagesStep'
 import type { PackMode } from '@/components/ui/PackModeToggle'
+import { useAuth } from '@/lib/AuthContext'
 
 interface BuyCreditsSheetProps {
   open: boolean
@@ -96,68 +99,6 @@ function PaymentStep({ pack, onBack, onClose, onContinue }: { pack: CreditPack; 
   )
 }
 
-function ScanQRStep({ pack, onBack, onClose, onComplete }: { pack: CreditPack; onBack: () => void; onClose: () => void; onComplete: () => void }) {
-  return (
-    <>
-      <StepHeader title="Scan to pay" onBack={onBack} onClose={onClose} />
-      <div className="flex-1 flex flex-col gap-l items-center px-l pb-l">
-        <CreditsSummaryPill credits={pack.credits} price={pack.priceAmount} />
-        <p className="text-sm text-text-body text-center">Scan the QR code to get the wsup app and continue buying credits!</p>
-        <button
-          onClick={onComplete}
-          aria-label="Simulate successful scan"
-          title="Demo: click to simulate successful payment"
-          className="bg-white rounded-button p-l flex items-center justify-center size-[232px] border-none cursor-pointer hover:opacity-90 transition-opacity"
-        >
-          <Image src="/qr-placeholder.png" alt="QR code" width={148} height={148} className="object-contain" />
-        </button>
-        <div className="flex gap-l w-full mt-auto">
-          <button
-            onClick={onBack}
-            className="flex-1 px-m py-xs rounded-pill text-sm font-medium text-white-80 bg-white-10 border border-white-10 backdrop-blur-[32px] cursor-pointer hover:opacity-90 transition-opacity"
-          >
-            Back
-          </button>
-          <button
-            onClick={onClose}
-            className="flex-1 px-m py-xs rounded-pill text-sm font-medium text-white-80 bg-white-10 border border-white-10 backdrop-blur-[32px] cursor-pointer hover:opacity-90 transition-opacity"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </>
-  )
-}
-
-function FinishInAppStep({ pack, onBack, onClose, onComplete }: { pack: CreditPack; onBack: () => void; onClose: () => void; onComplete: () => void }) {
-  return (
-    <>
-      <StepHeader title="Finish in the app" onBack={onBack} onClose={onClose} />
-      <div className="flex-1 flex flex-col px-l pb-l">
-        <div className="flex-1 flex flex-col items-center justify-center gap-m rounded-card border border-white-10 p-l">
-          <div className="size-[96px] rounded-[20px] overflow-hidden shrink-0 relative shadow-normal">
-            <Image src="/app-icon.png" alt="wsup" fill className="object-cover" />
-          </div>
-          <div className="flex flex-col items-center gap-xxs">
-            <span className="text-lg font-semibold text-text-title">wsup app</span>
-            <span className="text-sm text-text-body">{pack.credits} credits · {pack.priceAmount}</span>
-          </div>
-        </div>
-        <div className="mt-m flex flex-col gap-s">
-          <Button fullWidth className="gap-xxs" onClick={onComplete}>
-            <span>Open wsup app</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
-              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Button>
-          <Button variant="secondary" fullWidth>Don&apos;t have it? Get the app</Button>
-        </div>
-      </div>
-    </>
-  )
-}
-
 interface FlowBodyProps {
   step: Step
   pack: CreditPack | null
@@ -171,9 +112,10 @@ interface FlowBodyProps {
   scanVariant: 'qr' | 'app'
   resultVariant: ResultVariant
   resultMode: ResultMode
+  gateAction: (action: () => void, headline: ReactNode, subtitle: string) => void
 }
 
-function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep, setPack, onClose, scanVariant, resultVariant, resultMode }: FlowBodyProps) {
+function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep, setPack, onClose, scanVariant, resultVariant, resultMode, gateAction }: FlowBodyProps) {
   if (step === 'packages') {
     return (
       <BuyCreditsPackagesStep
@@ -182,26 +124,43 @@ function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep,
         onModeChange={setMode}
         selectedPackId={selectedId}
         onSelectPack={(p) => { setSelected(p.id); setPack(p) }}
-        onOneTimeBuy={(p) => { setPack(p); setStep('payment') }}
-        onMonthlyContinue={() => {
-          const selected = PACKS.find(p => p.id === selectedId)
-          if (selected) {
-            const { credits } = applyMonthlyBonus(selected)
-            setPack({ ...selected, credits })
-            setStep('result')
-          }
-        }}
+        onOneTimeBuy={(p) => gateAction(
+          () => { setPack(p); setStep('payment') },
+          <>Sign in to continue</>,
+          'So your credits go to the right account.',
+        )}
+        onMonthlyContinue={() => gateAction(
+          () => {
+            const selected = PACKS.find(p => p.id === selectedId)
+            if (selected) {
+              const { credits } = applyMonthlyBonus(selected)
+              setPack({ ...selected, credits })
+              setStep('result')
+            }
+          },
+          <>Sign in to continue</>,
+          'So your credits go to the right account.',
+        )}
         header={<StepHeader title="Buy credits" onClose={onClose} />}
       />
     )
   }
   if (step === 'payment' && pack) {
-    return <PaymentStep pack={pack} onBack={() => setStep('packages')} onClose={onClose} onContinue={() => setStep('scan')} />
+    return <PaymentStep pack={pack} onBack={() => setStep('packages')} onClose={onClose} onContinue={() => gateAction(
+      () => setStep('scan'),
+      <>Sign in to continue.</>,
+      'So we know which account to credit.',
+    )} />
   }
   if (step === 'scan' && pack) {
-    return scanVariant === 'qr'
-      ? <ScanQRStep pack={pack} onBack={() => setStep('payment')} onClose={onClose} onComplete={() => setStep('result')} />
-      : <FinishInAppStep pack={pack} onBack={() => setStep('payment')} onClose={onClose} onComplete={() => setStep('result')} />
+    const gatedComplete = () => gateAction(
+      () => setStep('result'),
+      <>Sign in to continue.</>,
+      'So we know which account to credit.',
+    )
+    const StepComp = scanVariant === 'qr' ? ScanQRStep : FinishInAppStep
+    const stepTitle = scanVariant === 'qr' ? 'Scan to pay' : 'Finish in the app'
+    return <StepComp pack={pack} onBack={() => setStep('payment')} onClose={onClose} onComplete={gatedComplete} header={<StepHeader title={stepTitle} onBack={() => setStep('payment')} onClose={onClose} />} />
   }
   if (step === 'result' && pack) {
     return (
@@ -219,6 +178,12 @@ function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep,
   return null
 }
 
+interface LoginGate {
+  headline: ReactNode
+  subtitle: string
+  resume: () => void
+}
+
 export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps) {
   const [step, setStep] = useState<Step>('packages')
   const [pack, setPack] = useState<CreditPack | null>(null)
@@ -226,8 +191,22 @@ export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps)
   const [selectedId, setSelectedId] = useState<string | null>(DEFAULT_SELECTED_ID)
   const [resultVariant, setResultVariant] = useState<ResultVariant>('success') // production: set by payment callback
   const [showToggle, setShowToggle] = useState(false)
+  const [loginGate, setLoginGate] = useState<LoginGate | null>(null)
+  const { isLoggedIn, login } = useAuth()
 
   const resultMode: ResultMode = mode === 'monthly' ? 'subscription' : 'one-time'
+
+  const gateAction = (action: () => void, headline: ReactNode, subtitle: string) => {
+    if (isLoggedIn) action()
+    else setLoginGate({ headline, subtitle, resume: action })
+  }
+
+  const handleSignIn = () => {
+    const resume = loginGate?.resume
+    login()
+    setLoginGate(null)
+    resume?.()
+  }
 
   useEffect(() => {
     if (!open) {
@@ -236,6 +215,7 @@ export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps)
       setMode(DEFAULT_MODE)
       setSelectedId(DEFAULT_SELECTED_ID)
       setShowToggle(false)
+      setLoginGate(null)
     }
   }, [open])
 
@@ -257,7 +237,7 @@ export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps)
 
   const bodyProps = {
     step, pack, mode, setMode, selectedId, setSelected: setSelectedId,
-    setStep, setPack, onClose, resultVariant, resultMode,
+    setStep, setPack, onClose, resultVariant, resultMode, gateAction,
   }
 
   return (
@@ -273,6 +253,14 @@ export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps)
           <FlowBody {...bodyProps} scanVariant="qr" />
         </div>
       </CenterPopup>
+
+      <LoginSheet
+        open={loginGate !== null}
+        onClose={() => setLoginGate(null)}
+        onSignIn={handleSignIn}
+        headline={loginGate?.headline}
+        subtitle={loginGate?.subtitle}
+      />
 
       {open && step === 'result' && showToggle && (
         <ResultVariantToggle variant={resultVariant} onChange={setResultVariant} />

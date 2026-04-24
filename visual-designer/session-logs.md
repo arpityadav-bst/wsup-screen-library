@@ -1,7 +1,54 @@
 # Visual Designer — Session Logs
-Last updated: 2026-04-23
+Last updated: 2026-04-24
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 19 — 2026-04-24 (ChatBar active state + LoginSheet pattern + auth gating)
+**Scope:** Multiple new patterns + 3 new primitives + cross-flow auth gating. All 8 gates.
+
+**What shipped:**
+- **ChatBar active/focused state** — input focus expands the single-row composer into a two-row layout: row 1 sparkle + input | mic + gift; row 2 bulb-circle + "Claude 4.5 Opus" model pill | image. Click-outside collapses. Stays expanded while input has value to avoid mid-compose flicker.
+- **ChatBar typing state** — once `value.length > 0`, mic hidden, image swapped for send-icon (new `/icons/icon-send.svg`, Figma asset). Gift stays.
+- **AuthContext** (`src/lib/AuthContext.tsx`) — minimal `{ isLoggedIn, login, logout, setIsLoggedIn }`. Wrapped at `app/layout.tsx`.
+- **EmailField primitive** — pill input (`bg-white-10 rounded-popup px-m py-icon-btn`) with inline arrow submit. Not a FormInput variant (that's a labeled form field) — distinct UX.
+- **GoogleSignIn primitive** — white pill with the official Google G glyph + label prop (defaults to "Login with Google").
+- **LoginSheet pattern** — responsive auth gate. Desktop: 720×420 modal, 40/60 split, form left (dark `bg-footer-bg` with subtle `bg-surface-premium` overlay, `border-white-20`), character image right (top-aligned, radial dark gradient in top-right for close-icon contrast). Mobile: bottom-sheet with image + radial fade above, form below. Logo is the colored W mark (`/wsup-logo.svg`, fetched from Figma). Copy is prop-driven.
+- **LoginSheet gating** — BuyCreditsSheet's four progression CTAs (one-time buy, Continue on Patreon, Continue to pay in app, Open wsup app) all gated through one `gateAction` helper. Copy unified: "Sign in to continue." / "So we know which account to credit." Header profile icon (logged-out) opens LoginSheet with: "Sign in to access your profile." / "So we can save your characters, chats and credits."
+- **Header avatar** — logged-in shows `/profile-picture.jpg` linked to `/profile`; logged-out is a button that opens LoginSheet.
+- **Explore R-key toggle** — mirrors Chat's R/Shift+R pattern for a Logged-in/Not-logged-in dev switcher.
+- **Split of BuyCreditsSheet** — extracted `BuyCreditsScanSteps` (ScanQRStep + FinishInAppStep) to stay under the 300-line cap after gating code was added.
+- **CloseButton shared primitive** — replaced inline X buttons in BottomSheet, CenterPopup, ConfirmSheet, and LoginSheet. Reduced a 4-way duplication; 6+ banner/sidebar close-buttons remain as future cleanup.
+- **DevStateToggle shared primitive** (+ `DevStateOption`) — replaced the three per-page floating dev toggles (Chat character state, Explore auth, Profile data mode). One panel shape, one option style.
+
+**Corrections received:**
+- "Send icon should be exactly like this" → replaced stand-in paper-plane SVG with the Figma-authored path (15×15 viewbox in a 20×20 container via `translate(2.5 2.5)`).
+- "Profile icon on not logged in shouldn't navigate" → split the Header avatar into Link (logged-in) / button (logged-out → opens LoginSheet) branches.
+- "Image top right needs slightly darker gradient for close-icon visibility" → added a radial gradient overlay in the image panel's top-right; dropped the `backdrop-blur-bg bg-black-30` on the button itself.
+- "Login popup needs stroke and darker bg without blur" → `border-white-10 → border-white-20`; form panel `bg-profile-sheet-bg bg-surface-premium → bg-footer-bg` (temporarily).
+- "Include the subtle gradient from the reference" → re-added `bg-surface-premium` over `bg-footer-bg` — gives the soft colored hints on the darker base.
+- "Decrease the login popup size" → 848×461 → 720×420.
+- "Remove Your Privacy Choices, make Terms and Privacy Policy subtle" → footer collapsed to a single `<p>`; Terms/Privacy demoted from `text-white`/`text-white-90` to `text-white-40`.
+- "Content should spread evenly" → form panel restructured into 3 flex children (logo / copy+inputs group / footer) with `justify-between`, matching Figma Auto Layout distribute.
+- "Only the logo is required" and "the real logo, not the app-icon" → replaced LogoMark asset twice: `/app-icon.png` → `/logo.png` (wordmark) → `/wsup-logo.svg` (the colored W mark alone, fetched from Figma).
+- "Copy should reflect the purchase intent" → collapsed per-step BuyCredits gate copy ("Sign in to buy credits" / "Sign in to subscribe" / "Almost there" / "Finish checkout") into one message: "Sign in to continue." / "So we know which account to credit."
+
+**Gate audit at session close:**
+- Gate 1 (Tokens): EmailField raw `rounded-[24px]`, `py-[10px]`, `gap-[10px]` → tokenized to `rounded-popup`, `py-icon-btn`, `gap-icon-btn`. LoginSheet `text-[24px]` → `text-2xl`. `-top-[20px]` (logo float) kept as accepted structural one-off.
+- Gate 2 (Reuse): FormInput considered for EmailField; rejected — different UX (labeled form vs pill+submit). BottomSheet/CenterPopup considered for LoginSheet; rejected — desktop 2-col layout is too structurally different.
+- Gate 3 (Componentize@2): CloseButton (4-way in modal family) and DevStateToggle (3-way in dev panels) both extracted.
+- Gate 4 (Patternize@2): LoginSheet registered as a new Patterns entry.
+- Gate 5 (Style guide): AuthPrimitivesSection (Components) + LoginSheetSection (Patterns) + ChatBar typing state preview all added. Nav arrays updated.
+- Gate 6 (VDA): decisions.md (9+ entries this session), knowledge-base.md (LoginSheet pattern, ChatBar active-state, purchase copy rule), taste.md (4 principles: composer controls appear on focus; row 2 is the generation context row; login gate explains *why*; character imagery anchors auth surfaces).
+- Gate 7 (Consistency): R-key dev toggle pattern matched Chat; CloseButton visual matched existing modal close styles; purchase-flow copy unified across gates.
+- Gate 8 (UX review): Terms/Privacy at `text-white-40` — slight emphasis over surrounding `text-white-20`, still in legal-fine-print territory; verified readable.
+
+**Learned:**
+- When a pattern's ≥3 uses are quietly copy-pasted across pages (dev toggles), the right time to extract is when the 3rd use arrives — any later and the drift starts to pile up.
+- Login-gate copy is intent-scoped, not action-scoped. All four BuyCredits progressions share one intent ("credit me"), so one message covers them. Splintering produced 4 restatements of the same idea.
+- Desktop form panels with `justify-between` + 3 flex children approximate Figma's Auto Layout "distribute" cleanly — easier than computing exact margins.
+- The user's "no blur" was about removing soft glowy gradients, not removing all color. Re-adding `bg-surface-premium` over a darker base satisfied both "subtle gradient" and "darker bg" in one move.
 
 ---
 

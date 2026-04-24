@@ -1,7 +1,101 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-04-23
+Last updated: 2026-04-24
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
+
+---
+
+## Layout technique: flex + justify-between = Figma auto-layout "distribute"
+
+When Figma's Auto Layout is set to "space between" with N children (typical: logo top, content middle, footer bottom), the Tailwind equivalent is `flex flex-col justify-between` on the parent. Each child becomes a distribution slot. Group related middle content into one wrapper (`flex flex-col gap-l`) so it distributes as a single unit.
+
+**Example (desktop LoginSheet form panel):**
+```tsx
+<div className="flex flex-col justify-between px-l pt-l pb-l">
+  <LogoMark />                                  {/* top */}
+  <div className="flex flex-col gap-l">          {/* middle group */}
+    <CopyBlock />
+    <InputBlock />
+  </div>
+  <LegalFooter />                                {/* bottom */}
+</div>
+```
+
+**When to use:** any panel/sheet where corners-anchored content with free-flowing middle reads cleaner than hand-computed margins. Do NOT use when you want exact spacing — use `gap-*` tokens instead.
+
+---
+
+## Login gate pattern — CONFIRMED (Session 19)
+
+`LoginSheet` (`src/components/ui/LoginSheet.tsx`) is the canonical auth gate. Applied to any action that requires a logged-in user: Buy credits flow progressions (one-time buy, monthly continue, pay in app, open wsup app), future character-save actions, etc.
+
+**Shape:**
+- Desktop: centered `max-w-[848px] h-[461px]` 2-col modal with a **40/60 split** — form on the left (40%), character image on the right (60%). Form content is **left-aligned**: W icon (app-icon) at top-left, headline / subtitle / inputs / footer all `text-left items-start`. Close button floats on the image.
+- Mobile: full-viewport container with character image + radial blur/fade at the top; form sheet (`h-[380px]`, `rounded-tl-popup rounded-tr-popup`, `backdrop-blur-popup` over `bg-profile-sheet-bg bg-surface-premium`) sits on top. LogoMark floats at `-top-[20px]`, form content is **center-aligned**.
+- Shared `FormContent` with `align: 'start' | 'center'` prop drives the alignment difference. Same content, same order: LogoMark → headline (24px semibold, 2 lines) → subtitle (gradient text) → EmailField → OR divider → GoogleSignIn → LegalFooter (Terms + Privacy Policy + Privacy Choices badge).
+
+**Props:** `open`, `onClose`, `onSignIn`, optional `headline` (ReactNode), `subtitle` (string), `characterImage` (string path). Defaults to "Let's dive into character creation." for first-time/character-creation triggers.
+
+**Usage pattern (gated action):**
+```ts
+const gateAction = (action, headline, subtitle) => {
+  if (isLoggedIn) action()
+  else setLoginGate({ headline, subtitle, resume: action })
+}
+const handleSignIn = () => {
+  const resume = loginGate?.resume
+  login()
+  setLoginGate(null)
+  resume?.()  // auto-continue the original action post-login
+}
+```
+
+**Supporting primitives:**
+- `EmailField` (`src/components/ui/EmailField.tsx`) — pill input + arrow submit button. Reusable.
+- `GoogleSignIn` (`src/components/ui/GoogleSignIn.tsx`) — white pill with Google G glyph. Reusable.
+- `AuthContext` (`src/lib/AuthContext.tsx`) — provides `isLoggedIn` / `login()` / `logout()`. Wrapped at `app/layout.tsx`.
+
+**Copy per trigger (current consumers):**
+- Entire purchase flow (one-time pack buy, monthly subscribe, payment continue, scan/result continue): "Sign in to continue" / "So your credits go to the right account."
+- Header / BottomNav profile icon (logged-out): "Sign in to access your profile" / "So we can save your characters, chats and credits."
+- Default (new-user flows like character creation): "Let's dive into character creation" / "Create detailed characters and bring them to life."
+
+**Copy rules:**
+- Headlines have NO terminal punctuation (no full stop) — they're UI titles, not sentences.
+- Subtitles can end with a period — they're explanatory sentences.
+
+**Copy principle:** One copy per user *intent*, not per button. All four BuyCredits gates share one message because the user's intent is the same throughout the purchase — "credit me." Don't splinter copy into per-step variants that say the same thing differently.
+
+---
+
+## ChatBar active-state expansion — CONFIRMED (Session 19)
+
+The WSUP chat composer has two states, switched by input focus.
+
+**Inactive (single row):**
+`[bulb-circle] [sparkle] [Message input] | [image] [mic] [gift]`
+
+**Active / expanded (two rows inside the bubble):**
+- Row 1: `[sparkle] [input with cursor]` on the left  |  `[mic] [gift]` on the right
+- Row 2: `[bulb-circle] [Claude 4.5 Opus pill ›]` on the left  |  `[image]` on the right
+
+**Typing (expanded + `value.length > 0`):**
+- Row 1 right becomes just `[gift]` — mic is hidden
+- Row 2 right replaces `[image]` with `[send]` — same slot, new primary affordance
+- Rationale: voice and image become irrelevant once the user is composing; send is the intent
+
+**State transitions:**
+- Input `onFocus` → expanded
+- Click outside the wrapper → collapsed (via `mousedown` document listener)
+- While input has a value → stays expanded (prevents flicker mid-compose)
+
+**Layout mechanics:**
+- Wrapper flips `items-center` (inactive) ↔ `items-start` (active)
+- Right column flips `flex-row` (inactive) ↔ `flex-col justify-between self-stretch` (active) — this pushes image to the bottom to mirror the left column's two-row height
+- Action buttons use `onMouseDown={(e) => e.preventDefault()}` to keep the input focused when tapped
+
+**Model picker pill (active-only):**
+`backdrop-blur-popup bg-black-30 border border-white-10 rounded-pill px-xs py-[2px] shadow-popup` with `text-xs text-white-90` label and a 4×8 chevron SVG. This is the surface treatment for "tap to change the generation context" chips — distinct from the bubble itself.
 
 ---
 

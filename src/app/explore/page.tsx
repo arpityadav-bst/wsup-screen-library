@@ -1,6 +1,11 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Button from '@/components/ui/Button'
 import Header from '@/components/shared/Header'
 import Sidebar from '@/components/shared/Sidebar'
+import { useAuth } from '@/lib/AuthContext'
+import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 import CategoryTabs from '@/components/shared/CategoryTabs'
 import CharacterCard from '@/components/shared/CharacterCard'
 import WhatIsWsup from '@/components/shared/WhatIsWsup'
@@ -98,6 +103,21 @@ const characters = [
 ]
 
 export default function ExplorePage() {
+  const { isLoggedIn, setIsLoggedIn } = useAuth()
+  const [showAuthToggle, setShowAuthToggle] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      if (e.key === 'r' || e.key === 'R') {
+        if (e.shiftKey) setIsLoggedIn(!isLoggedIn)
+        else setShowAuthToggle(prev => !prev)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [isLoggedIn, setIsLoggedIn])
+
   return (
     <div className="min-h-screen bg-page-bg">
       <Header />
@@ -171,6 +191,17 @@ export default function ExplorePage() {
       </main>
 
       <BottomNav />
+
+      <DevStateToggle open={showAuthToggle} title="Auth" hint="R toggle · Shift+R flip">
+        {[
+          { label: 'Logged in', value: true },
+          { label: 'Not logged in', value: false },
+        ].map(({ label, value }) => (
+          <DevStateOption key={label} active={isLoggedIn === value} onClick={() => setIsLoggedIn(value)}>
+            {label}
+          </DevStateOption>
+        ))}
+      </DevStateToggle>
     </div>
   )
 }

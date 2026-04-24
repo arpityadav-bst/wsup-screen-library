@@ -2,6 +2,7 @@
 
 import ButtonsSection from './components/ButtonsSection'
 import FormsSection from './components/FormsSection'
+import AuthPrimitivesSection from './components/AuthPrimitivesSection'
 import TagsCardsSection from './components/TagsCardsSection'
 import CoachmarkSection from './components/CoachmarkSection'
 import CharacterCardSection from './components/CharacterCardSection'
@@ -21,6 +22,7 @@ export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: 
     <>
       <ButtonsSection onSectionVisible={onSectionVisible} />
       <FormsSection onSectionVisible={onSectionVisible} />
+      <AuthPrimitivesSection onSectionVisible={onSectionVisible} />
       <TagsCardsSection onSectionVisible={onSectionVisible} />
       <CoachmarkSection onSectionVisible={onSectionVisible} />
       <CharacterCardSection onSectionVisible={onSectionVisible} />

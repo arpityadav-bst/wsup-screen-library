@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import Button from '@/components/ui/Button'
 import BottomSheet from '@/components/ui/BottomSheet'
+import CloseButton from '@/components/ui/CloseButton'
 
 interface ConfirmSheetProps {
   open: boolean
@@ -56,14 +57,7 @@ function DesktopConfirm({ open, onClose, onConfirm, title, description, confirmL
       >
         <div className="flex items-start justify-between pt-m px-xl">
           <p className="font-semibold text-base text-text-title">{title}</p>
-          <button
-            onClick={onClose}
-            className="p-icon-btn -mr-icon-btn -mt-xxs rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+          <CloseButton onClose={onClose} className="-mr-icon-btn -mt-xxs" />
         </div>
         <div className="px-xl pt-xs pb-xl">
           <p className="text-sm text-text-body leading-normal">{description}</p>

@@ -6,11 +6,15 @@ import SearchBar from '@/components/shared/SearchBar'
 import SpicyToggle from '@/components/shared/SpicyToggle'
 import CreditSidebar from '@/components/shared/CreditSidebar'
 import BuyCreditsSheet from '@/components/ui/BuyCreditsSheet'
+import ProfileLoginGate from '@/components/shared/ProfileLoginGate'
+import { useAuth } from '@/lib/AuthContext'
 
 export default function Header() {
   const [spicy, setSpicy] = useState(false)
   const [creditsOpen, setCreditsOpen] = useState(false)
   const [buyOpen, setBuyOpen] = useState(false)
+  const [loginOpen, setLoginOpen] = useState(false)
+  const { isLoggedIn } = useAuth()
 
   useEffect(() => {
     const openSidebar = () => setCreditsOpen(true)
@@ -55,14 +59,25 @@ export default function Header() {
           <Image src="/trophy.png" alt="Leaderboard" width={25} height={25} className="object-contain" />
         </button>
 
-        {/* User avatar */}
-        <Link href="/profile" className="hidden md:flex w-8 h-8 items-center justify-center border border-header-icon-border rounded-full hover:bg-header-icon-hover-bg transition-colors">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ borderRadius: '50%', overflow: 'hidden' }}>
-            <circle cx="16" cy="16" r="16" fill="transparent"/>
-            <circle cx="16" cy="12" r="5.5" fill="var(--avatar-fill)"/>
-            <ellipse cx="16" cy="30" rx="11.5" ry="8" fill="rgba(255,255,255,0.1)"/>
-          </svg>
-        </Link>
+        {/* User avatar — link to profile when logged in, opens LoginSheet when not */}
+        {isLoggedIn ? (
+          <Link href="/profile" className="hidden md:flex w-8 h-8 items-center justify-center border border-header-icon-border rounded-full hover:bg-header-icon-hover-bg transition-colors overflow-hidden">
+            <Image src="/profile-picture.jpg" alt="Profile" width={32} height={32} className="object-cover w-full h-full" />
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setLoginOpen(true)}
+            aria-label="Sign in"
+            className="hidden md:flex w-8 h-8 items-center justify-center border border-header-icon-border rounded-full hover:bg-header-icon-hover-bg transition-colors overflow-hidden bg-transparent cursor-pointer p-0"
+          >
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ borderRadius: '50%', overflow: 'hidden' }}>
+              <circle cx="16" cy="16" r="16" fill="transparent"/>
+              <circle cx="16" cy="12" r="5.5" fill="var(--avatar-fill)"/>
+              <ellipse cx="16" cy="30" rx="11.5" ry="8" fill="rgba(255,255,255,0.1)"/>
+            </svg>
+          </button>
+        )}
 
         {/* Credits */}
         <button onClick={() => setCreditsOpen(true)} className="relative flex items-center hover:opacity-90 transition-opacity" style={{ height: '32px' }}>
@@ -95,6 +110,7 @@ export default function Header() {
     </header>
     <CreditSidebar open={creditsOpen} onClose={() => setCreditsOpen(false)} />
     <BuyCreditsSheet open={buyOpen} onClose={() => setBuyOpen(false)} />
+    <ProfileLoginGate open={loginOpen} onClose={() => setLoginOpen(false)} />
     </>
   )
 }

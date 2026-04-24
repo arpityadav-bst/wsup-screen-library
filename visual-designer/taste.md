@@ -1,5 +1,27 @@
 # Visual Designer — Taste Profile
-Last updated: 2026-04-23
+Last updated: 2026-04-24
+
+### Adapt pattern to the device's dominant axis
+The same content can have two layouts — horizontal on desktop (where width is plentiful), vertical on mobile (where height is plentiful). LoginSheet is a 40/60 left-form / right-image modal on desktop and a bottom-sheet with image-above-form on mobile. Same content, same order, different axis. Don't shoehorn the desktop split into a stacked mobile layout or vice versa — each axis has its own reading flow; the pattern should follow it.
+
+### Scale UI weight to its context, not to a fixed rulebook
+A 48px logo that feels right on desktop (where it shares the panel with a 60% character image) is undersized on mobile (where it floats alone above a form sheet with no competing chrome). Start with what *feels right* in the actual layout, not what matches another viewport's size. The mobile LoginSheet uses a 72px logo precisely because mobile has less chrome to balance it against.
+
+### A login gate should explain *why*, not just *what*
+Every auth-gated action has a reason the user was trying to do something. The LoginSheet's headline reflects that reason ("Sign in to continue", "Sign in to access your profile"). A generic "Please log in" feels punitive and disconnects from the user's intent. Same popup, adapted copy. And when they sign in, the original action resumes automatically — don't make them tap Continue twice.
+
+### Headlines are titles, not sentences — no terminal punctuation
+UI headlines ("Sign in to continue", "Let's dive into character creation") don't end with a full stop. They're labels for a surface, not spoken sentences. Subtitles are explanatory and can end with a period since they're actual sentences. Period-on-headline reads as pedantic and steals rhythm.
+
+### Character imagery anchors every auth surface
+Wsup's brand is characters, not abstract product chrome. The LoginSheet always includes a character image — right panel on desktop, top-fading backdrop on mobile. Even for payment/subscribe flows, the character stays present as a reminder of what the user came for. Pure-form sign-in sheets feel like they belong to a different app.
+
+### Composer controls appear on focus, not by default
+Input bars reveal secondary controls (model picker, send modes, attachments reorg) only when the user is actively composing. Inactive state stays minimal — a single row with the essentials. Active state expands to surface the controls the user needs *at the moment they need them*. This is progressive disclosure applied to chat UI: show the baseline, expand when invoked, collapse when done.
+*Corollary: while the input has text, treat the user as still composing — keep the expanded layout. Collapsing mid-thought flickers the layout and hides controls the user may still want.*
+
+### Row 2 of a composer is the "generation context" row
+When an input bar expands to two rows, row 2 belongs to generation/context controls — model picker, auto-suggest, attach-image, persona. Row 1 stays focused on the message itself (sparkle + text + send-adjacent actions like mic and gift). Don't cram model pickers into a header or a separate settings menu when the composer already has the right visual slot for them.
 
 ### Comparison values sit AFTER the primary value, not before
 When showing a "was / now" pattern (strikethrough original → bonus), the struck-through original goes to the right of the real number, not between the label/icon and the real number. Placing it before creates dead space between the icon and the meaningful value. The eye should land on the icon, then the primary number, then (optionally) the comparison.

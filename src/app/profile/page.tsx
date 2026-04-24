@@ -20,6 +20,7 @@ import MenuSheet, { MenuPopoverItems } from '@/components/profile/MenuSheet'
 import Popover from '@/components/ui/Popover'
 import CharacterMenuSheet, { DormantCharacterMenuSheet } from '@/components/profile/CharacterMenuSheet'
 import LogoutConfirmSheet from '@/components/profile/LogoutConfirmSheet'
+import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 import SocialView from '@/components/profile/SocialView'
 import MyCardsView from '@/components/profile/MyCardsView'
 import ProfileRightSidebar from '@/components/profile/ProfileRightSidebar'
@@ -250,29 +251,13 @@ export default function ProfilePage() {
 
       <BottomNav />
 
-      {/* Data toggle — R to show/hide, Shift+R to cycle */}
-      {showDataToggle && (
-        <div className="fixed bottom-m right-m z-[70] flex flex-col gap-xxs bg-secondary-surface backdrop-blur-popup rounded-card p-s shadow-big border border-white-10"
-          style={{ animation: 'fade-in 0.15s ease-out' }}
-        >
-          <span className="text-xxs font-semibold text-text-dim uppercase tracking-[0.8px] mb-xxs">
-            Data · <span className="text-text-xxsmall normal-case">R toggle · Shift+R cycle</span>
-          </span>
-          {DATA_MODES.map((mode) => (
-            <button
-              key={mode}
-              onClick={() => setDataMode(mode)}
-              className={`text-left px-s py-xxs rounded-button text-xs cursor-pointer border-none transition-colors ${
-                dataMode === mode
-                  ? 'bg-accent text-text-title font-medium'
-                  : 'bg-transparent text-text-small hover:bg-white-10'
-              }`}
-            >
-              {DATA_LABELS[mode]}
-            </button>
-          ))}
-        </div>
-      )}
+      <DevStateToggle open={showDataToggle} title="Data" hint="R toggle · Shift+R cycle">
+        {DATA_MODES.map((mode) => (
+          <DevStateOption key={mode} active={dataMode === mode} onClick={() => setDataMode(mode)}>
+            {DATA_LABELS[mode]}
+          </DevStateOption>
+        ))}
+      </DevStateToggle>
     </div>
   )
 }

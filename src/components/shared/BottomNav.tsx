@@ -1,6 +1,9 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
+import ProfileLoginGate from '@/components/shared/ProfileLoginGate'
+import { useAuth } from '@/lib/AuthContext'
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 
@@ -95,30 +98,49 @@ const activeGradient = 'linear-gradient(90deg, rgba(114,233,241,0.1) 0%, rgba(11
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+const AUTH_GATED_HREFS = new Set(['/profile'])
+
 export default function BottomNav() {
   const pathname = usePathname()
+  const { isLoggedIn } = useAuth()
+  const [loginOpen, setLoginOpen] = useState(false)
+
+  const itemClass = 'flex flex-col items-center gap-[6px] py-s flex-1 min-w-0 cursor-pointer bg-transparent border-none'
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-page-bg border-t border-white-10 flex items-center"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 8px)' }}
-    >
-      {navItems.map(({ label, href, Icon }) => {
-        const active = pathname === href
-        return (
-          <Link
-            key={label}
-            href={href}
-            className="flex flex-col items-center gap-[6px] py-s flex-1 min-w-0"
-            style={active ? { backgroundImage: activeGradient } : undefined}
-          >
-            <Icon active={active} />
-            <span className={`text-xs font-normal leading-none truncate ${active ? 'text-text-title' : 'text-white-50'}`}>
-              {label}
-            </span>
-          </Link>
-        )
-      })}
-    </nav>
+    <>
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-page-bg border-t border-white-10 flex items-center"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 8px)' }}
+      >
+        {navItems.map(({ label, href, Icon }) => {
+          const active = pathname === href
+          const gated = AUTH_GATED_HREFS.has(href) && !isLoggedIn
+          const style = active ? { backgroundImage: activeGradient } : undefined
+          const textCls = `text-xs font-normal leading-none truncate ${active ? 'text-text-title' : 'text-white-50'}`
+          if (gated) {
+            return (
+              <button
+                key={label}
+                type="button"
+                onClick={() => setLoginOpen(true)}
+                className={itemClass}
+                style={style}
+              >
+                <Icon active={active} />
+                <span className={textCls}>{label}</span>
+              </button>
+            )
+          }
+          return (
+            <Link key={label} href={href} className={itemClass} style={style}>
+              <Icon active={active} />
+              <span className={textCls}>{label}</span>
+            </Link>
+          )
+        })}
+      </nav>
+      <ProfileLoginGate open={loginOpen} onClose={() => setLoginOpen(false)} />
+    </>
   )
 }
