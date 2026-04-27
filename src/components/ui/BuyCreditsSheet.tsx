@@ -33,6 +33,10 @@ type Step = 'packages' | 'payment' | 'scan' | 'result'
 
 const CURRENT_BALANCE = 10 // mock existing balance; production: from user state
 const DEFAULT_MODE: PackMode = 'monthly'
+
+// Single gate copy across all 4 payment-progression CTAs (one-time, monthly, payment, scan)
+const GATE_HEADLINE = <>Sign in to continue</>
+const GATE_SUBTITLE = 'Keep your credits across every device.'
 const DEFAULT_SELECTED_ID = 'stack'
 
 const SURFACE_CLASS = 'bg-profile-sheet-bg bg-surface-premium' // solid base + gradient overlay — see Overlays > Surface styles
@@ -119,8 +123,8 @@ function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep,
         onSelectPack={(p) => { setSelected(p.id); setPack(p) }}
         onOneTimeBuy={(p) => gateAction(
           () => { setPack(p); setStep('payment') },
-          <>Sign in to continue</>,
-          'So your credits go to the right account.',
+          GATE_HEADLINE,
+          GATE_SUBTITLE,
         )}
         onMonthlyContinue={() => gateAction(
           () => {
@@ -131,8 +135,8 @@ function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep,
               setStep('result')
             }
           },
-          <>Sign in to continue</>,
-          'So your credits go to the right account.',
+          GATE_HEADLINE,
+          GATE_SUBTITLE,
         )}
         header={<StepHeader title="Buy credits" onClose={onClose} />}
       />
@@ -141,15 +145,15 @@ function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep,
   if (step === 'payment' && pack) {
     return <PaymentStep pack={pack} onBack={() => setStep('packages')} onClose={onClose} onContinue={() => gateAction(
       () => setStep('scan'),
-      <>Sign in to continue.</>,
-      'So we know which account to credit.',
+      GATE_HEADLINE,
+      GATE_SUBTITLE,
     )} />
   }
   if (step === 'scan' && pack) {
     const gatedComplete = () => gateAction(
       () => setStep('result'),
-      <>Sign in to continue.</>,
-      'So we know which account to credit.',
+      GATE_HEADLINE,
+      GATE_SUBTITLE,
     )
     const StepComp = scanVariant === 'qr' ? ScanQRStep : FinishInAppStep
     const stepTitle = scanVariant === 'qr' ? 'Scan to pay' : 'Finish in the app'

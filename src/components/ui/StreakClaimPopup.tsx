@@ -22,8 +22,8 @@ interface StreakClaimPopupProps {
   onExploreEarn?: () => void
 }
 
-const GATE_HEADLINE = 'Sign in to claim'
-const GATE_SUBTITLE = 'So your credits go to the right account.'
+const GATE_HEADLINE = 'Sign in to claim your credits'
+const GATE_SUBTITLE = 'Unlock free credits and start chatting.'
 
 function BalancePill({ balance }: { balance: number }) {
   return (

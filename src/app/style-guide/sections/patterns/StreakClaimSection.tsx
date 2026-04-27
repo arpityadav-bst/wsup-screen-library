@@ -30,7 +30,7 @@ export default function StreakClaimSection({ onSectionVisible }: { onSectionVisi
             ['StreakBlock bare={true}', 'Header strip + Daily check-in card + footnote sit directly on the popup surface'],
             ['No tier-pill grid', 'Progression preview belongs in the credit hub (CreditSidebar), not the action-focused popup'],
             ['No secondary rewards', 'Other earn paths (Chat, Create a post) live in the credit hub. Popup is strictly streak claim'],
-            ['Auth gate — Claim → LoginSheet → resume on sign-in', 'gateAction pattern (same as BuyCreditsSheet). Gate copy: &ldquo;Sign in to claim&rdquo; / &ldquo;So your credits go to the right account.&rdquo;'],
+            ['Auth gate — Claim → LoginSheet → resume on sign-in', 'gateAction pattern (same as BuyCreditsSheet). Gate copy: &ldquo;Sign in to claim your credits&rdquo; / &ldquo;Unlock free credits and start chatting.&rdquo; — benefit-forward, not account-hygiene'],
             ['Closing LoginSheet drops the pending action', 'User stays unclaimed; can re-click Claim to re-trigger gate, or close popup'],
             ['Internal claimed state resets when popup closes', 'Fresh demo each visit'],
             ['CloseButton absolute top-xs right-xs', 'Self-mounted; primitives render no header chrome when title prop omitted'],
