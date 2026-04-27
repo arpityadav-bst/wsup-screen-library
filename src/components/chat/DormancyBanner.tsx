@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import InfoIcon from '@/components/ui/InfoIcon'
+import CloseButton from '@/components/ui/CloseButton'
 
 export type BannerVariant = 'inactivity' | 'moderation' | 'removed'
 
@@ -63,14 +64,11 @@ export default function DormancyBanner({ variant, isCreator }: DormancyBannerPro
             {config.mobileText}
             {showReviveLink && <a href="/edit-character" className="ml-xs link">Revive</a>}
           </p>
-          <button
-            onClick={() => setDismissed(true)}
-            className="shrink-0 p-xxxs rounded-pill cursor-pointer bg-transparent border-none text-white-40 hover:text-white-90 transition-colors"
-          >
-            <svg className="w-m h-m" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
+          <CloseButton
+            onClose={() => setDismissed(true)}
+            size={16}
+            className="p-xxxs text-white-40 hover:text-white-90 hover:bg-transparent"
+          />
         </div>
       </div>
 
@@ -83,14 +81,11 @@ export default function DormancyBanner({ variant, isCreator }: DormancyBannerPro
           {config.text}
           {showReviveLink && <a href="/edit-character" className="ml-xs link">Revive</a>}
         </p>
-        <button
-          onClick={() => setDismissed(true)}
-          className="shrink-0 p-xxs rounded-pill cursor-pointer bg-transparent border-none text-white-90 hover:bg-white-10 transition-colors"
-        >
-          <svg className="w-m h-m" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </button>
+        <CloseButton
+          onClose={() => setDismissed(true)}
+          size={16}
+          className="p-xxs"
+        />
       </div>
     </>
   )

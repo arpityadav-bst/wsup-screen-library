@@ -1,5 +1,5 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-04-24
+Last updated: 2026-04-27
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
 
@@ -422,3 +422,54 @@ Common arbitrary values and their token equivalents:
 - `h-[1px]` → `h-px`
 
 No new tokens were needed — all mapped to existing values.
+
+---
+
+## CloseButton primitive (Session 19 → 20)
+
+**File:** `src/components/ui/CloseButton.tsx`
+
+**API:**
+```tsx
+<CloseButton onClose={() => {}} size={20} className="..." ariaLabel="Close" />
+```
+
+- `onClose` — required, click handler
+- `size` — svg pixel size (default 20). Use 16 for banners, 20 for sheets/sidebars.
+- `className` — merged via `cn` (twMerge), so any default class can be overridden
+- `ariaLabel` — defaults to "Close"; pass "Dismiss" for banners
+
+**Defaults:** `p-icon-btn rounded-full hover:bg-white-10 text-white-90 bg-transparent`
+
+**Override patterns observed in WSUP:**
+- Sheet/sidebar header (default): `<CloseButton onClose={onClose} />`
+- Buy-credits step header (slightly muted): `<CloseButton onClose={onClose} className="text-white-80" />`
+- Banner-style with smaller icon: `<CloseButton onClose={...} size={16} ariaLabel="Dismiss" className="text-white-50 hover:text-white-80" />`
+- Tight banner (mobile): `<CloseButton onClose={...} size={16} className="p-xxxs text-white-40 hover:text-white-90 hover:bg-transparent" />`
+- Tight banner (desktop): `<CloseButton onClose={...} size={16} className="p-xxs" />`
+
+**When NOT to use:**
+- The X-shape SVG path appears in WSUP for **three** distinct uses. Only the first should compose CloseButton:
+  1. Dismiss/close action — yes, use CloseButton
+  2. Failure status indicator (e.g. inside a 72×72 status badge in BuyCreditsResultStep) — no, this is an icon
+  3. Rejected-state badge icon (DormantCharacterCard `rejected` config) — no, this is part of a labeled badge
+
+**Migration rule:** A close button has a click handler that hides/closes something. A status icon is decorative. Verify before migrating.
+
+**Currently consumed by:** BottomSheet, CenterPopup, ConfirmSheet, LoginSheet (S19) + BuyCreditsSheet StepHeader, CreditSidebar, LowCreditsBanner, DormancyBanner mobile + desktop (S20). 8 callsites.
+
+**Documented in style guide:** UIUtilitiesSection — 3 variants shown (default, compact, banner muted).
+
+---
+
+## Project context — WSUP is design-only (Session 20)
+
+**Why this matters for VDA:** WSUP is a design-spec / dev-handoff project, not a production app. Stubs are intentional, not bugs.
+
+**What's a stub by design (don't propose to fix):**
+- `AuthContext` exposes `{ isLoggedIn, login, logout }` — `login()` synchronously flips the boolean. Production will swap in real OAuth.
+- `LoginSheet` email submit + Google click both call the same stub `onSignIn` — fine.
+- `PACKS`, `CREATOR_ACTIVITY`, `STREAK_DAYS`, etc. hardcoded in components — fine.
+- Payment, subscription, and "Open wsup app" steps have no real backends — fine.
+
+**Where VDA energy belongs instead:** visual polish, token discipline, primitive reuse, copy clarity, accessibility, dev-handoff legibility, style guide completeness.

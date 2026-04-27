@@ -16,6 +16,7 @@ import LifecycleSection from './components/LifecycleSection'
 import ProfileCardsSection from './components/ProfileCardsSection'
 import ProfileOverlaysSection from './components/ProfileOverlaysSection'
 import UIUtilitiesSection from './components/UIUtilitiesSection'
+import RewardCardsSection from './components/RewardCardsSection'
 
 export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -35,6 +36,7 @@ export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: 
       <BottomNavSection onSectionVisible={onSectionVisible} />
       <ProfileCardsSection onSectionVisible={onSectionVisible} />
       <ProfileOverlaysSection onSectionVisible={onSectionVisible} />
+      <RewardCardsSection onSectionVisible={onSectionVisible} />
       <UIUtilitiesSection onSectionVisible={onSectionVisible} />
     </>
   )

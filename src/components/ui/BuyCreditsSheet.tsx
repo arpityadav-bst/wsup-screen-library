@@ -8,6 +8,7 @@ import CreditsSummaryPill from '@/components/ui/CreditsSummaryPill'
 import Button from '@/components/ui/Button'
 import Checkbox from '@/components/ui/Checkbox'
 import ChevronIcon from '@/components/ui/ChevronIcon'
+import CloseButton from '@/components/ui/CloseButton'
 import ResultVariantToggle from '@/components/ui/ResultVariantToggle'
 import LoginSheet from '@/components/ui/LoginSheet'
 import { ScanQRStep, FinishInAppStep } from '@/components/ui/BuyCreditsScanSteps'
@@ -51,15 +52,7 @@ function StepHeader({ title, onBack, onClose }: { title: string; onBack?: () => 
         <span className="w-[36px] shrink-0" aria-hidden />
       )}
       <p className="font-semibold text-base text-text-title">{title}</p>
-      <button
-        onClick={onClose}
-        aria-label="Close"
-        className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-80 border-none bg-transparent cursor-pointer"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      </button>
+      <CloseButton onClose={onClose} className="text-white-80" />
     </div>
   )
 }

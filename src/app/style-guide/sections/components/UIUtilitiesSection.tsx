@@ -5,6 +5,7 @@ import AvatarRing from '@/components/ui/AvatarRing'
 import TrendArrow from '@/components/ui/TrendArrow'
 import SubpageHeader from '@/components/ui/SubpageHeader'
 import MenuItem from '@/components/ui/MenuItem'
+import CloseButton from '@/components/ui/CloseButton'
 
 export default function UIUtilitiesSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -54,6 +55,28 @@ export default function UIUtilitiesSection({ onSectionVisible }: { onSectionVisi
           <MenuItem label="Edit Character" onClick={() => {}} />
           <MenuItem label="Share" onClick={() => {}} />
           <MenuItem label="Delete" onClick={() => {}} destructive />
+        </div>
+      </div>
+
+      {/* CloseButton */}
+      <div>
+        <SubLabel>CloseButton</SubLabel>
+        <p className="text-xs text-text-small mb-s max-w-[520px]">
+          Canonical X primitive for sheets, modals, sidebars, and dismissible banners. Use over hand-rolled inline buttons. Accepts <code className="text-text-title">size</code> (default 20) and <code className="text-text-title">className</code> overrides via twMerge — pass <code className="text-text-title">text-white-50</code> or <code className="text-text-title">p-xxs</code> to swap defaults.
+        </p>
+        <div className="flex items-center gap-xl">
+          <div className="flex flex-col items-center gap-xxs">
+            <CloseButton onClose={() => {}} />
+            <span className="text-xs text-text-small">Default · 20px</span>
+          </div>
+          <div className="flex flex-col items-center gap-xxs">
+            <CloseButton onClose={() => {}} size={16} />
+            <span className="text-xs text-text-small">Compact · 16px</span>
+          </div>
+          <div className="flex flex-col items-center gap-xxs">
+            <CloseButton onClose={() => {}} size={16} className="p-xxs text-white-50 hover:text-white-90 hover:bg-transparent" />
+            <span className="text-xs text-text-small">Banner · muted</span>
+          </div>
         </div>
       </div>
 

@@ -1,7 +1,96 @@
 # Visual Designer — Session Logs
-Last updated: 2026-04-24
+Last updated: 2026-04-27
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 21 — 2026-04-27 (Streak Claim Popup pattern — Explore on-load)
+**Scope:** New pattern from Figma `Credit Claim Bottom Sheet` (414×418 mobile sheet). Mounts on Explore page open. Single content block (header + streak progress + 3 reward rows + earn-link CTA). Built compound (BottomSheet + CenterPopup), not custom shells.
+
+**What shipped:**
+- **`src/components/ui/CoinIcon.tsx`** — extracted from inline copies in `CreditSidebar` and `CreditHero`. Wrapper around `<Image src="/credit.png">` with `size`/`className` props. CreditButton + CreditsSummaryPill kept their direct `<Image>` usage on purpose (different class needs).
+- **`src/components/ui/RewardRow.tsx`** — extracted the "label + Earn N + Claim button" row from CreditSidebar. Added `claimable`/`claimLabel`/`onClaim` props. CreditSidebar's existing call sites unchanged thanks to defaults.
+- **`src/components/ui/StreakClaimPopup.tsx`** — compound mobile (BottomSheet z=70) + desktop (CenterPopup 440px z=70). Internal sub-components: `BalancePill`, `StreakProgress`, `ExploreEarnLink`, `PopupContent`. Surface uses default `bg-profile-sheet-bg` (NOT Figma's white@10%) per WSUP taste rule.
+- **Explore page wiring** — `streakPopupOpen` state defaulted to `true` so popup shows on first visit. `S` toggles dev panel; `Shift+S` flips popup state — mirrors the existing `R`/`Shift+R` Auth toggle.
+- **Style guide** — `StreakClaimSection` added to PatternsTab + NAV. Two live triggers: default state, and one-claimed state with daily-checkin disabled.
+
+**Design decisions called out (full reasoning in decisions.md):**
+- Compound over custom shells — content is symmetric, primitives compose cleanly. Saved 80+ lines vs. forking like LoginSheet did.
+- Solid surface, not Figma's white@10% — codified taste rule overrides Figma value (Gate 7).
+- Self-mounted CloseButton — primitive's title slot includes a divider that doesn't fit the streak popup header layout.
+- Header `pr-xxxl` only on the title line — not the whole header — so the subtitle row keeps its full width and the Balance pill sits beside the subtitle without forcing a wrap on 414px viewports. Caught + fixed on screenshot review (Gate 8).
+- Gradient hex (`#72e9f1 → #7192e5 → #6257d7`) matches LoginSheet exactly. 2 uses; tokenize at the 3rd.
+
+**Gate audit at session close:**
+- Gate 1 (Tokens): no raw values in classNames. Inline `style` carries the dynamic-width gradient — same exception class as LoginSheet.
+- Gate 2 (Reuse): BottomSheet, CenterPopup, CloseButton, ChevronIcon, Button all reused.
+- Gate 3 (Componentize@2): CoinIcon and RewardRow extracted on the trigger of a 2nd consumer (StreakClaimPopup). Internal helpers (`BalancePill`, `StreakProgress`, `ExploreEarnLink`) stayed inline — single use.
+- Gate 4 (Patternize@2): documented as "Streak Claim" pattern in style guide.
+- Gate 5 (Style guide): `StreakClaimSection` registered in PatternsTab and NAV. Two states shown.
+- Gate 6 (VDA): per-edit decisions captured (this entry + decisions.md).
+- Gate 7 (Consistency): same `.link` class as CreditSidebar's "How creator rewards work" CTA. Same `RewardRow` consumed in both popup + sidebar. Same dev-toggle key pattern.
+- Gate 8 (UX review): screenshot at 414×896 caught a subtitle wrap, fixed by moving `pr-xxxl` from the header container to the title line only. Re-screenshot verified.
+
+**Verification:** `tsc --noEmit` clean. Mobile + desktop screenshots reviewed against Figma reference.
+
+**Iteration arc (continued same day):**
+1. Designer flagged the 1×/2× multiplier progress bar as "old system" — replaced with the live-product day-pill grid via a new shared `StreakBlock` extracted from CreditSidebar. Both consumers now share one streak source of truth.
+2. Designer asked to drop the day-pill preview from the popup — added `tiers?` optional + a `showTiers` guard so StreakBlock renders compact when tiers are omitted.
+3. Wired auth gating via the `gateAction` pattern from BuyCreditsSheet: Claim → LoginSheet → resume on sign-in / drop pending action on close. Internal claimed state per reward.
+4. Designer dropped secondary rewards from the popup (popup is strictly streak claim) and asked to minimize surface layers. Added `bare` prop to StreakBlock to drop its outer card wrapper when used as the sole content of a sheet.
+5. Designer flagged the layout as cramped — reorganized into three explicit zones: **header** (title + balance row), **action** (DailyCheckInCard with DAY badge + single forward-looking footnote "Tomorrow · Get +N"), **exit** (full-width hairline + Explore link). Dropped the "STREAK | DAY N | CHECK-IN REWARD" strip (duplicated the title's intent in a single-section context) and the "Miss a day? Streak resets." warning (loss-aversion belongs in the credit hub, not at the moment of claim).
+6. Extracted `DailyCheckInCard` to `ui/DailyCheckInCard.tsx` so both StreakBlock and the popup compose the same card. `dayBadge?` prop renders the small uppercase gold label inside the card for the popup variant.
+7. **Gate 5 backfill** — self-audit caught that RewardRow + DailyCheckInCard (both extracted this session) had no style guide entries. Created `components/RewardCardsSection.tsx` with 3 states each, registered in ComponentsTab + NAV.
+
+**Final gate audit (after iterations):**
+- 1 Tokens — `text-[10px] tracking-[0.8px]` for the DAY badge follows the established label-xs-with-color-override pattern (15 files); inline gradient stops match LoginSheet exactly. PASS.
+- 2 Reuse — BottomSheet, CenterPopup, CloseButton, ChevronIcon, Button, LoginSheet, useAuth all reused. PASS.
+- 3 Componentize@2 — CoinIcon, RewardRow, StreakBlock, DailyCheckInCard all extracted at the 2nd-consumer trigger. PASS.
+- 4 Patternize@2 — Streak Claim documented in PatternsTab. PASS.
+- 5 Style guide — Streak Claim pattern + Reward Cards components both registered. PASS (after backfill).
+- 6 VDA — decisions.md entries logged per-edit; this session log captures the full iteration arc. PASS.
+- 7 UX consistency — same `gateAction` pattern as BuyCreditsSheet; same `.link` class as CreditSidebar's "How creator rewards work"; S-key dev toggle mirrors R-key auth toggle. PASS.
+- 8 UX review — three explicit zones, hairline divider, single text stream per zone. PASS.
+
+**Open / next:**
+- Real auth gating in production (currently always-open on Explore) — design handoff stub.
+- "Miss a day?" warning was dropped from popup but lives on in CreditSidebar — if product wants it back in the popup, consider an info-icon tooltip rather than a permanent line.
+
+---
+
+## Session 20 — 2026-04-27 (Session 19 cleanup sweep + CloseButton flexing + style guide gap)
+**Scope:** Cleanup sweep against Session 19's three open items. Surfaced an undetected Gate 5 violation from S19 and a primitive-flexibility limitation. No new patterns shipped.
+
+**What shipped:**
+- **Removed orphan asset** — `public/credit-bag-tmp.png` (untracked from Session 18, no references anywhere in src).
+- **CloseButton flexing** — refactored to use `cn` (twMerge) for className merging so consumers can override `text-white-X`, padding, hover behavior cleanly. Original used raw string concat which left both default + override in the className string and let CSS-emit order pick the winner (unreliable).
+- **4 close-button migrations** —
+  - `BuyCreditsSheet` StepHeader (exact-match swap)
+  - `CreditSidebar` header (exact-match swap)
+  - `LowCreditsBanner` (16px svg + muted color override)
+  - `DormancyBanner` mobile (`p-xxxs`, `text-white-40`, transparent hover) and desktop (`p-xxs`)
+- **CloseButton added to style guide** (`UIUtilitiesSection`) with 3 variants: default 20px, compact 16px, banner muted. Closes a Gate 5 violation that slipped past Session 19's audit.
+- **Memory** — saved `project_wsup_design_only.md`: WSUP is design-only handoff; AuthContext + LoginSheet stubs are intentional; mock data is intentional; don't propose backend wiring.
+
+**Misidentifications corrected:**
+- Session 19's "6 close-button copies" list named `BuyCreditsResultStep` and `DormantCharacterCard.rejected-badge`. Both render the same X-shape SVG path but as **failure status indicator** and **rejected-state badge icon** respectively, not dismiss actions. Left them inline. Real count: 4 dismiss buttons across 5 callsites (DormancyBanner has mobile + desktop).
+
+**Gate audit at session close:**
+- Gate 1 (Tokens): No new raw values introduced. Override classNames passed to CloseButton all use tokens (text-white-40, p-xxxs, etc).
+- Gate 2 (Reuse): The session was the reuse work — 4 migrations onto existing CloseButton.
+- Gate 3 (Componentize@2): CloseButton primitive exists since S19; this session widened its consumer count from 4 → 8.
+- Gate 4 (Patternize@2): N/A — no pattern work.
+- Gate 5 (Style guide): **Caught a S19 gap** — CloseButton was extracted but never documented. Now in `UIUtilitiesSection` with 3 variants. Going forward: every primitive lands in style guide in the same edit, not as a follow-up.
+- Gate 6 (VDA): decisions.md (4 entries), taste.md (3 principle groups: primitives that flex, same-shape-different-intent, style guide is a contract), session-logs.md (this entry), knowledge-base.md (CloseButton API + override pattern).
+- Gate 7 (Consistency): Migrations are visual no-ops (override classes preserve each callsite's previous look). No regressions.
+- Gate 8 (UX review): Reviewed all 5 migrated render sites for visual parity; identical to inline versions.
+
+**Learned:**
+- Migrating to a primitive isn't a grep job. Same SVG path can mean dismiss-action, status-indicator, or state-badge. Verify intent at each callsite before swapping.
+- A primitive that takes className without `cn`/twMerge is fragile — overrides "work" only by happy accident of CSS source order. Add `cn` from day one.
+- A style guide gap is a primitive-existence gap. If CloseButton wasn't in the style guide for 3 days, the next consumer would have rebuilt the inline version (not knowing it existed). Style guide entry IS the announcement.
+- "Design-only project" context matters for what optimizations to propose. Don't suggest real OAuth, real payment processing, real session persistence — those aren't part of the deliverable.
 
 ---
 

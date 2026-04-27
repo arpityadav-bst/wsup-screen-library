@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Button from '@/components/ui/Button'
+import CloseButton from '@/components/ui/CloseButton'
 
 interface LowCreditsBannerProps {
   credits: number
@@ -33,15 +34,12 @@ export default function LowCreditsBanner({ credits, estimatedReplies, onAddCredi
       <Button size="xs" className="h-[28px] px-m shrink-0" onClick={handleAddCredits}>
         Add credits
       </Button>
-      <button
-        onClick={() => setDismissed(true)}
-        aria-label="Dismiss"
-        className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-50 hover:text-white-80 border-none bg-transparent cursor-pointer shrink-0"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
+      <CloseButton
+        onClose={() => setDismissed(true)}
+        size={16}
+        ariaLabel="Dismiss"
+        className="text-white-50 hover:text-white-80"
+      />
     </div>
   )
 }

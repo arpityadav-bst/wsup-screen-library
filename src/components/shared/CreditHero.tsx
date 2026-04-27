@@ -1,9 +1,9 @@
 'use client'
 
-import Image from 'next/image'
 import { useState } from 'react'
 import ChevronIcon from '@/components/ui/ChevronIcon'
 import ExternalLinkIcon from '@/components/ui/ExternalLinkIcon'
+import CoinIcon from '@/components/ui/CoinIcon'
 
 interface CreditHeroProps {
   total: number
@@ -11,12 +11,6 @@ interface CreditHeroProps {
   purchased: number
   onTransactionHistory?: () => void
   onManageSubscription?: () => void
-}
-
-function CoinIcon({ size = 16 }: { size?: number }) {
-  return (
-    <Image src="/credit.png" alt="" width={size} height={size} className="object-contain shrink-0" />
-  )
 }
 
 export default function CreditHero({ total, rewarded, purchased, onTransactionHistory, onManageSubscription }: CreditHeroProps) {

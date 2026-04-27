@@ -1,5 +1,5 @@
 # Visual Designer — Taste Profile
-Last updated: 2026-04-24
+Last updated: 2026-04-27
 
 ### Adapt pattern to the device's dominant axis
 The same content can have two layouts — horizontal on desktop (where width is plentiful), vertical on mobile (where height is plentiful). LoginSheet is a 40/60 left-form / right-image modal on desktop and a bottom-sheet with image-above-form on mobile. Same content, same order, different axis. Don't shoehorn the desktop split into a stacked mobile layout or vice versa — each axis has its own reading flow; the pattern should follow it.
@@ -368,3 +368,16 @@ Before proposing any new token, exhaust these options:
 - "Last chatted Xd ago" on its own row below character name, not sharing a row with chat count (wraps at 2-col mobile).
 - Chat count moved to right of character name row — name (left, truncate) + count (right, shrink-0). Saves vertical space.
 - Contact support: text link (text-secondary, .link class), not a button. Button implies required action.
+
+### Primitives that flex (Session 20)
+- A shared primitive should accept `cn`/twMerge-aware className so consumers can override defaults (color, padding, size) without forking the component or duplicating CSS rules.
+- Three callsites with similar-but-not-identical styling (sheet 10px padding, banner 4px padding, banner 2px padding) is a sign the primitive needs override flexibility — not three copies and not three variants. One primitive, configurable surface.
+- 16px svg vs 20px svg is a context decision (banner density vs sheet header) — make `size` a prop, not a hardcode.
+
+### Same shape, different intent (Session 20)
+- Visual identity (the `M18 6L6 18M6 6l12 12` X path) is not semantic identity. The same SVG path renders dismiss buttons, failure status indicators, and rejected-state badges in WSUP. Don't migrate by grep — migrate by intent.
+- When auditing for primitive adoption, ask "is this a [primitive] or does it just look like one?" Different intent = leave it alone.
+
+### Style guide is a contract (Session 20)
+- A primitive that exists in code but isn't in the style guide is invisible to the consumer (designer, engineer, future Claude). They'll either rebuild it inline or miss it entirely.
+- Every extracted primitive must land in the style guide in the same edit, not as a follow-up. Gate 5 isn't optional.

@@ -2,11 +2,15 @@
 
 import Image from 'next/image'
 import { useEffect } from 'react'
-import Button from '@/components/ui/Button'
 import CreditHero from '@/components/shared/CreditHero'
+import StreakBlock from '@/components/shared/StreakBlock'
 import InfoIcon from '@/components/ui/InfoIcon'
 import Badge from '@/components/ui/Badge'
 import ChevronIcon from '@/components/ui/ChevronIcon'
+import CloseButton from '@/components/ui/CloseButton'
+import CoinIcon from '@/components/ui/CoinIcon'
+import RewardRow from '@/components/ui/RewardRow'
+import Button from '@/components/ui/Button'
 
 interface CreditSidebarProps {
   open: boolean
@@ -30,35 +34,11 @@ const CREATOR_ACTIVITY = [
   { name: 'Luna', chatters: 3, earned: null, image: '/chars/char3.webp' },
 ]
 
-function CoinIcon({ size = 16 }: { size?: number }) {
-  return (
-    <Image src="/credit.png" alt="" width={size} height={size} className="object-contain shrink-0" />
-  )
-}
-
 function SectionTitle({ children, info }: { children: React.ReactNode; info?: boolean }) {
   return (
     <div className="flex items-center justify-between pb-s mb-s border-b border-white-10">
       <span className="label-xs text-text-title">{children}</span>
       {info && <InfoIcon className="text-white-40 hover:text-white-60 transition-colors cursor-pointer shrink-0" />}
-    </div>
-  )
-}
-
-function RewardRow({ label, earnValue, claimable = true }: { label: string; earnValue: number; claimable?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-s py-xs">
-      <div className="flex flex-col gap-xxxs">
-        <span className="text-sm text-text-body">{label}</span>
-        <div className="flex items-center gap-xxs text-xs text-text-xsmall">
-          <span>Earn</span>
-          <CoinIcon size={12} />
-          <span className="tabular-nums">{earnValue}</span>
-        </div>
-      </div>
-      <Button variant={claimable ? 'primary' : 'secondary'} size="m" className="shrink-0 !px-xxl">
-        Claim
-      </Button>
     </div>
   )
 }
@@ -91,15 +71,7 @@ export default function CreditSidebar({ open, onClose }: CreditSidebarProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-l h-[52px] border-b border-white-10 shrink-0">
           <p className="font-semibold text-base text-text-title">Credits</p>
-          <button
-            onClick={onClose}
-            className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer"
-            aria-label="Close"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
+          <CloseButton onClose={onClose} />
         </div>
 
         {/* Scrollable content */}
@@ -140,58 +112,12 @@ export default function CreditSidebar({ open, onClose }: CreditSidebarProps) {
           </div>
 
           {/* Streak */}
-          <div className="rounded-card bg-white-05 border border-white-10 p-m">
-            {/* Streak header — single line: title + status, divider below */}
-            <div className="flex items-center justify-between pb-s mb-s border-b border-white-10">
-              <div className="flex items-center gap-xs">
-                <span className="label-xs text-text-title">Streak</span>
-                <span className="w-px h-s bg-white-20" aria-hidden />
-                <span className="text-[10px] font-semibold tracking-[0.8px] uppercase text-credit-gold">Day 2</span>
-                <span className="w-px h-s bg-white-20" aria-hidden />
-                <span className="label-xs">Check-in reward</span>
-              </div>
-              <InfoIcon className="text-white-40 hover:text-white-60 transition-colors cursor-pointer shrink-0" />
-            </div>
-
-            {/* Daily check-in — same inner template as Daily / One-Time Rewards (no semibold), wrapped in inset card */}
-            <div className="flex items-center justify-between gap-s bg-white-05 rounded-button p-s mb-s">
-              <div className="flex flex-col gap-xxxs">
-                <span className="text-sm text-text-body">Daily check-in</span>
-                <div className="flex items-center gap-xxs text-xs text-text-xsmall">
-                  <span>Earn</span>
-                  <CoinIcon size={12} />
-                  <span className="tabular-nums">10</span>
-                </div>
-              </div>
-              <Button variant="primary" size="m" className="!px-xxl">Claim</Button>
-            </div>
-
-            {/* Day pills */}
-            <div className="grid grid-cols-4 gap-xs mb-s">
-              {STREAK_DAYS.map((day) => (
-                <div
-                  key={day.label}
-                  className={`flex flex-col items-center gap-xxs py-xs rounded-button ${
-                    day.active ? 'bg-credit-gold/[0.15] border border-credit-gold' : 'bg-white-05 border border-transparent'
-                  }`}
-                >
-                  <div className="flex items-center gap-xxxs">
-                    <CoinIcon size={12} />
-                    <span className="text-xs text-text-body tabular-nums">{day.value}</span>
-                  </div>
-                  <span className="text-xs text-text-xsmall">{day.label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Footnote — single-line, left / right edges */}
-            <div className="flex items-center justify-between gap-xs text-xs">
-              <span className="text-text-small whitespace-nowrap">
-                Tomorrow · Get <span className="text-credit-gold font-semibold">+15</span>
-              </span>
-              <span className="text-text-dim whitespace-nowrap">Miss a day? Streak resets.</span>
-            </div>
-          </div>
+          <StreakBlock
+            currentDay={2}
+            tiers={STREAK_DAYS}
+            tomorrowReward={15}
+            dailyCheckInEarn={10}
+          />
 
           {/* Daily Rewards */}
           <div className="rounded-card bg-white-05 border border-white-10 p-m">
