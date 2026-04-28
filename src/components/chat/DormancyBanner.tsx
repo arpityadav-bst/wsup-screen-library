@@ -8,7 +8,6 @@ export type BannerVariant = 'inactivity' | 'moderation' | 'removed'
 
 interface DormancyBannerProps {
   variant: BannerVariant
-  isCreator?: boolean
 }
 
 const BANNER_CONFIG: Record<BannerVariant, {
@@ -22,18 +21,18 @@ const BANNER_CONFIG: Record<BannerVariant, {
   inactivity: {
     bg: 'bg-white-05',
     border: 'border-white-10',
-    text: 'This character isn\'t currently listed publicly. You can keep chatting.',
-    mobileText: 'Not listed — chat available',
+    text: 'This character is paused by its creator. Chat is still available.',
+    mobileText: 'Paused — chat available',
     textColor: 'text-white-50',
     icon: <InfoIcon size={16} className="text-white-40 shrink-0" />,
   },
   moderation: {
     bg: 'bg-white-05',
     border: 'border-white-10',
-    text: 'This character isn\'t currently listed publicly. You can keep chatting.',
-    mobileText: 'Not listed — chat available',
-    textColor: 'text-white-60',
-    icon: <InfoIcon size={16} className="text-white-50 shrink-0" />,
+    text: 'This character is being reviewed. Chat is still available.',
+    mobileText: 'Being reviewed — chat available',
+    textColor: 'text-white-50',
+    icon: <InfoIcon size={16} className="text-white-40 shrink-0" />,
   },
   removed: {
     bg: 'bg-white-05',
@@ -45,10 +44,10 @@ const BANNER_CONFIG: Record<BannerVariant, {
   },
 }
 
-export default function DormancyBanner({ variant, isCreator }: DormancyBannerProps) {
+export default function DormancyBanner({ variant }: DormancyBannerProps) {
   const [dismissed, setDismissed] = useState(false)
   const config = BANNER_CONFIG[variant]
-  const showReviveLink = isCreator && variant !== 'removed'
+  const showReviveLink = variant !== 'removed'
 
   if (dismissed) return null
 

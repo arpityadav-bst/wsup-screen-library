@@ -2,12 +2,15 @@
 
 import { useState } from 'react'
 import { Section, SubLabel, PreviewBox, TokenCell } from '../../helpers'
-import StreakClaimPopup from '@/components/ui/StreakClaimPopup'
+import StreakClaimPopup, { STREAK_LOGIN_VARIANTS } from '@/components/ui/StreakClaimPopup'
+import LoginSheet from '@/components/ui/LoginSheet'
 import Button from '@/components/ui/Button'
 
 export default function StreakClaimSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   const [openDefault, setOpenDefault] = useState(false)
   const [openClaimed, setOpenClaimed] = useState(false)
+  const [openLoginStandard, setOpenLoginStandard] = useState(false)
+  const [openLoginPromo, setOpenLoginPromo] = useState(false)
 
   return (
     <Section id="Streak Claim" title="Streak Claim Popup" onVisible={onSectionVisible}>
@@ -18,6 +21,15 @@ export default function StreakClaimSection({ onSectionVisible }: { onSectionVisi
         <PreviewBox className="flex gap-s flex-wrap">
           <Button size="s" variant="secondary" onClick={() => setOpenDefault(true)}>Default (Day 3, 15 to claim)</Button>
           <Button size="s" variant="secondary" onClick={() => setOpenClaimed(true)}>Daily already claimed</Button>
+        </PreviewBox>
+      </div>
+
+      <div className="min-w-[440px] flex-1">
+        <SubLabel>Login gate variants</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">Two copy + layout treatments for the auth gate triggered by Claim. <strong className="text-text-title">Standard (1)</strong>: direct sign-in form (Email + Google + Apple). <strong className="text-text-title">Promo (2)</strong>: 2-step flow — persuasion screen with single &ldquo;Sign in to claim&rdquo; CTA + portability hint, then tapping the CTA reveals Email + Google + Apple in the same popup (headline stays &ldquo;Save your free credits&rdquo; for continuity). When the gate is open on <code className="text-text-title">/explore</code>, use the <code className="text-text-title">Variant 1 / 2</code> pills above the popup&rsquo;s top-right to compare live.</p>
+        <PreviewBox className="flex gap-s flex-wrap">
+          <Button size="s" variant="secondary" onClick={() => setOpenLoginStandard(true)}>Standard (form)</Button>
+          <Button size="s" variant="secondary" onClick={() => setOpenLoginPromo(true)}>Promo (CTA)</Button>
         </PreviewBox>
       </div>
 
@@ -60,6 +72,25 @@ export default function StreakClaimSection({ onSectionVisible }: { onSectionVisi
         tomorrowReward={15}
         dailyCheckInEarn={15}
         dailyCheckInClaimable={false}
+      />
+
+      <LoginSheet
+        open={openLoginStandard}
+        onClose={() => setOpenLoginStandard(false)}
+        onSignIn={() => setOpenLoginStandard(false)}
+        headline={STREAK_LOGIN_VARIANTS.standard.headline}
+        subtitle={STREAK_LOGIN_VARIANTS.standard.subtitle}
+        mode={STREAK_LOGIN_VARIANTS.standard.mode}
+      />
+      <LoginSheet
+        open={openLoginPromo}
+        onClose={() => setOpenLoginPromo(false)}
+        onSignIn={() => setOpenLoginPromo(false)}
+        headline={STREAK_LOGIN_VARIANTS.promo.headline}
+        subtitle={STREAK_LOGIN_VARIANTS.promo.subtitle}
+        mode={STREAK_LOGIN_VARIANTS.promo.mode}
+        ctaLabel={STREAK_LOGIN_VARIANTS.promo.ctaLabel}
+        footer={STREAK_LOGIN_VARIANTS.promo.footer}
       />
     </Section>
   )

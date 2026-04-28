@@ -6,7 +6,7 @@ import Header from '@/components/shared/Header'
 import Sidebar from '@/components/shared/Sidebar'
 import { useAuth } from '@/lib/AuthContext'
 import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
-import StreakClaimPopup from '@/components/ui/StreakClaimPopup'
+import StreakClaimPopup, { type StreakLoginVariant } from '@/components/ui/StreakClaimPopup'
 import CategoryTabs from '@/components/shared/CategoryTabs'
 import CharacterCard from '@/components/shared/CharacterCard'
 import WhatIsWsup from '@/components/shared/WhatIsWsup'
@@ -106,8 +106,8 @@ const characters = [
 export default function ExplorePage() {
   const { isLoggedIn, setIsLoggedIn } = useAuth()
   const [showAuthToggle, setShowAuthToggle] = useState(false)
-  const [showStreakToggle, setShowStreakToggle] = useState(false)
   const [streakPopupOpen, setStreakPopupOpen] = useState(true)
+  const [streakLoginVariant, setStreakLoginVariant] = useState<StreakLoginVariant>('standard')
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -115,10 +115,6 @@ export default function ExplorePage() {
       if (e.key === 'r' || e.key === 'R') {
         if (e.shiftKey) setIsLoggedIn(!isLoggedIn)
         else setShowAuthToggle(prev => !prev)
-      }
-      if (e.key === 's' || e.key === 'S') {
-        if (e.shiftKey) setStreakPopupOpen(prev => !prev)
-        else setShowStreakToggle(prev => !prev)
       }
     }
     window.addEventListener('keydown', handler)
@@ -210,17 +206,6 @@ export default function ExplorePage() {
         ))}
       </DevStateToggle>
 
-      <DevStateToggle open={showStreakToggle} title="Streak Popup" hint="S toggle · Shift+S flip">
-        {[
-          { label: 'Shown', value: true },
-          { label: 'Hidden', value: false },
-        ].map(({ label, value }) => (
-          <DevStateOption key={label} active={streakPopupOpen === value} onClick={() => setStreakPopupOpen(value)}>
-            {label}
-          </DevStateOption>
-        ))}
-      </DevStateToggle>
-
       <StreakClaimPopup
         open={streakPopupOpen}
         onClose={() => setStreakPopupOpen(false)}
@@ -228,6 +213,8 @@ export default function ExplorePage() {
         streakDay={3}
         tomorrowReward={15}
         dailyCheckInEarn={15}
+        loginVariant={streakLoginVariant}
+        onLoginVariantChange={setStreakLoginVariant}
         onExploreEarn={() => {
           setStreakPopupOpen(false)
           window.dispatchEvent(new CustomEvent('wsup:open-credit-sidebar'))

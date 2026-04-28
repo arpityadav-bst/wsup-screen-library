@@ -33,7 +33,6 @@ function getBannerVariant(state: CharacterState) {
 export default function ChatPage() {
   const [characterState, setCharacterState] = useState<CharacterState>('active')
   const [showToggle, setShowToggle] = useState(false)
-  const [isCreator, setIsCreator] = useState(false)
   const bannerVariant = getBannerVariant(characterState)
   const isRemoved = characterState === 'removed'
 
@@ -49,9 +48,6 @@ export default function ChatPage() {
         } else {
           setShowToggle(prev => !prev)
         }
-      }
-      if (e.key === 'c' || e.key === 'C') {
-        setIsCreator(prev => !prev)
       }
     }
     window.addEventListener('keydown', handler)
@@ -98,7 +94,7 @@ export default function ChatPage() {
               creatorName="Honeybadger"
               characterState={characterState}
             />
-            {bannerVariant && <DormancyBanner variant={bannerVariant} isCreator={isCreator} />}
+            {bannerVariant && <DormancyBanner variant={bannerVariant} />}
             <ChatMessages />
             {isRemoved ? (
               <div className="flex items-center justify-center px-m py-m bg-page-bg border-t border-white-10 shrink-0 md:bg-transparent">
@@ -114,11 +110,7 @@ export default function ChatPage() {
         <ChatRightSidebar />
       </main>
 
-      <DevStateToggle open={showToggle} title="State" hint="R toggle · Shift+R cycle · C creator">
-        <label className="flex items-center gap-xxs text-xs text-text-small cursor-pointer mb-xxs">
-          <input type="checkbox" checked={isCreator} onChange={() => setIsCreator(prev => !prev)} className="cursor-pointer" />
-          Creator view
-        </label>
+      <DevStateToggle open={showToggle} title="State" hint="R toggle · Shift+R cycle">
         {STATES.map((state) => (
           <DevStateOption
             key={state}

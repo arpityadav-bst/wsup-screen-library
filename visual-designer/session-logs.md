@@ -1,7 +1,41 @@
 # Visual Designer — Session Logs
-Last updated: 2026-04-27
+Last updated: 2026-04-28
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 22 — 2026-04-28 (Streak login variants + Apple sign-in)
+**Scope:** PM delivered two copy/layout treatments for the auth gate triggered by the StreakClaim popup's Claim button. Variant A (`standard`) — full sign-in form with new copy. Variant B (`promo`) — value-prop screen with single CTA and a streak-portability hint footer. Add a dev toggle (mirroring R/S) so both can be flipped on `/explore`. Plus: PM brief mentioned Apple/Google/email — `LoginSheet` only had Google + email, so Apple was added as a real new primitive.
+
+**What shipped:**
+- **`src/components/ui/AppleSignIn.tsx`** — new primitive matching `GoogleSignIn`'s API (onClick, label, fullWidth, className). `bg-black + border border-white-20`, white logo + label. Differentiates from Google's `bg-white` so the two providers don't visually merge on the dark sheet surface.
+- **`src/components/ui/LoginSheet.tsx`** — added `mode: 'form' | 'cta'` prop, `ctaLabel?` and `footer?` props. New internal `CtaBlock` helper renders a single primary Button + small hint footer. Form mode (default) now stacks Email → OR → Google → Apple. Mobile sheet height bumped to 440 for form (Apple added a row) and set to 360 for cta (less content). Desktop layout unchanged at 720×420.
+- **`src/components/ui/StreakClaimPopup.tsx`** — exports `StreakLoginVariant` type and `STREAK_LOGIN_VARIANTS` preset map. New `loginVariant` prop maps to LoginSheet's mode/ctaLabel/footer. The `standard` preset uses the existing copy; `promo` carries PM's loss-aversion framing.
+- **`src/app/explore/page.tsx`** — L key dev toggle wired with the same DevStateToggle pattern as R (auth) and S (streak). `Shift+L` flips between standard and promo.
+- **Style guide** — `LoginSheetSection` updated with a third trigger (CTA mode demo) and anatomy rows describing mode prop, Apple+Google brand pairing, and cta-mode footer. `StreakClaimSection` got a new "Login gate variants" subsection with both triggers, importing `STREAK_LOGIN_VARIANTS` so the style guide stays in sync with live copy automatically.
+
+**Design decisions called out (full reasoning in decisions.md):**
+- mode prop > forking into a second sheet — the shell (logo, character image, legal, dismissal) is identical; only the action area + an optional hint footer differ.
+- Variant presets owned by StreakClaimPopup, exported for style-guide reuse — keeps LoginSheet domain-agnostic; single source of truth for the streak copy.
+- Apple = brand-pure black-on-dark with white border; Google stays white. Two white buttons would erase the differentiation users expect from an Apple/Google row.
+- Apple sits below Google. Web context (no HIG mandate); preserves muscle memory.
+- Cta footer is `text-xs text-text-small` — value reassurance attached to the CTA, not boilerplate. Heavier weight than the legal line.
+- Promo variant copy leads with loss aversion ("Save your free credits") instead of acquisition framing. The user has progress to protect — that's a stronger pull than "sign in to claim."
+
+**Quality gate audit (final):**
+- 1 Tokens — all spacing/colors via tokens; new Apple button uses `bg-black` + `border-white-20` + `bg-page-bg` hover (foundational Tailwind for brand-pure bg/text mirrors existing `bg-white` + `text-black` on Google). **PASS**
+- 2 Reuse — Button (primary), CopyBlock, LegalFooter, LogoMark, EmailField, GoogleSignIn all reused. AppleSignIn is the only new primitive. CtaBlock is an internal helper inside LoginSheet (single consumer, no extraction warranted yet). **PASS**
+- 3 Componentize@2 — AppleSignIn at first use; ready to scale to a 2nd consumer. CtaBlock retained internally pending a 2nd consumer. **PASS**
+- 4 Patternize@2 — LoginSheet pattern updated with cta-mode trigger; StreakClaim pattern updated with login-gate variants subsection. **PASS**
+- 5 Style guide — both `LoginSheetSection` and `StreakClaimSection` updated. Outdated sizes (max-w-[848px] / h-[461px]) corrected to current (max-w-[720px] / h-[420px]). Outdated purchase subtitle updated to current benefit-forward copy. **PASS**
+- 6 VDA — decisions logged real-time during edits; this session-log captures the variant arc. **PASS**
+- 7 UX consistency — L follows R/S keyboard pattern; DevStateToggle reused; AppleSignIn matches GoogleSignIn structure; mode prop preserves all existing LoginSheet contracts (default `mode='form'`). **PASS**
+- 8 UX review — variants clearly differentiated; Apple/Google brand-pure; cta mode reads as a value-prop screen, not a stripped-down form. **PASS**
+
+VDA health check: **HEALTHY** — knowledge files updated this session, decisions logged per-edit (not batched), no contradictions.
+
+**Visual verification:** Captured 4 screenshots via `.scripts/test-login-variants.mjs` — mobile/desktop × standard/promo. All four render correctly: standard shows Email + OR + Google + Apple; promo shows single primary CTA "Sign in to claim" + hint footer. Headlines and subtitles match PM copy verbatim.
 
 ---
 

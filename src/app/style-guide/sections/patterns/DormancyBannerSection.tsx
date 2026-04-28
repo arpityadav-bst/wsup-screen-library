@@ -8,44 +8,23 @@ export default function DormancyBannerSection({ onSectionVisible }: { onSectionV
     <Section id="Dormancy Banner" title="Dormancy Banner" onVisible={onSectionVisible}>
       <div className="w-full max-w-[414px] flex flex-col gap-xl">
         <div>
-          <SubLabel>Inactivity — neutral</SubLabel>
+          <SubLabel>Inactivity — Revive link shown</SubLabel>
           <div className="rounded-card overflow-hidden border border-white-10">
             <DormancyBanner variant="inactivity" />
           </div>
         </div>
 
         <div>
-          <SubLabel>Moderation — neutral (no yellow, no warning framing)</SubLabel>
+          <SubLabel>Moderation — Revive link shown</SubLabel>
           <div className="rounded-card overflow-hidden border border-white-10">
             <DormancyBanner variant="moderation" />
           </div>
         </div>
 
         <div>
-          <SubLabel>Removed — neutral</SubLabel>
+          <SubLabel>Removed — no Revive link</SubLabel>
           <div className="rounded-card overflow-hidden border border-white-10">
             <DormancyBanner variant="removed" />
-          </div>
-        </div>
-
-        <div>
-          <SubLabel>Creator Variant — with Revive link (inactivity)</SubLabel>
-          <div className="rounded-card overflow-hidden border border-white-10">
-            <DormancyBanner variant="inactivity" isCreator />
-          </div>
-        </div>
-
-        <div>
-          <SubLabel>Creator Variant — with Revive link (moderation)</SubLabel>
-          <div className="rounded-card overflow-hidden border border-white-10">
-            <DormancyBanner variant="moderation" isCreator />
-          </div>
-        </div>
-
-        <div>
-          <SubLabel>Creator Variant — removed (no Revive link)</SubLabel>
-          <div className="rounded-card overflow-hidden border border-white-10">
-            <DormancyBanner variant="removed" isCreator />
           </div>
         </div>
 

@@ -10,6 +10,8 @@ import LoginSheet from './LoginSheet'
 import DailyCheckInCard from './DailyCheckInCard'
 import { useAuth } from '@/lib/AuthContext'
 
+export type StreakLoginVariant = 'standard' | 'promo'
+
 interface StreakClaimPopupProps {
   open: boolean
   onClose: () => void
@@ -20,10 +22,32 @@ interface StreakClaimPopupProps {
   dailyCheckInClaimable?: boolean
   onClaimDailyCheckIn?: () => void
   onExploreEarn?: () => void
+  loginVariant?: StreakLoginVariant
+  onLoginVariantChange?: (variant: StreakLoginVariant) => void
 }
 
-const GATE_HEADLINE = 'Sign in to claim your credits'
-const GATE_SUBTITLE = 'Unlock free credits and start chatting.'
+type StreakLoginPreset = {
+  headline: string
+  subtitle: string
+  mode: 'form' | 'cta'
+  ctaLabel?: string
+  footer?: string
+}
+
+export const STREAK_LOGIN_VARIANTS: Record<StreakLoginVariant, StreakLoginPreset> = {
+  standard: {
+    headline: 'Sign in to claim your credits',
+    subtitle: 'Your streak follows you across all your devices.',
+    mode: 'form',
+  },
+  promo: {
+    headline: 'Save your free credits',
+    subtitle: 'Sign in to keep your streak and credits across all your devices.',
+    mode: 'cta',
+    ctaLabel: 'Sign in to claim',
+    footer: "We'll move your streak to your account on first sign-in.",
+  },
+}
 
 function BalancePill({ balance }: { balance: number }) {
   return (
@@ -99,7 +123,7 @@ function PopupContent({
   )
 }
 
-export default function StreakClaimPopup({ open, onClose, ...rest }: StreakClaimPopupProps) {
+export default function StreakClaimPopup({ open, onClose, loginVariant = 'standard', onLoginVariantChange, ...rest }: StreakClaimPopupProps) {
   const { isLoggedIn, login } = useAuth()
   const [pendingClaim, setPendingClaim] = useState<(() => void) | null>(null)
   const [loginGateOpen, setLoginGateOpen] = useState(false)
@@ -162,8 +186,19 @@ export default function StreakClaimPopup({ open, onClose, ...rest }: StreakClaim
         open={loginGateOpen}
         onClose={handleLoginGateClose}
         onSignIn={handleSignIn}
-        headline={GATE_HEADLINE}
-        subtitle={GATE_SUBTITLE}
+        headline={STREAK_LOGIN_VARIANTS[loginVariant].headline}
+        subtitle={STREAK_LOGIN_VARIANTS[loginVariant].subtitle}
+        mode={STREAK_LOGIN_VARIANTS[loginVariant].mode}
+        ctaLabel={STREAK_LOGIN_VARIANTS[loginVariant].ctaLabel}
+        footer={STREAK_LOGIN_VARIANTS[loginVariant].footer}
+        variantSwitcher={onLoginVariantChange ? {
+          current: loginVariant,
+          variants: [
+            { id: 'standard', label: '1' },
+            { id: 'promo', label: '2' },
+          ],
+          onChange: (id) => onLoginVariantChange(id as StreakLoginVariant),
+        } : undefined}
       />
     </>
   )
