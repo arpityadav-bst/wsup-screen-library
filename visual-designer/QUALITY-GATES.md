@@ -132,16 +132,58 @@ For every visual change, verify style guide is updated IN THE SAME EDIT:
 
 ## GATE 6 — VDA LEARNS
 
-Update VDA knowledge files for every visual change:
+> **HARD FAIL TRIGGER:** if the designer ever asks "is VDA learning?", "did you log this?", or runs the health check unprompted mid-session — Gate 6 has *already* failed for this session, regardless of how complete the audit looks afterward. The asking IS the failure. Self-monitor against this signal: if you can imagine the designer being moved to ask the meta-question, log NOW before they have to.
 
-**Per-edit (same edit as the change):**
-- [ ] Add a row to `visual-designer/decisions.md` — what was decided + why
+Update VDA knowledge files for every visual change.
 
-**Per-session (at session end):**
-- [ ] Append session entry to `visual-designer/session-logs.md` — what was built, changed, learned
-- [ ] If a new design rule or pattern emerged → add to `visual-designer/knowledge-base.md`
+### The trigger is the correction loop closing, NOT the edit completing
 
-Note: `decisions.md` is per-edit (atomic with the change). `session-logs.md` is per-session (summary at the end). Don't conflate them.
+Every time the designer says *"no"*, *"actually"*, *"let's change"*, *"we don't need"*, *"why did you..."*, or asks a clarifying question that produces a new decision — that's a correction loop. **Before sending the reply that resolves it, write the decision + reasoning in `decisions.md`. Same turn. Not "after a few more edits."** If you respond to a correction and there's no new entry, you batched.
+
+Real-time means: log → reply. In that order. If the reply ships first, you're already late.
+
+### Routing table — kills the "where does this go?" cognitive cost
+
+| The insight is... | Goes in | Trigger words |
+|---|---|---|
+| A specific choice + WHY for this case | `decisions.md` | *"I picked X over Y because"* |
+| An aesthetic/visual rule that applies broadly | `taste.md` | *"always", "never", "any time", "whenever"* |
+| A *class of decisions* principle | `reasonings.md` | *"the way to think about this is", "anytime you face X"* |
+| Confirmed default rule with 2+ uses | `knowledge-base.md` | *"this has now happened twice"* |
+| WSUP-specific architecture/domain fact | `project-insights.md` | *"in WSUP", "this product's flow"* |
+| Process/cadence/operating rule | `workflow.md` | *"the way VDA operates"* |
+| Phase transition or gap status | `evolution.md` | *"VDA matured to" / "active gap"* |
+
+### Per-edit (same edit as the change)
+- [ ] Add a row to `decisions.md` — what was decided + why
+- [ ] Run the **Generalization Probe** (Gate 6.5 below) before considering Gate 6 complete
+
+### Per-session (at session end)
+- [ ] Append session entry to `session-logs.md` — what was built, changed, learned, **+ structured field `designer_caught_count: N`** (count of UX issues the designer pointed out that you should have caught)
+- [ ] If a new design rule or pattern emerged → add to `knowledge-base.md`
+
+Note: `decisions.md` is per-correction-loop (atomic with the resolution). `session-logs.md` is per-session (summary at the end). Don't conflate them.
+
+---
+
+## GATE 6.5 — GENERALIZATION PROBE
+
+After logging a decision, immediately ask:
+
+> *"Is there a transferable principle here that applies beyond this case?"*
+
+If **yes** → sibling entry in `taste.md` (aesthetic/visual rule) or `reasonings.md` (class-of-decisions principle).
+
+The decision entry captures **the moment** (this specific choice in this specific context). The taste/reasonings entry captures **the generalization** (the rule that explains a whole class of moments). Without this step, `decisions.md` becomes a graveyard of orphaned moments and the rules never compound across sessions.
+
+**Trigger words signal generality** — when the decision text uses *"always", "never", "every", "all", "any X", "whenever"*, the decision IS already a rule and demands a sibling entry. Don't bury a rule inside a single decision.
+
+**Examples from past sessions (right routing):**
+- *Decision*: "Apple = `bg-black + border-white-20`, Google = `bg-white`" → *Sibling taste rule*: "Brand-pure pairing: when stacking provider sign-in buttons, differentiate by brand color, not layout."
+- *Decision*: "Variant pills float OUTSIDE the popup with 10px gap" → *Sibling taste rule*: "Dev controls live OUTSIDE the design surface, not inside it."
+- *Decision*: "Distinct copy for inactive vs moderation, equal text/icon shades" → *Sibling taste rule*: "When two states share visual treatment, their token shades must match exactly."
+
+If you write a decision with universal language but skip the taste/reasonings sibling, the audit (Health Check #6 — Purpose Fit) will catch it as a misroute.
 
 ---
 

@@ -1,7 +1,37 @@
 # Visual Designer — Designer's Reasonings
-Last updated: 2026-04-23
+Last updated: 2026-04-28
 
 The WHY behind the designer's decisions. Not what was chosen — why it was chosen. This file captures the designer's thinking process so the agent can reason the same way about new problems.
+
+---
+
+## On framing the auth gate by what the user is *protecting*, not what they're *unlocking*
+
+The standard sign-in framing is acquisition: "Sign in to claim X." It tells the user what they get *if* they sign in. The promo variant flips this: "Save your free credits" — they already have something, signing in protects it. This is loss aversion, and it's a stronger pull at the moment of friction than acquisition framing, because the user has invested (Day 3 streak, 15 credits earned). Signing in protects sunk cost; *not* signing in risks losing it.
+
+This isn't a copywriting trick — it's the right framing only when there's something real for the user to lose. Don't loss-frame an acquisition (a fresh user opening the app for the first time has nothing invested; promising they'll "lose" something is dishonest). The cue is: did this user already do work in the experience? If yes, frame the gate around protection. If no, frame around acquisition.
+
+**How to apply:** for any gate, look at what state the user already accumulated. If they have progress, status, history — write the gate copy to protect it. If they don't, write it to invite.
+
+---
+
+## On audience mismatch between the message and its reader
+
+A banner, modal, or label is read by *whoever's looking at the screen*, not by the persona the PM had in mind when they wrote it. The original moderation banner copy ("This character is under review") was written from the platform's POV — and read like an accusation by the *user* who just opened the chat. The user didn't put the character under review; they didn't even know what "review" meant in that context. The framing implicated them.
+
+Fix: identify who's actually reading. For the chat banner, the reader is a third-party user, not the creator. So the copy should answer *their* question ("can I still chat?") in *their* voice ("yes, this character is paused / being reviewed — chat is still available"), not the platform's voice ("we are reviewing this character"). The creator gets the richer "your character is in moderation, here's the appeal flow" treatment elsewhere — in their account view, not the chat banner.
+
+**How to apply:** for any user-facing string, ask: who reads this, and from whose POV is it written? Mismatch = rewrite from the reader's POV.
+
+---
+
+## On dev affordances being scaffolding, not product
+
+A dev shortcut, toggler, or pill is part of the review *infrastructure*, not the design itself. The user (in production) never sees it. So its visual treatment must communicate that role — distinct from real product chrome (controls users can use), ambiguous-but-positioned-like-a-control will cause a reviewer to mistake one for the other.
+
+The L-key panel attempt failed not because keyboard shortcuts are bad but because it sat at z-70 *behind* the LoginSheet's z-90 backdrop — the dev surface was hidden by the design surface it was meant to control. The fix wasn't "raise z-index" — it was "render the affordance OUTSIDE the design surface." Dev controls float above-or-beside the popup, with explicit dev labels ("VARIANT", "STATE"). They never share airspace with real chrome.
+
+**How to apply:** when adding any reviewer-only affordance, position it visibly outside the design surface, label it with a dev tag, and verify it works while the design is open (not just when the design is closed).
 
 ---
 

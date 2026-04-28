@@ -5,6 +5,24 @@ Chronological log of every VDA session. Each entry captures what was built, what
 
 ---
 
+## Session 22 — 2026-04-28 (Streak login variants + Apple sign-in + dormancy + dev cleanup)
+
+`designer_caught_count: 3` (recurring category: shipped on first-pass-that-works without a real Gate 8 review pass)
+
+**Late-session additions** (after the initial Session 22 entry below):
+- **Promo cta dead-zone fix** — first build had `justify-between` on the cta-mode form panel which created a ~140px void below the CTA. Replaced with `flex-1 justify-center` on the middle group so cta content centers vertically in the panel. *Caught by designer (Gate 8 fail) — should have been pre-shipped.*
+- **Variant pills repositioned: in-popup → out-of-popup** — first placement was inside the popup (top-right next to close button) which read as real product chrome. Moved to floating outside the popup, top-right, 10px gap above the popup edge. Pills now over the dim backdrop with `VARIANT` uppercase prefix — unambiguously dev tooling. *Caught by designer — guidance on dev-control positioning added to taste.md.*
+- **Promo CTA → in-place transition (Option A)** — tapping "Sign in to claim" advances the same popup to the provider chooser (Email + Google + Apple) while keeping the persuasion headline. Internal `internalMode` state separate from `mode` prop; resets on open or prop change. Two variants now feel like *different entry points to the same flow*, not parallel designs.
+- **Dev keymap cleanup** — dropped `S` (streak popup auto-opens, redundant), `C` (redundant with in-panel checkbox on /chat), `L` (z-index conflict — sat behind LoginSheet's z-90 backdrop, never actually worked). Auth panel on /explore is now the sole R panel.
+- **Dormancy banner copy + color normalization** — distinct neutral copy: inactivity = "paused by its creator" / moderation = "being reviewed" (PRD-aligned non-threatening tone preserved, audience mismatch addressed). Both shades normalized to `text-white-50` body / `text-white-40` icon — the 10%-shade drift between them was invisible nuance and a trap for the next designer. `isCreator` prop dropped — revive link now driven by variant (shown on inactivity/moderation, hidden on removed).
+- **DormancyBanner style guide collapsed from 6 demos → 3** — three "Creator Variant" demos removed; the three real variants now stand alone.
+
+**Honest Gate 8 retrospective (this session):**
+- 3 UX issues were caught by the designer instead of by me at the gate: (1) promo cta dead zone, (2) pill positioning ambiguity, (3) dormancy color drift between visually-equivalent states. Each is now codified in taste.md so future builds don't repeat them.
+- Pattern across the three: I shipped on the *first* layout that worked, instead of pausing for a UX review pass. The fix going forward: after every visual change, sit with it for a beat — *would I notice anything wrong if I were seeing this for the first time as a user?* — before declaring done.
+
+---
+
 ## Session 22 — 2026-04-28 (Streak login variants + Apple sign-in)
 **Scope:** PM delivered two copy/layout treatments for the auth gate triggered by the StreakClaim popup's Claim button. Variant A (`standard`) — full sign-in form with new copy. Variant B (`promo`) — value-prop screen with single CTA and a streak-portability hint footer. Add a dev toggle (mirroring R/S) so both can be flipped on `/explore`. Plus: PM brief mentioned Apple/Google/email — `LoginSheet` only had Google + email, so Apple was added as a real new primitive.
 

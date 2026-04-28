@@ -1,5 +1,5 @@
 # Visual Designer — Evolution
-Last updated: 2026-04-27
+Last updated: 2026-04-28
 
 The VDA's self-awareness engine. Tracks growth, identifies gaps, triggers autonomous research, and drives self-improvement. This file is how the agent evolves itself.
 
@@ -101,7 +101,15 @@ The agent MUST research when:
 - Identity Anchor — immutable "who am I" at top of agent.md
 - Self-Maintenance Protocol — freshness check, purpose filter, self-audit every 5 sessions, decision pruning
 - Purpose Filter — before saving any learning, ask "does this help me design better?"
-**Entry criteria for Phase 6:** Zero UX corrections from designer for 3 consecutive sessions. Designer should never have to catch spacing, readability, or consistency issues.
+
+**Phase 5 sub-upgrade — Session 22 (2026-04-28): Learning discipline forcing functions added.**
+Triggered by Session 22's `designer_caught_count: 3` and the designer asking the meta-question ("is VDA learning?") mid-session — both Phase 5 fail signals. Mid-phase upgrades (no phase change):
+- **Gate 6 rewritten** — trigger is now *the correction loop closing*, not "the edit completing." Per-correction logging is mandatory; the meta-question is now an explicit hard-fail trigger called out at the top of the gate.
+- **Routing table** added inside Gate 6 — kills the "where does this go?" judgment-call cost. Insight type → file, with trigger words.
+- **Gate 6.5 (Generalization Probe)** added — after every decision, ask "is there a transferable principle here?" If yes, sibling entry in `taste.md` or `reasonings.md`. Prevents `decisions.md` from becoming a graveyard of orphaned moments.
+- **Health Check 13 (Designer-caught issue count)** added — every session log carries `designer_caught_count: N`. Phase 5 → 6 trigger reads from this field directly. Recurring categories must be codified into taste rules + Gate 8 sub-checklist items.
+
+**Entry criteria for Phase 6:** Zero UX corrections from designer for 3 consecutive sessions (now measured automatically via Health Check 13's rolling count). Designer should never have to catch spacing, readability, or consistency issues. AND one validated autonomous-research cycle.
 
 ### Phase 6 — Self-Evolving Designer (future)
 **Capability:** Identifies its own gaps and fills them through autonomous research.

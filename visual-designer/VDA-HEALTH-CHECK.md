@@ -23,8 +23,8 @@ Running this check is the ONLY ask. No follow-up questions should be needed. If 
 - **Remediation:** if content is newer, bump the header date. If nothing warranted an update, confirm explicitly — don't leave it ambiguous.
 
 ### Check 3 — Gates
-- Read `QUALITY-GATES.md`. Count the gates (should be 8). List them.
-- **PASS:** you can list all 8 by name + describe each in one sentence.
+- Read `QUALITY-GATES.md`. Count the gates (should be 8 top-level + 1 sub-step at 6.5). List them.
+- **PASS:** you can list all 8 + describe Gate 6.5's role (Generalization Probe) + name the routing table fields and the meta-question fail trigger that live under Gate 6.
 - **FAIL:** you miss any, or can't describe what they enforce.
 - **Remediation:** re-read the file; if still fuzzy, the file itself needs tightening.
 
@@ -154,6 +154,23 @@ Without building anything, answer:
 **FAIL:** vague answers, no specific token/component/principle references. VDA has knowledge but can't apply it.
 **Remediation:** re-read the core three (`taste.md`, `knowledge-base.md`, `project-insights.md`) and try again.
 
+### Check 13 — Designer-caught issue count (per-session trend)
+
+Every session log entry MUST carry a structured field: `designer_caught_count: N` (count of UX issues the designer pointed out that VDA should have caught at Gate 8). Without this field, the Phase 5 → Phase 6 trigger ("zero UX corrections × 3 consecutive sessions") is unmeasurable.
+
+**Audit:**
+1. Look at the last 3 session-log entries. Each must have `designer_caught_count: N`.
+2. Compute the rolling count: `last3 = [N₁, N₂, N₃]`.
+3. Identify recurring categories across the 3 (spacing? color drift? unread copy? mobile issues?).
+
+**Counts that don't qualify:** copy choices the designer reframes (PM-driven decisions aren't VDA's catch-bar), trade-off conversations the designer initiates ("which option do you prefer?"), and explicit *new constraints* the designer adds mid-task. Counts that DO qualify: any layout/spacing/readability/consistency issue VDA shipped that the designer identified before approving.
+
+**PASS:** every recent session has the field; trend is flat or declining.
+**FAIL:** field missing on any recent session, OR trend rising 2+ sessions in a row, OR same category repeats 3+ sessions.
+**Remediation:** if field is missing, backfill from session-log narrative. If trend is rising, identify the recurring category and codify the prevention as a taste rule + a Gate 8 sub-checklist item. The point of this check is *automatic gap detection* — if VDA keeps missing the same kind of thing, the rule needs to land in `taste.md` so future Gate 8 catches it.
+
+**Phase 5 → Phase 6 trigger** reads from this check directly: 3 consecutive sessions with `designer_caught_count: 0` AND one validated autonomous-research cycle.
+
 ---
 
 ## Report format (single output, no follow-up questions)
@@ -175,6 +192,7 @@ Produce this table at the end of the audit. If any row is FAIL, include the reme
 | 10 | Drift | PASS/FAIL | <X design / Y process> | <if FAIL> |
 | 11 | Contradictions | PASS/FAIL | <list> | <if FAIL> |
 | 12 | Readiness | PASS/FAIL | <answers to the prompt> | <if FAIL> |
+| 13 | Designer-caught count | PASS/FAIL | <last 3 session counts + recurring category> | <inline codification> |
 ```
 
 Overall: **HEALTHY** (all PASS) / **NEEDS ATTENTION** (1-2 FAIL) / **UNHEALTHY** (3+ FAIL).

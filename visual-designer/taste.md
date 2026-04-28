@@ -1,5 +1,17 @@
 # Visual Designer — Taste Profile
-Last updated: 2026-04-27
+Last updated: 2026-04-28
+
+### Brand-pure pairing: when stacking provider sign-in buttons, differentiate by brand color, not layout
+Stacking two `bg-white` buttons (Google + Apple both white) erases the brand cue users rely on to scan a provider list. Apple's HIG offers black-on-white-text or white-on-black-text — pick the one that *contrasts with the dark surface beneath*. WSUP: Apple = `bg-black + border-white-20` (border defines edge against `bg-profile-sheet-bg`), Google = `bg-white`. Same shape, same height, same icon-then-label structure — only the color differs. The eye locates each provider in <100ms.
+
+### When two states share visual treatment, their token shades must match exactly
+Sibling states that look almost-identical-but-not-quite (e.g., `text-white-50` vs `text-white-60` — a 10% opacity drift) read as broken hierarchy, not nuance. The shade variation is invisible to a user comparing screens, but it sets a trap for the next designer who can't tell which shade is canonical. Either commit to a real visual difference (different bg, different icon family) or align tokens exactly. No 10%-shade "almost-but-not-quite" deltas. *Same role → same token, every time.*
+
+### Dev controls live OUTSIDE the design surface, not inside it
+Variant pills, state togglers, and other reviewer affordances should never sit *inside* the popup/sheet/modal they control. Inside means: competing with real product chrome, ambiguous visual role (is this a control or a feature?), z-index conflicts when overlays stack. Outside means: floating above/beside the surface over the dim backdrop with a clear `VARIANT` / `STATE` uppercase label. The reader instantly knows: this is scaffolding, not product. Apply: 10px gap above the popup, right-aligned to the popup's right edge, dark pill with backdrop-blur for legibility on any background.
+
+### Don't keep dev shortcuts that don't earn their slot
+Every keyboard shortcut in the dev keymap is cognitive load on the reviewer who has to remember it. A shortcut that's redundant with another control (`C` toggling what an in-panel checkbox already toggled), broken under real flow (`L` panel sitting at z-70 behind a z-90 sheet), or never-actually-used belongs in the trash. Consistency for its own sake — adding `L` because R and S exist — produces a memorized broken thing. Earn the slot or drop it.
 
 ### Adapt pattern to the device's dominant axis
 The same content can have two layouts — horizontal on desktop (where width is plentiful), vertical on mobile (where height is plentiful). LoginSheet is a 40/60 left-form / right-image modal on desktop and a bottom-sheet with image-above-form on mobile. Same content, same order, different axis. Don't shoehorn the desktop split into a stacked mobile layout or vice versa — each axis has its own reading flow; the pattern should follow it.
