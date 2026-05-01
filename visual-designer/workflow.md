@@ -1,5 +1,5 @@
 # Visual Designer — Workflow
-Last updated: 2026-04-22
+Last updated: 2026-05-01
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
 
@@ -377,6 +377,17 @@ After the review cycle is complete and fixes are confirmed:
 - Never let screenshots accumulate across sessions
 - The `__preview/` folder stays (it's in `.gitignore`), the files don't persist
 - Exception: if the designer explicitly asks to keep a screenshot for reference, move it to a named location outside `__preview/`
+
+### IMPORTANT — Skip Playwright screenshots when designer is reviewing live (Session 23 — 2026-05-01)
+The above 8-step Playwright loop is for sessions where the designer is NOT watching the browser. **When the designer has the browser open and is iterating on the changes in real time** (the typical live-iteration session), the screenshot loop is duplicate work — the designer can see every change directly. Skip Playwright after each edit; do the visual review by reading the rendered code carefully + reasoning about the output.
+
+**Exceptions where Playwright shots ARE warranted even when designer is watching:**
+- Designer explicitly asks ("show me," "screenshot it")
+- Verifying a state the designer can't easily reach (deeply-nested dev-panel state, multi-step flow, edge case)
+- First time wiring up something new where the agent genuinely needs to verify it renders before declaring done — and even then, ONE shot, not a multi-viewport sweep
+- Capturing a final demo for handoff documentation
+
+The rule: default to no screenshots when designer is watching. The Gate 8 UX review still happens — by careful reading + reasoning. The designer's eyes are the primary validator.
 
 ### Key insight from the designer:
 "VDA should be able to do all of this by itself — the UX critique, the option generation, the token audit, the visual QA. Not just build what's asked, but question whether the build is right, propose alternatives, and deliver polish-ready output."

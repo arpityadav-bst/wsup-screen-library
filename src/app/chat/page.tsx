@@ -10,20 +10,25 @@ import ChatMessages from '@/components/chat/ChatMessages'
 import ChatBar from '@/components/chat/ChatBar'
 import ChatRightSidebar from '@/components/chat/ChatRightSidebar'
 import DormancyBanner from '@/components/chat/DormancyBanner'
+import MemoryLimitPopup from '@/components/chat/MemoryLimitPopup'
 import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 
 const CHARACTER_IMAGE = '/chars/char5.webp'
 const CHARACTER_AVATAR = '/chars/avatars/char5.jpg'
 
-const STATES: CharacterState[] = ['active', 'dormant-inactive', 'dormant-moderation', 'removed']
-const STATE_LABELS: Record<CharacterState, string> = {
+type ChatDemoState = CharacterState | 'context-exhausted' | 'context-exhausted-popup'
+
+const STATES: ChatDemoState[] = ['active', 'dormant-inactive', 'dormant-moderation', 'removed', 'context-exhausted', 'context-exhausted-popup']
+const STATE_LABELS: Record<ChatDemoState, string> = {
   'active': 'Active',
   'dormant-inactive': 'Dormant (Inactive)',
   'dormant-moderation': 'Dormant (Moderation)',
   'removed': 'Removed',
+  'context-exhausted': 'Memory full (inline)',
+  'context-exhausted-popup': 'Memory full (popup)',
 }
 
-function getBannerVariant(state: CharacterState) {
+function getBannerVariant(state: ChatDemoState) {
   if (state === 'dormant-inactive') return 'inactivity'
   if (state === 'dormant-moderation') return 'moderation'
   if (state === 'removed') return 'removed'
@@ -31,17 +36,21 @@ function getBannerVariant(state: CharacterState) {
 }
 
 export default function ChatPage() {
-  const [characterState, setCharacterState] = useState<CharacterState>('active')
+  const [chatState, setChatState] = useState<ChatDemoState>('active')
   const [showToggle, setShowToggle] = useState(false)
-  const bannerVariant = getBannerVariant(characterState)
-  const isRemoved = characterState === 'removed'
+  const bannerVariant = getBannerVariant(chatState)
+  const isRemoved = chatState === 'removed'
+  const showInstallPrompt = chatState === 'context-exhausted'
+  const showInstallPopup = chatState === 'context-exhausted-popup'
+  const headerCharacterState: CharacterState =
+    chatState === 'context-exhausted' || chatState === 'context-exhausted-popup' ? 'active' : chatState
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
       if (e.key === 'r' || e.key === 'R') {
         if (e.shiftKey) {
-          setCharacterState(prev => {
+          setChatState(prev => {
             const i = STATES.indexOf(prev)
             return STATES[(i + 1) % STATES.length]
           })
@@ -52,6 +61,14 @@ export default function ChatPage() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
+  }, [])
+
+  // Auto-fire the memory limit popup 2s after page load — only if user hasn't manually changed state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setChatState(prev => (prev === 'active' ? 'context-exhausted-popup' : prev))
+    }, 2000)
+    return () => clearTimeout(timer)
   }, [])
 
   return (
@@ -92,16 +109,38 @@ export default function ChatPage() {
               characterName="Billie Eilish"
               characterImage={CHARACTER_AVATAR}
               creatorName="Honeybadger"
-              characterState={characterState}
+              characterState={headerCharacterState}
             />
             {bannerVariant && <DormancyBanner variant={bannerVariant} />}
-            <ChatMessages />
+            <ChatMessages showMemoryLimit={showInstallPrompt} characterName="Billie" />
             {isRemoved ? (
               <div className="flex items-center justify-center px-m py-m bg-page-bg border-t border-white-10 shrink-0 md:bg-transparent">
                 <span className="text-xs text-white-40">Messaging isn&apos;t available for this character.</span>
               </div>
             ) : (
-              <ChatBar />
+              <div className="relative shrink-0">
+                <ChatBar />
+              </div>
+            )}
+
+            {/* Backdrop overlay — full chat area, modal-style, when popup is showing */}
+            {showInstallPopup && !isRemoved && (
+              <>
+                <div
+                  className="absolute inset-0 bg-black-60 pointer-events-none z-20"
+                  aria-hidden
+                />
+                {/* Popup — anchored above ChatBar */}
+                <div className="absolute bottom-[88px] left-0 right-0 px-m md:px-2xxxl pt-12 z-30 pointer-events-none">
+                  <div className="pointer-events-auto">
+                    <MemoryLimitPopup
+                      characterName="Billie"
+                      characterImage={CHARACTER_AVATAR}
+                      onDismiss={() => setChatState('active')}
+                    />
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -114,8 +153,8 @@ export default function ChatPage() {
         {STATES.map((state) => (
           <DevStateOption
             key={state}
-            active={characterState === state}
-            onClick={() => setCharacterState(state)}
+            active={chatState === state}
+            onClick={() => setChatState(state)}
           >
             {STATE_LABELS[state]}
           </DevStateOption>
