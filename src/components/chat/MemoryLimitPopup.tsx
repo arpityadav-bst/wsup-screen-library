@@ -96,35 +96,37 @@ export default function MemoryLimitPopup({
           className="absolute top-xs right-xs z-10 text-white-70 hover:text-white"
         />
 
-        {/* Content — top padding accounts for the larger DP overlap (96px DP, 48px overhang) */}
-        <div className="relative pt-6xl px-l pb-l flex flex-col gap-m text-center">
+        {/* Content — top padding clears the DP overhang (96px DP, 48px overhang) + 16px breathing space */}
+        {/* Spacing rhythm: tight WITHIN groups (narration / action), wider BETWEEN them (the read→act pivot) */}
+        <div className="relative pt-4xl px-l pb-l flex flex-col gap-xl text-center">
 
-          {/* Title — system-voice, descriptive */}
-          <p className="text-base text-text-title font-medium leading-snug">
-            {resolvedTitle}
-          </p>
+          {/* Narration group — title + body read as one unit */}
+          <div className="flex flex-col gap-xs">
+            {/* Title — system-voice, descriptive */}
+            <p className="text-base text-text-title font-medium leading-snug">
+              {resolvedTitle}
+            </p>
+            {/* Body — app benefit */}
+            <p className="text-sm text-white-90 leading-relaxed">{resolvedBody}</p>
+          </div>
 
-          {/* Body — app benefit */}
-          <p className="text-sm text-white-90 leading-relaxed">{resolvedBody}</p>
-
-          {/* Primary CTA — full width */}
-          <Button size="m" fullWidth onClick={handleInstall}>
-            {ctaLabel}
-          </Button>
-
-          {/* Subtle divider — edge-to-edge */}
-          <div className="border-t border-white-10 -mx-l" />
-
-          {/* Switch-model link — centered */}
-          {secondaryLabel && (
-            <button
-              type="button"
-              onClick={handleSwitchModel}
-              className="link text-sm cursor-pointer bg-transparent border-none p-0 self-center"
-            >
-              {secondaryLabel}
-            </button>
-          )}
+          {/* Action group — primary CTA + alternate link */}
+          <div className="flex flex-col gap-s">
+            {/* Primary CTA — full width */}
+            <Button size="m" fullWidth onClick={handleInstall}>
+              {ctaLabel}
+            </Button>
+            {/* Switch-model link — centered, smaller weight */}
+            {secondaryLabel && (
+              <button
+                type="button"
+                onClick={handleSwitchModel}
+                className="link text-sm cursor-pointer bg-transparent border-none p-0 self-center"
+              >
+                {secondaryLabel}
+              </button>
+            )}
+          </div>
 
         </div>
       </div>

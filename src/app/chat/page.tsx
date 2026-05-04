@@ -16,16 +16,15 @@ import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 const CHARACTER_IMAGE = '/chars/char5.webp'
 const CHARACTER_AVATAR = '/chars/avatars/char5.jpg'
 
-type ChatDemoState = CharacterState | 'context-exhausted' | 'context-exhausted-popup'
+type ChatDemoState = CharacterState | 'context-exhausted-popup'
 
-const STATES: ChatDemoState[] = ['active', 'dormant-inactive', 'dormant-moderation', 'removed', 'context-exhausted', 'context-exhausted-popup']
+const STATES: ChatDemoState[] = ['active', 'dormant-inactive', 'dormant-moderation', 'removed', 'context-exhausted-popup']
 const STATE_LABELS: Record<ChatDemoState, string> = {
   'active': 'Active',
   'dormant-inactive': 'Dormant (Inactive)',
   'dormant-moderation': 'Dormant (Moderation)',
   'removed': 'Removed',
-  'context-exhausted': 'Memory full (inline)',
-  'context-exhausted-popup': 'Memory full (popup)',
+  'context-exhausted-popup': 'Memory full',
 }
 
 function getBannerVariant(state: ChatDemoState) {
@@ -40,10 +39,9 @@ export default function ChatPage() {
   const [showToggle, setShowToggle] = useState(false)
   const bannerVariant = getBannerVariant(chatState)
   const isRemoved = chatState === 'removed'
-  const showInstallPrompt = chatState === 'context-exhausted'
   const showInstallPopup = chatState === 'context-exhausted-popup'
   const headerCharacterState: CharacterState =
-    chatState === 'context-exhausted' || chatState === 'context-exhausted-popup' ? 'active' : chatState
+    chatState === 'context-exhausted-popup' ? 'active' : chatState
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -112,7 +110,7 @@ export default function ChatPage() {
               characterState={headerCharacterState}
             />
             {bannerVariant && <DormancyBanner variant={bannerVariant} />}
-            <ChatMessages showMemoryLimit={showInstallPrompt} characterName="Billie" />
+            <ChatMessages />
             {isRemoved ? (
               <div className="flex items-center justify-center px-m py-m bg-page-bg border-t border-white-10 shrink-0 md:bg-transparent">
                 <span className="text-xs text-white-40">Messaging isn&apos;t available for this character.</span>

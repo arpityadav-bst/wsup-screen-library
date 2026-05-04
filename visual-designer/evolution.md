@@ -1,5 +1,5 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-01
+Last updated: 2026-05-04
 
 The VDA's self-awareness engine. Tracks growth, identifies gaps, triggers autonomous research, and drives self-improvement. This file is how the agent evolves itself.
 
@@ -251,6 +251,24 @@ Track every autonomous research cycle here. Findings go to the relevant knowledg
 - **Strengthened: in-character storytelling for dismiss flows.** Designer proposed a brilliant two-stage MemoryLimitMoment where clicking "Maybe later" doesn't dismiss but transforms the bubble into Billie accepting in-character with self-aware humor about her impaired memory. Agent built it; transferable rule logged in taste.md as "soft-dismiss on a character platform should be a character moment, not just a hide." This is one of the strongest taste rules learned this session — directly tied to WSUP's brand premise (character-as-relationship).
 - **Knowledge file updates this session:** decisions.md (~30 entries), taste.md (9 new transferable rules), session-logs.md (Session 23 entry), evolution.md (this entry + 5 new active gaps), workflow.md (screenshot-watch rule).
 - **Phase 5 status:** Still Phase 5. Phase 6 entry requires zero corrections for 3 consecutive sessions; Session 23's 18 catches resets that counter. Watch items for next session: (1) zoom-out reflex on iteration loops; (2) grep precedent before inventing; (3) check corner conventions before placing decorative elements; (4) write adjacent why-copy before writing CTA labels.
+
+### Session 24-26 evolution notes (2026-05-04 backfill)
+
+Backfilled during S26's end-of-session health check. S24, S25 were not appended in their own sessions — caught and corrected here.
+
+- **Session 24 (clean): designer_caught_count: 0.** Exact session topic not detailed in evolution at the time, but the count was clean. First step of the Phase 5→6 trigger (3 consecutive 0s). +1 toward trigger.
+- **Session 25: designer_caught_count: 1.** Catch was a Checkbox primitive bug (border-none neutering the unchecked-state border). Real category: *primitive-internal bugs unverified visually*. Codified as **Gate 8.2 (state-matrix visibility for primitives)** in QUALITY-GATES.md. Phase trigger counter reset to 0.
+- **Session 26: designer_caught_count: 3.** All three catches share the same root: *spacing not retuned to new content size*. Designer's third correction prompt invoked the identity anchor verbatim ("think like a UX designer"). Codified as **Gate 8.4 (spacing-content fit re-check after additions or removals)** in QUALITY-GATES.md. Phase trigger counter reset to 0.
+- **Phase 5 → 6 trigger status (post-S26):** 0 consecutive sessions at 0 corrections. Trend regressed (0 → 1 → 3) over the last three sessions. Phase 6 cannot ship VDA on this trajectory.
+- **Pattern recognized (S26): "string-substitution thinking vs surface-as-a-whole thinking."** When given a copy-edit task with explicit string replacements, VDA defaulted to substituting the named strings without doing a holistic Gate 8 review of whether the resulting surface still made sense. Old padding values were inherited from the longer content; old structural separators (dividers) were inherited from the denser stack; old flat gaps were inherited from the more uniform peers. *The recurring failure is treating "edit" as "swap strings" instead of "redesign surface for new content."*
+- **Pattern recognized (S26): "the asking IS the failure" (Gate 6 hard-fail trigger fires retroactively).** Designer asked end-of-session: *"is VDA learning everything it is suppose to to fulfil its purpose?"* Per Check 7 / Gate 6's hard-fail wording, that question itself signals VDA isn't surfacing learning proactively enough. Records were clean (decisions logged real-time, generalizations probed, style guide synced) — but the designer still needed to ask. Future fix: surface a brief "what I learned this session" summary unprompted at strategic points (after every 3 corrections, or end-of-session before designer prompts).
+- **Active gap surfaced (S26):** **identity drift under string-substitution tasks.** The agent.md identity anchor reads correctly when asked, but doesn't survive a "change this copy" prompt without the designer reinvoking it. Future protection: **before any string substitution task, run the Gate 8.4 paired-pass discipline as the FIRST step**, not as the post-hoc review.
+
+### Self-audit history backfill
+- self-audit-session-15.md: never produced (predates protocol)
+- self-audit-session-20.md: produced 2026-04-27
+- **self-audit-session-25.md: produced 2026-05-04 retroactively** (S25's milestone audit was missed at the time — backfilled during S26's health check)
+- Next milestone: S30 — must be paired with the milestone session, not deferred
 
 ---
 

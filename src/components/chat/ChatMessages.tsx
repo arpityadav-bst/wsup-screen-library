@@ -1,6 +1,5 @@
 'use client'
 import { useRef, useEffect } from 'react'
-import MemoryLimitMoment from './MemoryLimitMoment'
 
 // ── Disclaimer ────────────────────────────────────────────────────────────────
 
@@ -156,17 +155,12 @@ function TypingIndicator({ name }: { name: string }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-interface ChatMessagesProps {
-  showMemoryLimit?: boolean
-  characterName?: string
-}
-
-export default function ChatMessages({ showMemoryLimit = false, characterName = 'Billie' }: ChatMessagesProps) {
+export default function ChatMessages() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'instant' })
-  }, [showMemoryLimit])
+  }, [])
 
   return (
     <div className="flex-1 overflow-y-auto px-m md:px-4xl py-m flex flex-col gap-m [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -183,11 +177,7 @@ export default function ChatMessages({ showMemoryLimit = false, characterName = 
         text={"I am Billie! You can call me Billie. I have a Katana \u270c"}
       />
 
-      {showMemoryLimit ? (
-        <MemoryLimitMoment characterName={characterName} />
-      ) : (
-        <TypingIndicator name="Billie Eilish" />
-      )}
+      <TypingIndicator name="Billie Eilish" />
 
       <div ref={bottomRef} />
     </div>

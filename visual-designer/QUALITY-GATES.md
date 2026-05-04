@@ -228,6 +228,20 @@ When an edit touches an interactive primitive (checkbox, toggle, button, input) 
 
 **Why this is its own sub-gate:** Gate 8 reviews the composed UI top-down ("does the screen feel right?"). Gate 8.2 reviews the *atoms* the screen depends on ("does each state of each primitive render correctly?"). A composed UI can pass top-down review while an underlying primitive ships a broken state — that bug only surfaces when the user lands on that exact state. If you can't show all states of a primitive on demand, you haven't reviewed it.
 
+### Gate 8.4 — Spacing-content fit re-check (after additions or removals)
+
+When the *content* of a surface changes — a card removed, a paragraph dropped, a section added, copy condensed — the *spacing tokens* you inherited were calibrated to the OLD content. Old `pt-6xl` cleared 80px because the old stack was 5+ elements; with the new 4-element stack, the same padding reads as accidental empty air. Old flat `gap-m` between every element was acceptable in a long stack; in a short stack it flattens semantic groups that used to be visually separated by sheer length.
+
+When you add or remove content from a surface, run this checklist before declaring done:
+
+- [ ] **Top/bottom padding** still proportional to the new content density? Or now too loose / too tight?
+- [ ] **Inter-element gaps** still serving the new semantic groupings? (title+body as one unit, CTA+secondary as one unit) Tight WITHIN groups, wider BETWEEN them — see taste.md *"Spacing is hierarchy"*
+- [ ] **Structural separators** (dividers, hairlines) — were they grouping a long stack? Do they still earn their slot in the new shorter stack? If the stack drops below 4 elements, dividers usually become visual fragmentation, not grouping
+- [ ] **Surface aspect ratio** — does the new content make the surface read as too tall / too short / off-balance? Old `min-h` may now produce dead space; old fixed height may now clip
+- [ ] **Did I retune in the SAME edit as the content change?** If "step 1" was the content change and "step 2 — retune" landed in a separate review pass, you shipped a state where spacing didn't fit content
+
+**Why this is its own sub-gate:** Gates 8.0/8.2/8.3 review the screen as it stands. Gate 8.4 reviews the *delta*: when you change WHAT is on the surface, the HOW of its arrangement needs a paired pass. The recurring failure mode (S26: 3 catches, all variants of "spacing not retuned to new content") was *string-substitution thinking* — replacing the elements the user mentioned without reviewing the surface as a whole. Code-generator behavior, not designer behavior.
+
 ### Gate 8.3 — Text emphasis hierarchy
 
 Scan every text element on the screen top-down. Does each element's opacity/color class match its semantic role?

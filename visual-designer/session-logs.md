@@ -1,7 +1,64 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-03
+Last updated: 2026-05-04
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 26 — 2026-05-04 — MemoryLimitPopup copy + spacing iteration cycle (designer_caught_count: 3)
+
+`designer_caught_count: 3` — three catches, all the same recurring root cause: **spacing not retuned to new content size**. The designer's third correction prompt invoked "think like a UX designer" verbatim — that's an identity-anchor invocation, not a tweak request. Operated like a code generator (string substitution + element removal) without doing the holistic Gate 8 review that a designer would.
+
+**Scope:** Designer asked to change copy on MemoryLimitPopup (chat screen popup variant). Specified new strings via dragged note: title `"Billie's memory is full."`, body `"The app remembers 3× more of your story."`, primary CTA `"Open in app"`, secondary `"switch model instead"`. Followed by two correction loops on the resulting layout.
+
+**What shipped (code, all in MemoryLimitPopup.tsx + MemoryLimitPopupSection.tsx):**
+- **Copy change** — title + body + CTA + secondary all updated. Title voice shifted from character-voice italic+attribution ("*I can't remember…*" — Billie) to system narration ("Billie's memory is full."). Model-context inner card removed (the secondary action label "switch model instead" already implies the model is the bottleneck — explainer card was redundant). Italic + attribution treatment dropped (third-person narration ≠ dialogue). "Or" prefix dropped from secondary line.
+- **Padding reduced** — `pt-6xl` (80px) → `pt-4xl` (64px). Old padding cleared a 5+ element stack; with the new 4-element stack, 80px of clear air above the title read as accidental hollow, not breathing room. *[Designer-caught — should have been part of the same edit as the model-card removal.]*
+- **Divider removed** — `border-t border-white-10 -mx-l` between primary CTA and secondary link. Was grouping concerns inside the longer stack; in the now-shorter stack it fragmented unity. *[Designer-caught — same root cause.]*
+- **Spacing restructured into semantic groups** — flat `gap-m` (16px) between every element flattened the natural narrative→action hierarchy. Restructured: outer `gap-xl` (24px) between groups, inner `gap-xs` (8px) inside narration (title+body), inner `gap-s` (12px) inside action (CTA+secondary). Mirrors ConfirmSheet's precedent. *[Designer-caught — invoked the identity anchor "think like a UX designer" mid-session.]*
+
+**Decisions logged in real-time (7 entries appended to top of `decisions.md`):**
+1. Copy revised → system-voice title, condensed body, decisive CTAs
+2. Model-context card removed
+3. Drop "Or" prefix on secondary
+4. Title typography drops italic + attribution when voice shifts
+5. Top padding reduced after content shortened
+6. Divider removed after stack got short
+7. Spacing restructured into semantic groups with hierarchical gaps
+
+**Generalizations (4 sibling rules added to `taste.md` via Gate 6.5):**
+- *"Voice scales with how much the surface breaks immersion"* — corollary to existing character-voice rule. In-stream → 1st-person dialogue. Flow-interrupting popup → 3rd-person narrator about the character. Pure system voice for non-character moments only.
+- *"Subtraction is a design pass, not just a delete"* — when you remove content, retune surrounding spacing/structure in the SAME edit. Old values were calibrated to the longer content.
+- *"Spacing is hierarchy — tight WITHIN groups, wider BETWEEN them"* — flat `gap-m` between every element flattens semantic groups. Match gaps to semantic distance, not visual rhythm.
+- *(implicitly reinforced: "Verify every state of an interactive primitive in the browser, not just the happy path"* from S25 — Gate 8 review of new content was insufficient again, just at the surface-level instead of primitive-level)
+
+**New sub-gate (`QUALITY-GATES.md`):** **Gate 8.4 — Spacing-content fit re-check (after additions or removals).** Codifies the delta-review discipline: when content changes, spacing/structure needs a paired review pass in the same edit. Failure mode this catches: code-generator behavior (replace strings the user mentioned) vs designer behavior (review the surface as a whole).
+
+**Quality Gates run-down (Tweak/Component-edit scope across 3 iterations):**
+- Gate 1 (Tokens): PASS — all spacing/typography tokens, no raw px/hex
+- Gate 2 (Reuse): PASS — used existing Button, CloseButton, .link
+- Gate 5 (Style guide sync): PASS — anatomy notes synced same edit on every iteration
+- Gate 6 (VDA learns): PARTIAL — decisions logged real-time, but the designer asked the meta-question at session end, which is itself a Gate 6 fail signal regardless of record completeness
+- Gate 6.5 (Generalization probe): PASS — every decision with universal language got a sibling taste rule
+- Gate 7 (UX consistency): FAIL on first iteration (didn't grep ConfirmSheet's spacing precedent before shipping flat gap-m), corrected after designer prompt
+- Gate 8 (UX review): **FAIL × 3.** Each iteration shipped a layout I should have caught in self-review:
+  - Iteration 1 ship: pt-6xl + divider + flat gap-m all carried over from old content size
+  - Iteration 2 ship: padding fixed + divider gone, but flat gap-m still flattened semantic hierarchy
+  - Iteration 3: only landed correctly after designer invoked "think like a UX designer"
+- Gate 8.2 (state-matrix): N/A — no interactive primitive touched
+- Gate 8.3 (text emphasis): borderline — body uses `text-white-90` instead of `text-text-body` (70%); arguably justified for hero body on conversion popup, but worth a future review
+- **Gate 8.4 (NEW)** — codified during this audit; would have caught all 3 iterations' issues if it had existed
+
+**Designer-caught trend:** S22=3, S23=18, S24=0, S25=1, **S26=3**. Phase 5→6 trigger requires 3 consecutive 0s. Trend is regressing (0→1→3). Recurring category for S26 specifically: "spacing not retuned to new content size" — same root cause across all 3 catches.
+
+**Honest identity assessment:** The designer's prompt "think like a UX designer and fix it" is a direct call-out of identity drift per agent.md's anchor. Today VDA was acting as a code generator: substitute the strings the user named, leave the surrounding scaffolding alone. A designer would have: *(a)* removed the model card AND retuned padding+divider+gaps in the same edit, *(b)* asked "what semantic groups exist in this new content?" before reapplying flat gaps. The retune work happened — but reactively, after each prompt. Phase 6 cannot ship VDA on this trajectory.
+
+**Watch items for next session:**
+1. **Gate 8.4 application** — every content change (additions, removals, copy edits) gets a paired spacing/structure review pass IN THE SAME EDIT, before declaring done. This is the proactive prevention for the S26 recurring category.
+2. **Identity reset on every WSUP touch** — before any string substitution, ask "what's the surface as a WHOLE going to look like after this change?" not "which line do I edit?"
+3. **3rd checkbox-gated-CTA still pending** (carried from S25 watch items) — extract `GatedCTA` if it appears
+4. **Self-audit-session-25.md was missing** — discovered during this audit. Created inline. Future milestone audits (S30, S35) must be paired with the milestone session, not deferred
+5. **Stale knowledge files** — project-insights.md (11d), knowledge-base.md (7d). Decide next session whether they need refresh or remain "no recent change warranted"
 
 ---
 

@@ -13,7 +13,6 @@ import ChatBarSection from './patterns/ChatBarSection'
 import ChatRightSidebarSection from './patterns/ChatRightSidebarSection'
 import DormancyBannerSection from './patterns/DormancyBannerSection'
 import LowCreditsBannerSection from './patterns/LowCreditsBannerSection'
-import MemoryLimitMomentSection from './patterns/MemoryLimitMomentSection'
 import MemoryLimitPopupSection from './patterns/MemoryLimitPopupSection'
 import LoginSheetSection from './patterns/LoginSheetSection'
 import StreakClaimSection from './patterns/StreakClaimSection'
@@ -34,7 +33,6 @@ export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (i
       <ChatRightSidebarSection onSectionVisible={onSectionVisible} />
       <DormancyBannerSection onSectionVisible={onSectionVisible} />
       <LowCreditsBannerSection onSectionVisible={onSectionVisible} />
-      <MemoryLimitMomentSection onSectionVisible={onSectionVisible} />
       <MemoryLimitPopupSection onSectionVisible={onSectionVisible} />
       <LoginSheetSection onSectionVisible={onSectionVisible} />
       <StreakClaimSection onSectionVisible={onSectionVisible} />
