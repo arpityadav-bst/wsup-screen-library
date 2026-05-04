@@ -217,6 +217,17 @@ After every change — before saying "done" — look at what you built as a UX d
 - [ ] **Is the hierarchy right?** Primary info should be largest/brightest, secondary should recede via color not size. Don't use size to demote meaningful data.
 - [ ] **Does empty state make sense?** If there are zero items, only show what's relevant to that state. Don't leak empty states from other tabs/sections.
 
+### Gate 8.2 — State matrix visibility (primitives)
+
+When an edit touches an interactive primitive (checkbox, toggle, button, input) or uses one in a new context, render every state and verify each is visually distinct:
+
+- [ ] Checkbox: checked AND unchecked both visible at rendered size (the unchecked state has been a recurring blind spot — verify it has a visible border/edge against the surface behind it)
+- [ ] Button: enabled AND disabled both visually distinct (disabled = `opacity-40 cursor-not-allowed` per Button primitive)
+- [ ] Input: empty placeholder, focused, filled, error states all readable
+- [ ] Toggle/pill: active AND inactive distinguishable without hover
+
+**Why this is its own sub-gate:** Gate 8 reviews the composed UI top-down ("does the screen feel right?"). Gate 8.2 reviews the *atoms* the screen depends on ("does each state of each primitive render correctly?"). A composed UI can pass top-down review while an underlying primitive ships a broken state — that bug only surfaces when the user lands on that exact state. If you can't show all states of a primitive on demand, you haven't reviewed it.
+
 ### Gate 8.3 — Text emphasis hierarchy
 
 Scan every text element on the screen top-down. Does each element's opacity/color class match its semantic role?

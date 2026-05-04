@@ -1,7 +1,97 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-01
+Last updated: 2026-05-03
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 25 — 2026-05-03 — Remove Account flow + Checkbox primitive bug fix + new Gate 8.2
+
+`designer_caught_count: 1` — Checkbox unchecked-state invisibility bug. Primitive-level: `border-none` in Checkbox base className neutered the conditional `border border-white-20` because Tailwind preflight sets `border-style: solid` by default, so the unchecked state was a transparent 16×16 void. Bug had existed silently for months across 3 other consumers (BuyCreditsSheet ToS, CreditPackRow, FormsSection demos) — Remove Account flow exposed it because it's the most prominent unchecked-checkbox-on-dark-bg in the app. Fixed at source.
+
+**Scope:** Designer asked to add a "Remove Account" option to the profile 3-dot menu (mobile sheet + desktop popover) with a confirmation sheet similar to Logout but with a checkbox-gated CTA — checkbox must be ticked before the destructive button un-disables. Spec referenced existing components ("any preexisting style of componenet of checkbox", "just how we use other disabled primary button in WSUP"), explicit reuse intent.
+
+**What shipped:**
+- **`src/components/ui/ConfirmSheet.tsx`** — extended with optional `confirmGate` prop (`{ label, checked, onChange }`). Renders a checkbox row between description and buttons; auto-disables confirm CTA until ticked. Logout flow unchanged (gate is opt-in via undefined prop). Mobile bottom sheet + desktop centered dialog both honor the gate.
+- **`src/components/profile/RemoveAccountConfirmSheet.tsx`** *(new)* — thin wrapper around ConfirmSheet, mirrors LogoutConfirmSheet's pattern. Owns local checkbox state, resets on close.
+- **`src/components/profile/MenuSheet.tsx`** — added "Remove account" row beneath Log out in both `MenuSheet` (mobile) and `MenuPopoverItems` (desktop). `text-status-alert` red matches Log out exactly (sibling tokens). Used the canonical Trash icon path from IconsTab — initially drew a custom variant, caught at Gate 7.
+- **`src/app/profile/page.tsx`** — wired `removeAccountOpen` state, passed `onRemoveAccount` through both menu surfaces, mounted RemoveAccountConfirmSheet alongside LogoutConfirmSheet.
+- **`src/app/style-guide/sections/components/ProfileOverlaysSection.tsx`** — added "Remove Account Confirm" trigger button (Gate 5).
+- **`src/app/style-guide/sections/IconsTab.tsx`** — Trash icon usage updated to `'MenuSheet, CharacterMenuSheet'`.
+- **`src/components/ui/Checkbox.tsx`** — primitive-level fix: removed `border-none` from base className so the unchecked state's conditional `border border-white-20` actually renders.
+
+**Decisions logged in real-time (8 entries in `decisions.md`):**
+1. Remove account confirm = ConfirmSheet + new optional `confirmGate` prop, NOT a forked sheet
+2. Severity of action gates the friction, not the surface
+3. Remove account row sits BELOW Log out in the menu
+4. Both destructive menu items share `text-status-alert` exactly, no shade variation
+5. Checkbox label sits left-aligned even though title/description are centered
+6. Disabled CTA inherits Button's existing `opacity-40 cursor-not-allowed`
+7. Checkbox unchecked-state invisibility bug fixed at source (primitive-level Tailwind collision)
+8. ConfirmGateRow styling matches BuyCreditsSheet ToS precedent exactly (text-xs, gap-xs, items-center)
+
+**Generalizations (3 sibling rules added to `taste.md`):**
+- *"Friction in a confirmation should scale with the reversibility of the action, not the surface"* — sibling to decision #2. Logout (reversible) gets plain confirm; account deletion (irreversible) gets checkbox-gate. Same primitive, configurable friction.
+- *"Alignment shift signals 'stop reading, start acting'"* — sibling to decision #5. Inside a confirmation surface, narration text is naturally center-aligned; a control inserted before the CTA should break that alignment to flush-left so the user reads it as a control, not as more caption text.
+- *"Verify every state of an interactive primitive in the browser, not just the happy path"* — sibling to decision #7 (added during end-of-session health check). Codified the designer-caught Checkbox lesson: state matrix verification on primitives, not just composed UI.
+
+**New sub-gate (`QUALITY-GATES.md`):** **Gate 8.2 — State matrix visibility (primitives)**. Mandates rendering the full state matrix of any interactive primitive (checkbox checked/unchecked, button enabled/disabled, input empty/focused/filled/error) before declaring done. Aimed at preventing the recurring "primitive-internal bugs unverified visually" category from happening again.
+
+**Gate 7 catches mid-session (designer-prompted, self-corrected):**
+- *Designer asked:* "do we use any checbox with text style anywhere in WSUP already?" → triggered a precedent search → found BuyCreditsSheet ToS gate at lines 88–92 → first-pass styling was wrong (text-sm + gap-s + items-start, invented). Aligned to precedent (text-xs + gap-xs + items-center). Exact category of S23 watch item "grep precedent before inventing."
+- *Self-catch on icon:* initially drew a custom Trash SVG path; ran search before declaring done, found the canonical path in IconsTab used by CharacterMenuSheet. Swapped to canonical.
+
+**Quality Gates audit (New component scope — all 8 ran):**
+- Gate 1 (Tokens): PASS — zero raw px/hex; existing `size-[16px]` / `rounded-[4px]` on Checkbox = exempted structural-one-off
+- Gate 2 (Reuse): PASS — extended ConfirmSheet, reused Checkbox/Button, reused canonical Trash
+- Gate 3 (Componentize@2): PASS with watch — checkbox+disabled-CTA in 2 places (BuyCreditsSheet, ConfirmSheet) but dissimilar layouts; 3rd consumer = extract `GatedCTA`
+- Gate 4 (Patternize@2): PASS — same as Gate 3
+- Gate 5 (Style guide sync): PASS — ProfileOverlaysSection trigger + IconsTab usage list updated same edit
+- Gate 6 (VDA learns): PASS — 8 decisions logged real-time, no batching
+- Gate 6.5 (Generalization probe): PASS — 3 sibling taste rules emerged from universal-language decisions
+- Gate 7 (UX consistency): PASS after corrections (icon, checkbox styling)
+- Gate 8 (UX review): PASS — but the designer-caught Checkbox bug was a Gate 8 miss (composed UI reviewed, primitive states not verified). Now codified as Gate 8.2.
+
+**VDA Health Check (13 checks):** all PASS — HEALTHY. Decisions design/process ratio: 8/2 (passes ≥7/10 design threshold). No misroutes, no contradictions, no batching, no unused rules.
+
+**Watch items for next session:**
+1. If a 3rd checkbox-gated-CTA appears → extract `GatedCTA` primitive
+2. Designer-caught trend (S22=3, S23=18, S24=0, S25=1): Phase 5→6 trigger needs 3 consecutive sessions at 0
+3. **Gate 8.2 application** — first time I touch an interactive primitive next session, run the state matrix verification explicitly to exercise the new gate
+4. `knowledge-base.md` (2026-04-27) approaching 7d staleness; freshness pass at start of next session if untouched
+
+**Status at end:** Dev server stopped. Git dirty (7 modified + 1 new file, no commit). No follow-ups pending. Designer signed off with "great BYE".
+
+---
+
+## Session 24 — 2026-05-01 (afternoon) — Memory limit popup as default + 2s timer + double-remote push
+
+`designer_caught_count: 0` — no corrections; designer made two direct asks and they shipped first-pass.
+
+**Scope:** Follow-up to S23. Two product decisions that didn't exist at end of S23:
+1. Make `MemoryLimitPopup` the default 3s auto-fire on `/chat` (was `MemoryLimitMoment` inline)
+2. Tighten the timer from 3s → 2s
+
+**What shipped:**
+- `src/app/chat/page.tsx` — auto-fire effect target swapped (`'context-exhausted'` → `'context-exhausted-popup'`); timeout 3000 → 2000.
+- `decisions.md` — one entry covering both calls. No taste.md generalization (product-level default-variant decision, not a transferable visual rule).
+
+**Decision rationale logged:** the install pitch is a meaningful conversion moment that should *interrupt* the flow, not slip into it. Inline `MemoryLimitMoment` optimizes for in-character continuity but can pass unnoticed during a fast scroll; popup's chat-darkening backdrop forces acknowledgement. 2s (down from 3s) reduces dwell-before-trigger so the demo lands faster on review without feeling instant.
+
+**Quality gate audit (Tweak scope per QUALITY-GATES triage):**
+- Gate 1 (Tokens): no class changes — N/A. **PASS**
+- Gate 7 (Consistency): both target states already exist; only the default reference moved. No new conventions invented. **PASS**
+- Gate 8 (UX review): popup auto-fires with the existing modal-style `bg-black-60` backdrop and dismiss path. Designer asked for 2s explicitly — shipped as asked. Worth a flag: 2s is fast for a heavier interrupt; if production telemetry shows users dismissing before reading, the timer may need to flex. **PASS**
+- Gates 2/3/4/5/6.5: skipped per Tweak triage — no new components, no new patterns, no broad-rule generalization needed.
+- Gate 6: decision logged in same edit as the change. **PASS**
+
+**Git operations (out-of-band):**
+- Bundled S23 (15 files, 675+/21–) + today's tweaks into one commit `81cfa19`. S23 had not been committed at end of yesterday.
+- Pushed to `origin/master` (arpityadav-bst/wsup-screen-library) and `ashish/designs` (ashish-pathak-bst/wsup-prd, via `master:designs`). Both clean fast-forwards from `67e285d`.
+
+**Out-of-band research:** Janitor.ai Play Store review analysis (~120 reviews Feb–Apr 2026). Surfaced 8 top recurring complaints for chat-AI mobile apps + competitive moat positioning. Output stayed in conversation; not saved to memory (designer did not request save). Most relevant takeaways for WSUP design: stop-button reliability and scroll-during-stream are universal rage triggers; session persistence is a churn killer; web-feature parity is the floor not the ceiling.
+
+VDA health check: **HEALTHY** — knowledge files up to date, decisions logged real-time, no contradictions. Watch items from S23 (zoom-out reflex, grep precedent, corner conventions, why-copy before CTA, animation-encodes-meaning) were not tested today since the work was a one-line behavior tweak with no structural design judgment.
 
 ---
 

@@ -20,6 +20,7 @@ import MenuSheet, { MenuPopoverItems } from '@/components/profile/MenuSheet'
 import Popover from '@/components/ui/Popover'
 import CharacterMenuSheet, { DormantCharacterMenuSheet } from '@/components/profile/CharacterMenuSheet'
 import LogoutConfirmSheet from '@/components/profile/LogoutConfirmSheet'
+import RemoveAccountConfirmSheet from '@/components/profile/RemoveAccountConfirmSheet'
 import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 import SocialView from '@/components/profile/SocialView'
 import MyCardsView from '@/components/profile/MyCardsView'
@@ -36,6 +37,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('Characters')
   const [menuOpen, setMenuOpen] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
+  const [removeAccountOpen, setRemoveAccountOpen] = useState(false)
   const [bioOpen, setBioOpen] = useState(false)
   const [badgesSheetOpen, setBadgesSheetOpen] = useState(false)
   const [socialOpen, setSocialOpen] = useState(false)
@@ -154,6 +156,7 @@ export default function ProfilePage() {
                   onClose={() => setMenuOpen(false)}
                   onMyCards={() => setMyCardsOpen(true)}
                   onLogout={() => { setMenuOpen(false); setLogoutOpen(true) }}
+                  onRemoveAccount={() => { setMenuOpen(false); setRemoveAccountOpen(true) }}
                 />
               </Popover>
             </div>
@@ -241,8 +244,10 @@ export default function ProfilePage() {
         onClose={() => setMenuOpen(false)}
         onMyCards={() => setMyCardsOpen(true)}
         onLogout={() => { setMenuOpen(false); setLogoutOpen(true) }}
+        onRemoveAccount={() => { setMenuOpen(false); setRemoveAccountOpen(true) }}
       />
       <LogoutConfirmSheet open={logoutOpen} onClose={() => setLogoutOpen(false)} onConfirm={() => setLogoutOpen(false)} />
+      <RemoveAccountConfirmSheet open={removeAccountOpen} onClose={() => setRemoveAccountOpen(false)} onConfirm={() => setRemoveAccountOpen(false)} />
       <BioSheet open={bioOpen} onClose={() => setBioOpen(false)} name={PROFILE.name} bio={PROFILE.bio} />
       <BadgesSheet open={badgesSheetOpen} onClose={() => setBadgesSheetOpen(false)} badges={BADGES} />
       <CharacterMenuSheet open={charMenuOpen} onClose={() => setCharMenuOpen(false)} character={charMenuChar} />

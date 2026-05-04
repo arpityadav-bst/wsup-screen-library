@@ -19,7 +19,7 @@ export default function Checkbox({ checked, onChange, variant = 'primary', ...re
       role="checkbox"
       aria-checked={checked}
       onClick={() => onChange?.(!checked)}
-      className={`size-[16px] rounded-[4px] flex items-center justify-center shrink-0 cursor-pointer transition-colors border-none ${checked ? filledBg : 'bg-transparent border border-white-20'}`}
+      className={`size-[16px] rounded-[4px] flex items-center justify-center shrink-0 cursor-pointer transition-colors ${checked ? filledBg : 'bg-transparent border border-white-20'}`}
       {...rest}
     >
       {checked && (

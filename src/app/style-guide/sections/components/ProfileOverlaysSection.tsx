@@ -4,11 +4,13 @@ import { useState } from 'react'
 import { Section, SubLabel } from '../../helpers'
 import CharacterStatesSheet from '@/components/profile/CharacterStatesSheet'
 import LogoutConfirmSheet from '@/components/profile/LogoutConfirmSheet'
+import RemoveAccountConfirmSheet from '@/components/profile/RemoveAccountConfirmSheet'
 import Button from '@/components/ui/Button'
 
 export default function ProfileOverlaysSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   const [statesOpen, setStatesOpen] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
+  const [removeAccountOpen, setRemoveAccountOpen] = useState(false)
 
   return (
     <Section id="Profile Overlays" title="Profile Overlays" onVisible={onSectionVisible}>
@@ -22,11 +24,15 @@ export default function ProfileOverlaysSection({ onSectionVisible }: { onSection
           <Button variant="secondary" size="s" onClick={() => setLogoutOpen(true)}>
             Logout Confirm
           </Button>
+          <Button variant="secondary" size="s" onClick={() => setRemoveAccountOpen(true)}>
+            Remove Account Confirm
+          </Button>
         </div>
       </div>
 
       <CharacterStatesSheet open={statesOpen} onClose={() => setStatesOpen(false)} />
       <LogoutConfirmSheet open={logoutOpen} onClose={() => setLogoutOpen(false)} onConfirm={() => setLogoutOpen(false)} />
+      <RemoveAccountConfirmSheet open={removeAccountOpen} onClose={() => setRemoveAccountOpen(false)} onConfirm={() => setRemoveAccountOpen(false)} />
 
     </Section>
   )

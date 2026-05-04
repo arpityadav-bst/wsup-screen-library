@@ -8,9 +8,7 @@ import CloseButton from '@/components/ui/CloseButton'
 interface MemoryLimitPopupProps {
   characterName: string
   characterImage: string
-  modelName?: string
   title?: string
-  modelNote?: string
   body?: string
   ctaLabel?: string
   secondaryLabel?: string
@@ -19,18 +17,12 @@ interface MemoryLimitPopupProps {
   onDismiss?: () => void
 }
 
-const DEFAULT_MODEL = 'Llama 3 (free)'
-const DEFAULT_CTA = 'Continue to chat in app'
-const DEFAULT_SECONDARY = 'switch to a better model'
+const DEFAULT_CTA = 'Open in app'
+const DEFAULT_SECONDARY = 'switch model instead'
 
-const buildTitle = () =>
-  `I can't remember everything anymore — my memory just got too full.`
+const buildTitle = (name: string) => `${name}'s memory is full.`
 
-const buildModelNote = (model: string) =>
-  `You're chatting on ${model} right now — it forgets context after a few messages.`
-
-const buildBody = (name: string) =>
-  `The app remembers 10× more, so your whole story stays with ${name}.`
+const buildBody = () => `The app remembers 3× more of your story.`
 
 function openInstall() {
   window.dispatchEvent(new CustomEvent('wsup:open-install-prompt'))
@@ -43,9 +35,7 @@ function openSwitchModel() {
 export default function MemoryLimitPopup({
   characterName,
   characterImage,
-  modelName = DEFAULT_MODEL,
   title,
-  modelNote,
   body,
   ctaLabel = DEFAULT_CTA,
   secondaryLabel = DEFAULT_SECONDARY,
@@ -62,9 +52,8 @@ export default function MemoryLimitPopup({
   }
   const handleInstall = onInstall ?? openInstall
   const handleSwitchModel = onSwitchModel ?? openSwitchModel
-  const resolvedTitle = title ?? buildTitle()
-  const resolvedNote = modelNote ?? buildModelNote(modelName)
-  const resolvedBody = body ?? buildBody(characterName)
+  const resolvedTitle = title ?? buildTitle(characterName)
+  const resolvedBody = body ?? buildBody()
 
   return (
     <div
@@ -108,18 +97,12 @@ export default function MemoryLimitPopup({
         />
 
         {/* Content — top padding accounts for the larger DP overlap (96px DP, 48px overhang) */}
-        <div className="relative pt-6xl px-l pb-l flex flex-col gap-m">
+        <div className="relative pt-6xl px-l pb-l flex flex-col gap-m text-center">
 
-          {/* Title — character voice, italic + inline attribution */}
-          <p className="text-base text-text-title font-medium italic leading-snug">
-            &ldquo;{resolvedTitle}&rdquo;
-            <span className="not-italic text-xs text-white-70 font-normal ml-xxs whitespace-nowrap">— {characterName}</span>
+          {/* Title — system-voice, descriptive */}
+          <p className="text-base text-text-title font-medium leading-snug">
+            {resolvedTitle}
           </p>
-
-          {/* Inner sleek model-context card */}
-          <div className="rounded-card bg-white-10 px-s py-xs">
-            <p className="text-xs text-white-70 leading-relaxed">{resolvedNote}</p>
-          </div>
 
           {/* Body — app benefit */}
           <p className="text-sm text-white-90 leading-relaxed">{resolvedBody}</p>
@@ -134,16 +117,13 @@ export default function MemoryLimitPopup({
 
           {/* Switch-model link — centered */}
           {secondaryLabel && (
-            <p className="text-sm text-white-70 leading-relaxed text-center">
-              Or{' '}
-              <button
-                type="button"
-                onClick={handleSwitchModel}
-                className="link cursor-pointer bg-transparent border-none p-0"
-              >
-                {secondaryLabel}
-              </button>
-            </p>
+            <button
+              type="button"
+              onClick={handleSwitchModel}
+              className="link text-sm cursor-pointer bg-transparent border-none p-0 self-center"
+            >
+              {secondaryLabel}
+            </button>
           )}
 
         </div>
