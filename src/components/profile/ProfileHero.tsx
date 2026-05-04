@@ -1,4 +1,5 @@
 import AvatarRing from '@/components/ui/AvatarRing'
+import Button from '@/components/ui/Button'
 
 interface ProfileHeroProps {
   name: string
@@ -7,20 +8,33 @@ interface ProfileHeroProps {
   bio: string
   onReadMore: () => void
   onMenuOpen: () => void
+  viewMode?: 'self' | 'public'
+  isFollowing?: boolean
+  onFollowToggle?: () => void
+  /** Public mode only — when true, the primary CTA swaps Follow → Unblock (single-tap, no confirm) */
+  isBlocked?: boolean
+  onUnblock?: () => void
 }
 
-export default function ProfileHero({ name, avatar, creatorBadge, bio, onReadMore, onMenuOpen }: ProfileHeroProps) {
+export default function ProfileHero({
+  name, avatar, creatorBadge, bio, onReadMore, onMenuOpen,
+  viewMode = 'self', isFollowing = false, onFollowToggle,
+  isBlocked = false, onUnblock,
+}: ProfileHeroProps) {
+  const isSelf = viewMode === 'self'
   return (
     <div className="flex flex-col items-center w-full relative">
-      {/* Action buttons — top right (mobile only) */}
-      {/* Action buttons — edit & share (3-dot is in center header on desktop) */}
+      {/* Action buttons — top right (mobile only).
+          Self: edit + share + 3-dot. Public: share + 3-dot only. */}
       <div className="absolute top-s right-s flex items-center gap-xxs">
-        <button className="w-xxxl h-xxxl rounded-button flex items-center justify-center text-text-dim">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
+        {isSelf && (
+          <button className="w-xxxl h-xxxl rounded-button flex items-center justify-center text-text-dim">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        )}
         <button className="w-xxxl h-xxxl rounded-button flex items-center justify-center text-text-dim">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <circle cx="18" cy="5" r="3" stroke="currentColor" strokeWidth="2" />
@@ -63,6 +77,28 @@ export default function ProfileHero({ name, avatar, creatorBadge, bio, onReadMor
             </button>
           </div>
         </div>
+
+        {/* Public-mode primary CTA — Block state overrides Follow state.
+            Blocked: single-tap Unblock (no confirm — block had its confirm; unblocking is the un-friction action).
+            Following: secondary-styled button. Default: primary Follow. */}
+        {!isSelf && (
+          <div className="mt-m w-full">
+            {isBlocked ? (
+              <Button variant="secondary" size="m" fullWidth onClick={onUnblock}>
+                Unblock
+              </Button>
+            ) : (
+              <Button
+                variant={isFollowing ? 'secondary' : 'primary'}
+                size="m"
+                fullWidth
+                onClick={onFollowToggle}
+              >
+                {isFollowing ? 'Following' : 'Follow'}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

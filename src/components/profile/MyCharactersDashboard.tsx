@@ -52,14 +52,6 @@ export default function MyCharactersDashboard({
 
   return (
     <div className="px-m md:px-4xl py-m flex flex-col gap-xl">
-      {/* Page header */}
-      <div className="flex flex-col gap-xxs">
-        <h1 className="text-lg font-semibold text-text-title">My Characters</h1>
-        <p className="text-xs text-text-dim">
-          {activeChars.length} active, {actionableChars.length} dormant, {removedChars.length} removed
-        </p>
-      </div>
-
       {/* Filter pills + info icon */}
       <div className="flex items-center gap-xs">
         <div className="flex-1 min-w-0">

@@ -1,7 +1,71 @@
 # Visual Designer — Project Insights
-Last updated: 2026-04-23
+Last updated: 2026-05-04
 
 WSUP-specific observations and screen-level learnings. Updated as new screens are built.
+
+---
+
+## Public creator profile architecture (`/creator/[username]`) — Session 26
+
+**Route:** `/creator/[username]` (lowercase slug). ChatHeader's "by [creatorName]" link wires to `/creator/${creatorName.toLowerCase()}`.
+
+**Composition:** thin page component that mounts the same components used by `/profile` with `viewMode="public"`. NOT a forked page. The shared sub-components carry the mode prop:
+
+- `ProfileHero` — `viewMode='self'|'public'`. Self has edit/share/3-dot icons + 3-dot menu opens self-MenuSheet (My cards / Log out / Remove account). Public hides edit, swaps Hero CTA from absent to **Follow** (Button m fullWidth) under bio.
+- `StatsRow` — `viewMode` toggles trend deltas (▲ +12%) ON for self, OFF for public. Also gates the Followers/Following drilldown (chevron + click-through to `SocialView`) — owner-only.
+- `ProfileCharacterCard` — `viewMode` gates rank trend arrow (▲ 1, ▼ 2) and the 3-dot management menu. Public sees rank number only, no trend, no menu.
+- `ContentGrid` — accepts `viewMode`, passes through to ProfileCharacterCard.
+- `ProfileRightSidebar` — `viewMode` hides ActivePersonaCard (creator-private) and threads Follow/Unblock handlers through.
+- `PublicMenuSheet` (separate component, not a `viewMode` of MenuSheet) — Report-only by default. Same shape as MenuSheet (BottomSheet + label + button rows + Cancel) but different intent. Different intent ≠ migrate by grep.
+
+**What's owner-only (public hides):**
+- Trend deltas (Stats + character ranks) — *movement* feedback
+- Followers/Following drilldown — social-graph navigation
+- Active Persona card — creator-private state
+- Character 3-dot management menu — owner-only actions
+- MyCharactersDashboard (lifecycle filter pills, "Needs Attention" section, "Removed" section, info banner) — public uses simple `ContentGrid` instead
+
+**Mock creator data:** `HONEYBADGER_PROFILE`, `HONEYBADGER_CHARACTERS`, `HONEYBADGER_STORIES`, `HONEYBADGER_FOLLOWERS`, `HONEYBADGER_FOLLOWING` in `mockData.ts`. Lookup table in `creator/[username]/page.tsx` keyed by lowercase slug. `notFound()` if slug doesn't exist.
+
+---
+
+## Block flow architecture — Session 26
+
+**Trigger:** 3-dot menu on `/creator/[username]` — order **Block** → **Report** (personal-control before institutional escalation). Both `text-status-alert`. Bare-verb labels (the menu's parent context already specifies the target).
+
+**Confirm:** `BlockConfirmSheet` (thin wrapper around `ConfirmSheet`, mirrors `LogoutConfirmSheet` pattern). Title `"Block ${creatorName}?"` (explicit target at the friction moment). Plain confirm — NOT checkbox-gated, because Block is reversible. `destructive` prop on (Block button = alert color).
+
+**State on confirm:**
+- `setIsBlocked(true)`
+- `setIsFollowing(false)` — auto-unfollow (you can't both follow and block someone)
+- Sheet closes
+
+**Blocked-state surface changes (single page-level conditional):**
+- Hero: Follow CTA → **Unblock** button (Button secondary, single-tap, no confirm — un-friction action)
+- Stats: unchanged (already public credibility info)
+- ProfileTabBar + ContentGrid: replaced with `<EmptyState variant="blocked" />` — single banner, no tabs
+- Menu items: "Block" → "Unblock"
+
+**Unblock:** single tap from either Hero button OR menu item. State reverts. NO auto-re-follow (deliberate action separated from unblock).
+
+**Out of scope for this iteration (deferred):**
+- Feed/search filtering of blocked creator's content (would need `BlockContext` propagation)
+- Active chats with blocked creator's character (PM decision pending — chat continues vs. archives)
+- Distinct-user-block escalation counter / moderator dashboard (backend)
+- Block from character detail page (page doesn't exist yet)
+
+---
+
+## Memory limit pattern — Session 26 final
+
+`MemoryLimitMoment` (in-stream variant) was removed in S26. `MemoryLimitPopup` is canonical:
+- Auto-fires 2s after `/chat` mount on `'active'` state
+- Modal-style with chat-darkening backdrop (`bg-black-60` z-20)
+- Anchored above ChatBar with `max-w-[420px]`
+- Title is system-narration ("Billie's memory is full.") — NOT character-voice italic+attribution
+- Body benefit-shaped ("The app remembers 3× more of your story.")
+- Primary "Open in app" + secondary "switch model instead" link, no divider, hierarchical spacing groups (gap-xl outer, gap-xs narration, gap-s action)
+- Dismiss via close X or backdrop click → reverts chatState to `'active'`
 
 ---
 

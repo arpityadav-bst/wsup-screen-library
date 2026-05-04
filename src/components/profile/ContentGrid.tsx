@@ -25,9 +25,11 @@ interface ContentGridProps {
   characters: Character[]
   stories: Story[]
   onCharMenu?: (name: string) => void
+  /** Passed through to ProfileCharacterCard — public hides trend arrow + 3-dot menu */
+  viewMode?: 'self' | 'public'
 }
 
-export default function ContentGrid({ activeTab, characters, stories, onCharMenu }: ContentGridProps) {
+export default function ContentGrid({ activeTab, characters, stories, onCharMenu, viewMode = 'self' }: ContentGridProps) {
   if (activeTab === 'Stories') {
     return (
       <>
@@ -51,7 +53,7 @@ export default function ContentGrid({ activeTab, characters, stories, onCharMenu
       <div className="px-s py-s pb-m md:hidden">
         <div className="grid grid-cols-2 gap-s">
           {characters.map((c) => (
-            <ProfileCharacterCard key={c.name} {...c} onMenu={() => onCharMenu?.(c.name)} />
+            <ProfileCharacterCard key={c.name} {...c} onMenu={() => onCharMenu?.(c.name)} viewMode={viewMode} />
           ))}
         </div>
       </div>
@@ -59,7 +61,7 @@ export default function ContentGrid({ activeTab, characters, stories, onCharMenu
       <div className="hidden md:block py-l center-content-pad">
         <div className="grid grid-cols-4 gap-xl">
           {characters.map((c) => (
-            <ProfileCharacterCard key={c.name} {...c} onMenu={() => onCharMenu?.(c.name)} />
+            <ProfileCharacterCard key={c.name} {...c} onMenu={() => onCharMenu?.(c.name)} viewMode={viewMode} />
           ))}
         </div>
       </div>

@@ -6,6 +6,8 @@ import TrendArrow from '@/components/ui/TrendArrow'
 import SubpageHeader from '@/components/ui/SubpageHeader'
 import MenuItem from '@/components/ui/MenuItem'
 import CloseButton from '@/components/ui/CloseButton'
+import EmptyState from '@/components/ui/EmptyState'
+import Button from '@/components/ui/Button'
 
 export default function UIUtilitiesSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -55,6 +57,36 @@ export default function UIUtilitiesSection({ onSectionVisible }: { onSectionVisi
           <MenuItem label="Edit Character" onClick={() => {}} />
           <MenuItem label="Share" onClick={() => {}} />
           <MenuItem label="Delete" onClick={() => {}} destructive />
+        </div>
+      </div>
+
+      {/* EmptyState */}
+      <div>
+        <SubLabel>EmptyState</SubLabel>
+        <p className="text-xs text-text-small mb-s max-w-[520px]">
+          Centered emoji + dim caption + optional CTA child. Container has <code className="text-text-title">py-4xl px-l</code> for breathing space at viewport edges; message is capped at <code className="text-text-title">max-w-[420px]</code> for comfortable read-line length on wider columns. Use over hand-rolled empty placeholders. Six variants — emoji is variant-driven, message is per-instance.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-m max-w-[760px]">
+          <div className="bg-white-05 border border-white-10 rounded-card overflow-hidden">
+            <EmptyState variant="default" message="Nothing here yet." />
+          </div>
+          <div className="bg-white-05 border border-white-10 rounded-card overflow-hidden">
+            <EmptyState variant="no-active" message="No active characters" />
+          </div>
+          <div className="bg-white-05 border border-white-10 rounded-card overflow-hidden">
+            <EmptyState variant="all-good" message="Nothing needs attention" />
+          </div>
+          <div className="bg-white-05 border border-white-10 rounded-card overflow-hidden">
+            <EmptyState variant="no-removed" message="No removed characters" />
+          </div>
+          <div className="bg-white-05 border border-white-10 rounded-card overflow-hidden">
+            <EmptyState variant="create" message="Create your first character">
+              <Button variant="primary" size="m">Create Character</Button>
+            </EmptyState>
+          </div>
+          <div className="bg-white-05 border border-white-10 rounded-card overflow-hidden">
+            <EmptyState variant="blocked" message="You blocked Honeybadger. Their characters and stories are hidden. Unblock to see them again." />
+          </div>
         </div>
       </div>
 

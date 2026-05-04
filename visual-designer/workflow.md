@@ -1,7 +1,28 @@
 # Visual Designer — Workflow
-Last updated: 2026-05-01
+Last updated: 2026-05-04
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
+
+---
+
+## Session-start preflight — load just-added rules into working memory
+
+**Why this exists:** S26 surfaced the rule-application gap — VDA captures rules well (decisions logged real-time, generalization probes firing) but fails to APPLY them on next-action-time. Most damning evidence: Gate 8.4 was added mid-session in response to spacing-content-fit catches, then immediately failed on the very next content-addition (EmptyState's longer "blocked" variant). Codification ≠ internalization. The standard bootstrap re-reads taste.md/decisions.md/QUALITY-GATES, but those reads pass through quickly — long files become background context, not active filters.
+
+**The preflight (run AFTER the standard 5-file bootstrap, BEFORE first work item):**
+
+1. From `decisions.md`, scan the last **5–10 entries** (last 1–2 sessions). Identify any decisions whose row text uses universal language ("always", "never", "every", "any X", "whenever") — those are the *just-codified* rules.
+2. From `taste.md`, scan the **last 3–5 sibling rules added** (the ones added by the most recent generalization probes).
+3. From `QUALITY-GATES.md`, check whether any **new sub-gates** were added in the last 1–2 sessions (e.g., 8.2, 8.3, 8.4 emerged sequentially — each was at risk of fading immediately after codification).
+4. Produce a **"Watching for in this session"** preflight checklist — 3–6 items, each phrased as a *forcing question*, not a passive rule reference. Examples:
+   - *"After every content addition or removal, did I retune surrounding spacing?"* (Gate 8.4)
+   - *"Did I check the parent surface's context before naming this menu/affordance?"* (Action labels rule)
+   - *"On any owner/viewer dual-mode component, did I verify each just-added signal stays/disappears correctly?"* (Movement-is-private rule)
+5. Hold the preflight checklist visible (mentally or in the tasks list) for **the first 3 work items of the session**. After 3 successful applications, the rule has likely transitioned from "codified" to "internalized" — drop it from active preflight; it's now muscle memory.
+
+**Skip condition:** if no new rules were added in the last 2 sessions, skip the preflight. The standard bootstrap is sufficient when no recent codification needs internalization scaffolding.
+
+**Anti-pattern:** treating the preflight as performative ceremony — listing the rules, then ignoring them on the next edit. The preflight only works if it produces *forcing-question prompts*, not rule citations. The question form is what breaks the string-substitution autopilot.
 
 ---
 

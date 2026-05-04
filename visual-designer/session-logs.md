@@ -5,9 +5,16 @@ Chronological log of every VDA session. Each entry captures what was built, what
 
 ---
 
-## Session 26 — 2026-05-04 — MemoryLimitPopup copy + spacing iteration cycle (designer_caught_count: 3)
+## Session 26 — 2026-05-04 — MemoryLimitPopup polish + Public Creator Profile + Block flow (designer_caught_count: 8)
 
-`designer_caught_count: 3` — three catches, all the same recurring root cause: **spacing not retuned to new content size**. The designer's third correction prompt invoked "think like a UX designer" verbatim — that's an identity-anchor invocation, not a tweak request. Operated like a code generator (string substitution + element removal) without doing the holistic Gate 8 review that a designer would.
+`designer_caught_count: 8` — backfilled at end-of-session audit. **Three recurring categories:**
+- **A. Spacing-not-retuned-to-content (4 catches):** MemoryLimitPopup padding pt-6xl too loose after model card removal; divider redundant in shorter stack; flat gap-m flattening semantic groups; EmptyState container missing horizontal padding for the new longer "blocked" variant message
+- **B. Redundancy across hierarchy levels (2 catches):** /profile "My Characters" h1 duplicating the Characters tab label; menu items "Block Honeybadger" / "Unblock Honeybadger" duplicating the parent profile's already-specified target
+- **C. Owner-only signals leaking onto public surfaces (2 catches):** Followers/Following chevron+drilldown still active on public; ProfileCharacterCard rank trend arrows + 3-dot menu still rendering on public
+
+Designer invoked "think like a UX designer" verbatim once. Asked the meta-question ("is VDA learning?") twice. Both signals = identity-application drift + Gate 7 trust gap. Operated as a code generator (string-substitute + element-remove) on multiple iterations rather than as a designer reviewing surfaces holistically.
+
+**Rule-application gap surfaced:** Gate 8.4 (spacing-content fit re-check) was codified mid-session in response to Category A catches. VDA then immediately failed it on the very next content-addition (EmptyState's new variant). Codification ≠ internalization. Active gap added to evolution.md.
 
 **Scope:** Designer asked to change copy on MemoryLimitPopup (chat screen popup variant). Specified new strings via dragged note: title `"Billie's memory is full."`, body `"The app remembers 3× more of your story."`, primary CTA `"Open in app"`, secondary `"switch model instead"`. Followed by two correction loops on the resulting layout.
 

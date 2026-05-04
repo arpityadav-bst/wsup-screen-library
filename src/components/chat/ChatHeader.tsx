@@ -83,7 +83,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
         </div>
         <div className="flex items-center gap-xxs">
           <span className="text-xs text-text-body leading-tight">by</span>
-          <Link href="#" className="text-xs text-white underline leading-tight whitespace-nowrap">{creatorName}</Link>
+          <Link href={`/creator/${creatorName.toLowerCase()}`} className="text-xs text-white underline leading-tight whitespace-nowrap">{creatorName}</Link>
           <ChevronSmall />
         </div>
       </div>

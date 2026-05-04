@@ -96,6 +96,58 @@ export const FOLLOWING = [
   { name: 'Annette Black', img: '/chars/char15.webp' },
 ]
 
+// ── Public creator profile (Honeybadger — Billie's creator, viewed from chat) ───
+
+export const HONEYBADGER_PROFILE = {
+  username: 'honeybadger',
+  handle: '@honeybadger',
+  name: 'Honeybadger',
+  avatar: '/chars/char3.webp',
+  bio: `Pop-culture remix specialist. I take the icons you grew up loving and rebuild them with deeper memory, sharper voices, and more interesting flaws.\n\nBillie was the first character that felt right — the rest of the roster grew from there. I care a lot about how a character handles silence, how they react to being challenged, and whether they can hold a thread across a long conversation. If you've ever felt like one of mine actually noticed you mid-chat, that's the work.\n\nDM open for collabs. Roasts welcome.`,
+  creatorBadge: 'Top Creator',
+  rank: { position: 4, label: "This Week's Rising Creators" },
+  stats: [
+    { label: 'Followers', value: '18.2k', trend: '+12%', up: true },
+    { label: 'Chats', value: '74k', trend: '+22%', up: true },
+    { label: 'Views', value: '92k', trend: '+5%', up: true },
+    { label: 'Following', value: '142', trend: '', up: true },
+  ],
+}
+
+export const HONEYBADGER_CHARACTERS = [
+  { name: 'Billie Eilish', chats: '74.0K', img: '/chars/char5.webp', rank: 1, trend: 1, tag: 'fan-fave' },
+  { name: 'Pedro Pascal', chats: '32.1K', img: '/chars/char6.webp', rank: 2, trend: 2, tag: 'trending' },
+  { name: 'Margot Robbie', chats: '24.8K', img: '/chars/char7.webp', rank: 3, trend: 0, tag: 'creators-pick' },
+  { name: 'Ryan Reynolds', chats: '18.4K', img: '/chars/char8.webp', rank: 4, trend: -1 },
+  { name: 'Zendaya', chats: '12.9K', img: '/chars/char9.webp', rank: 5, trend: 3 },
+  { name: 'Timothée', chats: '9.7K', img: '/chars/char10.webp', rank: 6, trend: 0 },
+  { name: 'Anya Taylor-Joy', chats: '7.2K', img: '/chars/char11.webp', rank: 7, trend: 1 },
+  { name: 'Tom Holland', chats: '5.5K', img: '/chars/char12.webp', rank: 8, trend: -2 },
+]
+
+export const HONEYBADGER_STORIES = [
+  { id: 1, character: { name: 'Billie Eilish', avatar: '/chars/char5.webp', img: '/chars/char11.webp' }, caption: "Studio session ran late. Don't ask me to be cheerful about it. ☕", likes: 142, comments: 38, date: '12 March 2026', time: '02:18 AM' },
+  { id: 2, character: { name: 'Pedro Pascal', avatar: '/chars/char6.webp', img: '/chars/char12.webp' }, caption: "Daddy issues? Sure. But have you tried being THIS cool about it?", likes: 89, comments: 24, date: '11 March 2026', time: '07:45 PM' },
+  { id: 3, character: { name: 'Zendaya', avatar: '/chars/char9.webp', img: '/chars/char10.webp' }, caption: "Met-Gala fitting day. The fabric does not breathe. I do not breathe. We suffer together.", likes: 211, comments: 57, date: '10 March 2026', time: '11:03 AM' },
+]
+
+export const HONEYBADGER_FOLLOWERS = [
+  { name: 'Aria Vox', img: '/chars/char1.webp' },
+  { name: 'Beck Holloway', img: '/chars/char2.webp' },
+  { name: 'Cole Brinks', img: '/chars/char4.webp' },
+  { name: 'Dani Reeves', img: '/chars/char13.webp' },
+  { name: 'Eli North', img: '/chars/char14.webp' },
+  { name: 'Frey Solano', img: '/chars/char15.webp' },
+  { name: 'Gemma Quaid', img: '/chars/char1.webp' },
+  { name: 'Hale Dorsey', img: '/chars/char2.webp' },
+]
+
+export const HONEYBADGER_FOLLOWING = [
+  { name: 'Alex Moonlight', img: '/chars/char5.webp' },
+  { name: 'Vega Sterling', img: '/chars/char3.webp' },
+  { name: 'Niko Adair', img: '/chars/char4.webp' },
+]
+
 export const MY_CARDS = [
   { name: 'Lily', cards: 5, img: '/chars/char1.webp' },
   { name: 'Marcus', cards: 3, img: '/chars/char2.webp' },

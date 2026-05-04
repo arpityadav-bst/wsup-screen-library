@@ -1,4 +1,3 @@
-import AvatarRing from '@/components/ui/AvatarRing'
 import RankBanner from './RankBanner'
 import ProfileHero from './ProfileHero'
 import StatsRow from './StatsRow'
@@ -33,14 +32,23 @@ interface ProfileRightSidebarProps {
   following: Person[]
   followersCount: string
   followingCount: string
+  /** Self shows persona + trend deltas; public hides persona, hides deltas, surfaces a Follow CTA in the hero. */
+  viewMode?: 'self' | 'public'
+  isFollowing?: boolean
+  onFollowToggle?: () => void
+  isBlocked?: boolean
+  onUnblock?: () => void
 }
 
 export default function ProfileRightSidebar({
-  name, handle, avatar, creatorBadge, bio, stats, persona, rank, badges,
-  onBadgesSeeAll, onReadMore, onMenuOpen,
+  name, avatar, creatorBadge, bio, stats, persona, rank, badges,
+  onReadMore, onMenuOpen,
   socialOpen, socialTab, onSocialClose, onFollowersOpen, onFollowingOpen,
   followers, following, followersCount, followingCount,
+  viewMode = 'self', isFollowing = false, onFollowToggle,
+  isBlocked = false, onUnblock,
 }: ProfileRightSidebarProps) {
+  const isSelf = viewMode === 'self'
   return (
     <div className="hidden md:block w-[365px] shrink-0 border-l border-white-10 overflow-y-auto relative h-full scroll-hide">
 
@@ -68,17 +76,23 @@ export default function ProfileRightSidebar({
         bio={bio}
         onReadMore={onReadMore}
         onMenuOpen={onMenuOpen}
+        viewMode={viewMode}
+        isFollowing={isFollowing}
+        onFollowToggle={onFollowToggle}
+        isBlocked={isBlocked}
+        onUnblock={onUnblock}
       />
 
-      {/* Reuse same StatsRow from mobile */}
+      {/* Reuse same StatsRow from mobile — public hides the trend deltas */}
       <StatsRow
         stats={stats}
         onFollowersOpen={onFollowersOpen}
         onFollowingOpen={onFollowingOpen}
+        viewMode={viewMode}
       />
 
-      {/* Reuse same ActivePersonaCard from mobile */}
-      <ActivePersonaCard {...persona} />
+      {/* Active Persona — private to the creator, hidden on public profiles */}
+      {isSelf && <ActivePersonaCard {...persona} />}
 
       {/* Badges — full grid, no horizontal scroll, no "see all" */}
       <div className="w-full mt-m px-m">

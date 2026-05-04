@@ -22,9 +22,13 @@ interface ProfileCharacterCardProps {
   tag?: string
   approved?: boolean
   onMenu?: () => void
+  /** Self shows owner-only signals: rank trend arrow + 3-dot management menu.
+   *  Public hides both — rank delta is private feedback, menu is management-only. */
+  viewMode?: 'self' | 'public'
 }
 
-export default function ProfileCharacterCard({ name, chats, img, rank, trend, tag, approved, onMenu }: ProfileCharacterCardProps) {
+export default function ProfileCharacterCard({ name, chats, img, rank, trend, tag, approved, onMenu, viewMode = 'self' }: ProfileCharacterCardProps) {
+  const isSelf = viewMode === 'self'
   const tagInfo = tag ? TAG_CONFIG[tag] : null
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [showApproved, setShowApproved] = useState(!!approved)
@@ -70,24 +74,26 @@ export default function ProfileCharacterCard({ name, chats, img, rank, trend, ta
             <span className="text-xxs text-text-title tracking-[0.8px]">{tagInfo.label}</span>
           </div>
         ) : null}
-        {/* 3-dot menu */}
-        <div className="absolute top-xs right-xxs">
-          <button
-            onClick={handleMenuClick}
-            className="w-l h-l flex items-center justify-center text-text-title bg-transparent border-none cursor-pointer p-0"
-            style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.9))' }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="12" cy="5" r="2" />
-              <circle cx="12" cy="12" r="2" />
-              <circle cx="12" cy="19" r="2" />
-            </svg>
-          </button>
-          {/* Desktop: popover */}
-          <Popover open={popoverOpen} onClose={() => setPopoverOpen(false)} variant="dark">
-            <CharacterMenuPopoverItems onClose={() => setPopoverOpen(false)} />
-          </Popover>
-        </div>
+        {/* 3-dot menu — owner-only (character management actions). Hidden on public profiles. */}
+        {isSelf && (
+          <div className="absolute top-xs right-xxs">
+            <button
+              onClick={handleMenuClick}
+              className="w-l h-l flex items-center justify-center text-text-title bg-transparent border-none cursor-pointer p-0"
+              style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.9))' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="5" r="2" />
+                <circle cx="12" cy="12" r="2" />
+                <circle cx="12" cy="19" r="2" />
+              </svg>
+            </button>
+            {/* Desktop: popover */}
+            <Popover open={popoverOpen} onClose={() => setPopoverOpen(false)} variant="dark">
+              <CharacterMenuPopoverItems onClose={() => setPopoverOpen(false)} />
+            </Popover>
+          </div>
+        )}
       </div>
 
       {/* Bottom strip */}
@@ -102,7 +108,10 @@ export default function ProfileCharacterCard({ name, chats, img, rank, trend, ta
           </div>
           <div className="flex items-center gap-xxs">
             <span className="text-xs text-text-xsmall">#{rank}</span>
-            <TrendArrow trend={trend} className={trend > 0 ? 'text-status-success' : 'text-status-alert'} />
+            {/* Rank trend — owner-only feedback signal, hidden on public */}
+            {isSelf && (
+              <TrendArrow trend={trend} className={trend > 0 ? 'text-status-success' : 'text-status-alert'} />
+            )}
           </div>
         </div>
       </div>
