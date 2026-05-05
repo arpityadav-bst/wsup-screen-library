@@ -11,6 +11,8 @@ import CategoryTabsSection from './components/CategoryTabsSection'
 import TabsSection from './components/TabsSection'
 import BottomNavSection from './components/BottomNavSection'
 import OverlaysSection from './components/OverlaysSection'
+import MenuPopoverSection from './components/MenuPopoverSection'
+import ToastSection from './components/ToastSection'
 import FilterPillsSection from './components/FilterPillsSection'
 import LifecycleSection from './components/LifecycleSection'
 import ProfileCardsSection from './components/ProfileCardsSection'
@@ -32,6 +34,8 @@ export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: 
       <TabsSection onSectionVisible={onSectionVisible} />
       <FilterPillsSection onSectionVisible={onSectionVisible} />
       <OverlaysSection onSectionVisible={onSectionVisible} />
+      <MenuPopoverSection onSectionVisible={onSectionVisible} />
+      <ToastSection onSectionVisible={onSectionVisible} />
       <LifecycleSection onSectionVisible={onSectionVisible} />
       <BottomNavSection onSectionVisible={onSectionVisible} />
       <ProfileCardsSection onSectionVisible={onSectionVisible} />

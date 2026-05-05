@@ -1,5 +1,24 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-04
+Last updated: 2026-05-05
+
+---
+
+## Phase 5 → 6 trigger streak status (2026-05-05)
+
+**Streak: BROKEN.** Phase 5→6 entry requires 3 consecutive sessions of `designer_caught_count: 0`. Today's S27 ended with `designer_caught_count: ~7` — restart required.
+
+Recent count history: S22=3, S23=18, S24=0, S25=1, S26=8, **S27=~7**.
+
+**Active recurring failure mode (S27):** *over-correction on the next turn after a designer correction.* Examples:
+- Designer said "should be same everywhere" (re menu spacing). I interpreted as "use ONE visual style across all menus, mobile + desktop." Designer meant "same WITHIN each viewport." Cross-viewport homogeneity wasn't the ask — within-viewport consistency was.
+- Designer asked to fix gap-too-wide. I went too tight on the next swing (gap-xs → gap-xxs instead of gap-[6px]).
+- Designer didn't like strikethrough overlay. I almost removed the disable affordance entirely instead of redrawing the icon properly.
+
+**Pattern:** After the first correction lands, I optimize for "definitely won't repeat that mistake" instead of "what is the designer actually asking for, calibrated to this context." Read the correction surgically, not maximally.
+
+**Forcing function for next session:** before applying ANY correction, write down (in the response, not just internally) — "the designer is asking me to change X. They are NOT asking me to also change Y or Z." Constrains the swing.
+
+
 
 The VDA's self-awareness engine. Tracks growth, identifies gaps, triggers autonomous research, and drives self-improvement. This file is how the agent evolves itself.
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { notFound } from 'next/navigation'
 import useVerticalScrollbar from '@/hooks/useVerticalScrollbar'
 import Header from '@/components/shared/Header'
@@ -14,10 +14,9 @@ import ProfileTabBar from '@/components/profile/ProfileTabBar'
 import ContentGrid from '@/components/profile/ContentGrid'
 import BioSheet from '@/components/profile/BioSheet'
 import BadgesSheet from '@/components/profile/BadgesSheet'
-import PublicMenuSheet, { PublicMenuPopoverItems } from '@/components/profile/PublicMenuSheet'
+import PublicMenuSheet from '@/components/profile/PublicMenuSheet'
 import BlockConfirmSheet from '@/components/profile/BlockConfirmSheet'
 import EmptyState from '@/components/ui/EmptyState'
-import Popover from '@/components/ui/Popover'
 import ProfileRightSidebar from '@/components/profile/ProfileRightSidebar'
 import {
   HONEYBADGER_PROFILE, HONEYBADGER_CHARACTERS, HONEYBADGER_STORIES,
@@ -49,6 +48,7 @@ export default function CreatorPage({ params }: { params: { username: string } }
 
   const [activeTab, setActiveTab] = useState('Characters')
   const [menuOpen, setMenuOpen] = useState(false)
+  const dotsBtnRef = useRef<HTMLButtonElement>(null)
   const [bioOpen, setBioOpen] = useState(false)
   const [badgesSheetOpen, setBadgesSheetOpen] = useState(false)
   const [isFollowing, setIsFollowing] = useState(false)
@@ -128,6 +128,7 @@ export default function CreatorPage({ params }: { params: { username: string } }
             <div className="flex-1" />
             <div className="relative">
               <button
+                ref={dotsBtnRef}
                 onClick={() => setMenuOpen(true)}
                 className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer"
               >
@@ -137,15 +138,6 @@ export default function CreatorPage({ params }: { params: { username: string } }
                   <circle cx="12" cy="19" r="1.5" />
                 </svg>
               </button>
-              <Popover open={menuOpen} onClose={() => setMenuOpen(false)}>
-                <PublicMenuPopoverItems
-                  onClose={() => setMenuOpen(false)}
-                  onBlock={handleBlock}
-                  onUnblock={handleUnblock}
-                  onReport={handleReport}
-                  isBlocked={isBlocked}
-                />
-              </Popover>
             </div>
           </div>
 
@@ -222,6 +214,7 @@ export default function CreatorPage({ params }: { params: { username: string } }
       <PublicMenuSheet
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
+        anchorRef={dotsBtnRef}
         onBlock={handleBlock}
         onUnblock={handleUnblock}
         onReport={handleReport}

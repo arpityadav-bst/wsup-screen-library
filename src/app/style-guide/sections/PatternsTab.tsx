@@ -8,8 +8,10 @@ import WhatIsWsupSection from './patterns/WhatIsWsupSection'
 import FooterSection from './patterns/FooterSection'
 import MobileFooterSection from './patterns/MobileFooterSection'
 import ChatHeaderSection from './patterns/ChatHeaderSection'
+import ChatHeaderMenuSection from './patterns/ChatHeaderMenuSection'
 import ChatMessagesSection from './patterns/ChatMessagesSection'
 import ChatBarSection from './patterns/ChatBarSection'
+import SuggestedRepliesSection from './patterns/SuggestedRepliesSection'
 import ChatRightSidebarSection from './patterns/ChatRightSidebarSection'
 import DormancyBannerSection from './patterns/DormancyBannerSection'
 import LowCreditsBannerSection from './patterns/LowCreditsBannerSection'
@@ -28,8 +30,10 @@ export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (i
       <FooterSection onSectionVisible={onSectionVisible} />
       <MobileFooterSection onSectionVisible={onSectionVisible} />
       <ChatHeaderSection onSectionVisible={onSectionVisible} />
+      <ChatHeaderMenuSection onSectionVisible={onSectionVisible} />
       <ChatMessagesSection onSectionVisible={onSectionVisible} />
       <ChatBarSection onSectionVisible={onSectionVisible} />
+      <SuggestedRepliesSection onSectionVisible={onSectionVisible} />
       <ChatRightSidebarSection onSectionVisible={onSectionVisible} />
       <DormancyBannerSection onSectionVisible={onSectionVisible} />
       <LowCreditsBannerSection onSectionVisible={onSectionVisible} />

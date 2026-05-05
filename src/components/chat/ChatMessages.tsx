@@ -1,6 +1,10 @@
 'use client'
 import { useRef, useEffect } from 'react'
 
+export type ChatMessage =
+  | { id: string; role: 'user'; text: string; emotion?: string }
+  | { id: string; role: 'ai'; text: string; emotion?: string }
+
 // ── Disclaimer ────────────────────────────────────────────────────────────────
 
 function Disclaimer() {
@@ -153,33 +157,47 @@ function TypingIndicator({ name }: { name: string }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-// ── Main component ────────────────────────────────────────────────────────────
+type ChatMessagesProps = {
+  messages: ChatMessage[]
+  isTyping?: boolean
+  characterName?: string
+}
 
-export default function ChatMessages() {
+export default function ChatMessages({ messages, isTyping = false, characterName = 'Billie Eilish' }: ChatMessagesProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'instant' })
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages.length, isTyping])
+
+  // Re-scroll to bottom whenever the scroll container's height changes (suggestions appear, ChatBar expands, banners show).
+  // Without this, the last message gets clipped/overlapped when the input area grows.
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => {
+      bottomRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
   }, [])
 
   return (
-    <div className="flex-1 overflow-y-auto px-m md:px-4xl py-m flex flex-col gap-m [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div ref={containerRef} className="flex-1 overflow-y-auto px-m md:px-4xl py-m flex flex-col gap-m [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {/* Spacer — pushes messages to bottom when chat is short */}
       <div className="flex-1" />
       <Disclaimer />
-      <UserBubble
-        text="Namaskar Sara ji"
-        emotion="laugh softly with gentle smile looking into your eyes"
-      />
-
-      <AIBubble
-        emotion="She blinks, smiles and say,"
-        text={"I am Billie! You can call me Billie. I have a Katana \u270c"}
-      />
-
-      <TypingIndicator name="Billie Eilish" />
-
+      {messages.map((m) =>
+        m.role === 'user' ? (
+          <UserBubble key={m.id} text={m.text} emotion={m.emotion} />
+        ) : (
+          <AIBubble key={m.id} text={m.text} emotion={m.emotion} />
+        )
+      )}
+      {isTyping && <TypingIndicator name={characterName} />}
       <div ref={bottomRef} />
     </div>
   )
 }
+

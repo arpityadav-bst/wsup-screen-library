@@ -2,39 +2,49 @@
 
 import { useState, useRef, useEffect } from 'react'
 
-export default function ChatBar() {
+type ChatBarProps = {
+  value?: string
+  onChange?: (text: string) => void
+  onSend?: (text: string) => void
+  containerRef?: React.RefObject<HTMLElement | null>
+}
+
+export default function ChatBar({ value: valueProp, onChange, onSend, containerRef }: ChatBarProps = {}) {
   const [isActive, setIsActive] = useState(false)
-  const [value, setValue] = useState('')
+  const [internal, setInternal] = useState('')
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const controlled = valueProp !== undefined
+  const value = controlled ? valueProp : internal
+  const setValue = (v: string) => {
+    if (!controlled) setInternal(v)
+    onChange?.(v)
+  }
 
   const hasValue = value.length > 0
   const expanded = isActive || hasValue
 
+  const submit = () => {
+    const trimmed = value.trim()
+    if (!trimmed) return
+    onSend?.(trimmed)
+    setValue('')
+  }
+
   useEffect(() => {
     if (!isActive) return
     function handleClickOutside(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setIsActive(false)
-      }
+      const inside = containerRef?.current
+        ? containerRef.current.contains(e.target as Node)
+        : wrapperRef.current?.contains(e.target as Node)
+      if (!inside) setIsActive(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isActive])
+  }, [isActive, containerRef])
 
   const keepInputFocus = (e: React.MouseEvent) => e.preventDefault()
-
-  const bulbCircle = (
-    <button
-      type="button"
-      onMouseDown={keepInputFocus}
-      className="w-5 h-5 rounded-pill bg-white-10 flex items-center justify-center shrink-0 hover:bg-white-20 transition-colors"
-      aria-label="Auto-suggestions"
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/icons/icon-bulb.svg" alt="" width={12} height={12} />
-    </button>
-  )
 
   const micButton = (
     <button
@@ -83,7 +93,7 @@ export default function ChatBar() {
   const sendButton = (
     <button
       type="button"
-      onMouseDown={keepInputFocus}
+      onMouseDown={(e) => { e.preventDefault(); submit() }}
       className="hover:opacity-80 transition-opacity flex items-center justify-center w-5 h-5"
       aria-label="Send message"
     >
@@ -101,7 +111,6 @@ export default function ChatBar() {
         {/* Left column — input + (when expanded) model picker row */}
         <div className="flex flex-col gap-m flex-1 min-w-0">
           <div className="flex items-center gap-s w-full">
-            {!expanded && bulbCircle}
             <button
               type="button"
               onMouseDown={keepInputFocus}
@@ -119,12 +128,12 @@ export default function ChatBar() {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               onFocus={() => setIsActive(true)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }}
               className="flex-1 bg-transparent text-sm text-white placeholder:text-white-50 caret-white outline-none min-w-0"
             />
           </div>
           {expanded && (
             <div className="flex items-center gap-xxs">
-              {bulbCircle}
               <button
                 type="button"
                 onMouseDown={keepInputFocus}

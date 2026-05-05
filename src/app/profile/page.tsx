@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import useVerticalScrollbar from '@/hooks/useVerticalScrollbar'
 import Header from '@/components/shared/Header'
 import Sidebar from '@/components/shared/Sidebar'
@@ -16,8 +16,7 @@ import MyCharactersDashboard from '@/components/profile/MyCharactersDashboard'
 import CharacterStatesSheet from '@/components/profile/CharacterStatesSheet'
 import BioSheet from '@/components/profile/BioSheet'
 import BadgesSheet from '@/components/profile/BadgesSheet'
-import MenuSheet, { MenuPopoverItems } from '@/components/profile/MenuSheet'
-import Popover from '@/components/ui/Popover'
+import MenuSheet from '@/components/profile/MenuSheet'
 import CharacterMenuSheet, { DormantCharacterMenuSheet } from '@/components/profile/CharacterMenuSheet'
 import LogoutConfirmSheet from '@/components/profile/LogoutConfirmSheet'
 import RemoveAccountConfirmSheet from '@/components/profile/RemoveAccountConfirmSheet'
@@ -36,6 +35,7 @@ import {
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('Characters')
   const [menuOpen, setMenuOpen] = useState(false)
+  const dotsBtnRef = useRef<HTMLButtonElement>(null)
   const [logoutOpen, setLogoutOpen] = useState(false)
   const [removeAccountOpen, setRemoveAccountOpen] = useState(false)
   const [bioOpen, setBioOpen] = useState(false)
@@ -142,6 +142,7 @@ export default function ProfilePage() {
             <div className="flex-1" />
             <div className="relative">
               <button
+                ref={dotsBtnRef}
                 onClick={() => setMenuOpen(true)}
                 className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90 border-none bg-transparent cursor-pointer"
               >
@@ -151,14 +152,6 @@ export default function ProfilePage() {
                   <circle cx="12" cy="19" r="1.5" />
                 </svg>
               </button>
-              <Popover open={menuOpen} onClose={() => setMenuOpen(false)}>
-                <MenuPopoverItems
-                  onClose={() => setMenuOpen(false)}
-                  onMyCards={() => setMyCardsOpen(true)}
-                  onLogout={() => { setMenuOpen(false); setLogoutOpen(true) }}
-                  onRemoveAccount={() => { setMenuOpen(false); setRemoveAccountOpen(true) }}
-                />
-              </Popover>
             </div>
           </div>
 
@@ -242,6 +235,7 @@ export default function ProfilePage() {
       <MenuSheet
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
+        anchorRef={dotsBtnRef}
         onMyCards={() => setMyCardsOpen(true)}
         onLogout={() => { setMenuOpen(false); setLogoutOpen(true) }}
         onRemoveAccount={() => { setMenuOpen(false); setRemoveAccountOpen(true) }}

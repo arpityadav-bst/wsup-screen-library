@@ -1,5 +1,21 @@
 # Visual Designer — Designer's Reasonings
-Last updated: 2026-04-28
+Last updated: 2026-05-05
+
+## On showing *flow*, not just *states*, in a design-only handoff
+
+A design-only handoff (WSUP is one) lives or dies on whether the receiving dev can SEE how the screen behaves, not just what it looks like at rest. State togglers (R-key cycles through active / dormant / removed / memory-full) are great at showing *outcomes*: "this is what the screen looks like when the character is dormant." They are bad at showing *transitions*: "this is what happens between the user pressing send and the reply landing — the input clears, a typing indicator appears, scroll pins to bottom, the bubble fades in 1.2s later."
+
+For interactive flows (chat, search-as-you-type, drag-to-reorder, optimistic toggles) the dev needs to see the *transition timing and sequencing*, because that's where the bulk of the implementation cost actually lives. A frozen "after" screenshot doesn't tell them whether the typing indicator appears immediately or after a 200ms grace, whether scroll is smooth or instant, whether the input clears optimistically or after the reply lands.
+
+The right pattern: *static togglers for unreachable states* (dormant, removed, memory-full — states the user can't trigger from the happy path), *interactive mock data for the happy path* (typing in the chat, hitting send, getting a reply). Both coexist. The state togglers expose the design surface; the interactive mock exposes the design *behavior*.
+
+**Mock data, not real data.** Keyword maps + random fallback are sufficient — a real backend or LLM would (a) introduce a runtime dependency the handoff doesn't need, (b) make the demo non-deterministic for design QA, (c) burn API credits during review. The point isn't "make it work like prod" — it's "make the dev see the transition." Scripted replies do that with zero infra.
+
+**How to apply:** when handing off a screen with interactive behavior, ask "can the receiving dev infer the transition timing from this demo, or only the static states?" If only the states, add a tiny interactive layer (input → mock response, click → mock state-change). The implementation cost is ~1 hour; the handoff fidelity gain is large.
+
+---
+
+
 
 The WHY behind the designer's decisions. Not what was chosen — why it was chosen. This file captures the designer's thinking process so the agent can reason the same way about new problems.
 

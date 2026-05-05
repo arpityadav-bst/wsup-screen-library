@@ -71,7 +71,8 @@ export default function ChatHeaderSection({ onSectionVisible }: { onSectionVisib
             ['relative isolate (game button wrapper)', 'Stacking context — coachmark renders inside'],
             ['bg-status-alert animate-pulse (notification dot)', 'New-feature badge on game icon'],
             ['bg-gradient-to-b from-black to-transparent (mobile)', 'Mobile header gradient — fades into character bg'],
-            ['See Coachmark component in Components tab', 'Coachmark — standalone component (Coachmark.tsx)'],
+            ['3-dot button → opens ChatHeaderMenu (MenuPopover)', 'Items: Memories / Cards / Clear Chat / Switch LLMs / Auto-suggestions toggle / Add Member / Report. See "Chat Header Menu" pattern.'],
+            ['Coachmark suppressed in chat demo (useState(false))', 'Coachmark component preserved (see Components → Coachmark) and dismiss handler intact. Initial state set to false so the demo doesn\'t re-introduce a feature presumed already learned. Production wires to localStorage per the comment in ChatHeader.tsx'],
           ].map(([cls, label]) => (
             <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
               <TokenCell value={cls} />

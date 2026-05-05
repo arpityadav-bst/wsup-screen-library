@@ -16,7 +16,7 @@ export default function MenuItem({ icon, label, destructive, onClick, mode = 'sh
     return (
       <button
         onClick={onClick}
-        className={`w-full px-m py-xs text-sm font-semibold bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors ${
+        className={`w-full px-m py-xs text-sm font-semibold whitespace-nowrap bg-transparent border-none cursor-pointer text-center rounded-button hover:bg-white-10 transition-colors ${
           destructive ? 'text-status-alert' : 'text-text-title'
         }`}
       >

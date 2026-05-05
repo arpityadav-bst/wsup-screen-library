@@ -1,7 +1,55 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-04-27
+Last updated: 2026-05-05
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
+
+---
+
+## Surface chrome lives in ONE place — per-instance code should only supply content
+
+When a recurring surface (popover, sheet, card, dialog) has a fixed look — same bg, same border, same radius, same shadow, same internal padding — the chrome belongs in a single primitive. Per-instance code should pass *only* the content (items, body, action buttons). Duplicating chrome across files is how stack padding doubles up: one instance adds `p-xs` to its container, another adds `p-xs` AND `py-xs` to its inner wrapper, a third forgets the wrapper entirely — and the same "type" of surface now has three slightly-different-looking variants across the app. The fix isn't to write down the magic numbers; the fix is a primitive that *enforces* the chrome by encapsulating it.
+
+**WSUP example:** `MenuPopover` codifies this. Every centered-text menu (chat, profile, character, public) gets identical surface chrome because every menu mounts the same primitive. Per-menu code only supplies the `items[]` array.
+
+**Rule of thumb:** if you find yourself copy-pasting `bg-X border-Y rounded-Z shadow-W p-N` across files for the same surface concept, stop and extract.
+
+---
+
+## Uniform breathing inside a pill/badge: use a square wrapper sized to container height
+
+When a small element (icon, dot, single character) needs to sit inside a pill, badge, or button with uniform breathing on all sides, the wrong instinct is to balance `padding-left` against the implicit vertical breathing. The right move: give the element a square wrapper sized to the container's height (`w-8 h-8` inside an `h-8` pill), with the element centered via `flex items-center justify-center`. The square fills vertically (zero vertical padding) and starts at the container's left edge (zero horizontal padding before it). Breathing is automatic and equal on all four sides — `(container - element) / 2`.
+
+**Avoids two failure modes:** (a) trial-and-error padding math, (b) the "circle-on-pill" look that happens when an inner-circle background creates a visible second container.
+
+---
+
+## Standardize element heights inside a horizontal control row — don't let intrinsic sizes drift
+
+A horizontal row of mixed elements (chips with text, icon buttons, close pills) will have *different intrinsic heights* if you size them via padding alone — text-content elements get heights from `font-size + line-height + padding`, icon-only elements get heights from explicit `w-X h-X`. The drift produces a visibly uneven row even when each element is "correct" in isolation.
+
+**Rule:** pick a target height for the row (`h-7`, `h-8`, etc.), apply it explicitly to every element, use `flex items-center` inside elements with non-text content. Padding becomes a horizontal-spacing-only concern. The row reads as a clean strip; nothing looks like an afterthought.
+
+---
+
+## Icon-with-modifier needs a single integrated SVG — don't compose from layered elements
+
+"Bulb-off," "bell-muted," "eye-hidden," "user-blocked" — every icon-with-modifier looks janky when implemented as two layers (the original `<img>` plus a CSS-positioned line/slash on top). The two layers don't share anti-aliasing, line-weight, scale-rendering, or stroke-cap geometry; the modifier reads as "stuck on" rather than "part of the icon." Source or draw a single SVG that integrates the modifier into the icon's path geometry — same `stroke-width`, same `stroke-linecap`, same viewBox, same anti-aliasing pass. Lucide, Phosphor, and Heroicons all ship integrated `*-off` variants; use them rather than overlaying.
+
+**Rule of thumb:** if an icon needs a strikethrough/slash to communicate state, the strikethrough belongs in the icon's SVG, not in a positioned wrapper.
+
+---
+
+## Layout shifts during a click can swallow the click — the chatbar-shrinks-on-mousedown bug
+
+When element A's click handler causes a vertical-layout shift that moves element B (the click target), and the mouseup happens AFTER the shift, the click on B never fires — because `onClick` requires mousedown AND mouseup on the *same* element. Browser fires mousedown, document handler runs, layout shifts, cursor is now over a different element, mouseup hits that, click is never registered on B.
+
+**Two ways to guard:**
+1. Don't cause a layout shift on mousedown — make element A's outside-click handler aware of element B's container (shared ref), so clicks on B don't trigger A's collapse.
+2. `onMouseDown={(e) => e.preventDefault()}` on B — fires the click action on mousedown phase, before any browser default focus/blur side-effects can shift the layout.
+
+**WSUP fix used both:** lifted ChatBar's outside-click ref to share with SuggestedReplies (primary fix), plus belt-and-suspenders `preventDefault` on every suggestion button (defensive).
+
+**The signal that you have this bug:** "first click does something I didn't expect, second click works."
 
 ---
 

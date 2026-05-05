@@ -11,7 +11,7 @@ Not every change needs all 8 gates. Classify the change first, then run the matc
 | Scope | Examples | Mandatory gates | Skip by default |
 |---|---|---|---|
 | **Tweak** | Fix a padding, reword a label, swap an icon, adjust spacing, fix a bug | 1 (tokens), 7 (consistency), 8 (UX review) | 2, 3, 4, 5, 6 |
-| **Component edit** | New prop/variant, changed visual of existing component, refactor inline → reusable | add 2 (reuse), 5 (style guide) if visual language changed | 3, 4 unless duplication appears |
+| **Component edit** | New prop/variant, changed visual of existing component, refactor inline → reusable | add 2 (reuse), **5 (style guide) — ALWAYS if a referencing section exists, no "if visual language changed" loophole** | 3, 4 unless duplication appears |
 | **New component or new pattern** | A brand new shared component, a new responsive overlay, a new screen | **ALL 8 gates** | — |
 
 **Rules for the triage itself:**
@@ -111,7 +111,26 @@ Check for repeated component combinations:
 
 ## GATE 5 — STYLE GUIDE SYNC
 
-For every visual change, verify style guide is updated IN THE SAME EDIT:
+For every visual change, verify style guide is updated IN THE SAME EDIT.
+
+### Mechanical pre-edit check (no interpretation, no triage subjectivity)
+
+**Before editing ANY component file, run this check:**
+1. Grep `style-guide/sections/**` for the component name. If a section exists that imports it OR demonstrates its visual anatomy → that section is part of THIS edit's scope.
+2. Grep `style-guide/sections/**` for inline mockups of the component (sections that re-implement the component's structure inline rather than importing it — common for `ChatBarSection`, `ChatHeaderSection`, `ChatMessagesSection`). If any inline mockup matches the visual you're changing → that section is part of THIS edit's scope too.
+3. After making changes to the component, re-grep to verify each section that referenced the OLD visual now matches the NEW visual. Anatomy notes, inline previews, when-to-use examples — all of it.
+
+**This converts Gate 5 from a "did the language change?" judgment call into a file-presence rule.** Either a referencing section exists or it doesn't. If it does, you edit both files in the same edit. No exceptions for "small changes" or "I'm just removing an element."
+
+### For new primitives in `ui/`
+A new primitive isn't done until ALL THREE happen in the same edit:
+1. A standalone section file is created (e.g., `style-guide/sections/components/{Name}Section.tsx`)
+2. That section is imported and rendered in `ComponentsTab.tsx`
+3. The section's title is added to the `NAV.Components` array in `style-guide/page.tsx`
+
+"Mentioned in another section's anatomy notes" does NOT satisfy Gate 5 for a new primitive. The reader of the style guide must be able to find it as its own entry.
+
+### Component changes:
 
 **Component changes:**
 - [ ] New component → add showcase in existing or new style guide section

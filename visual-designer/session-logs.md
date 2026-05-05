@@ -1,7 +1,90 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-04
+Last updated: 2026-05-05
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 27 — 2026-05-05 — Chat interactivity (mock replies + suggested-replies) + menu primitive consolidation (designer_caught_count: 7)
+
+Freshness check: knowledge-base ✓ (updated this session) | taste ✓ (updated this session, 5 misrouted rules moved to knowledge-base) | decisions ✓ (updated this session — 386 entries, NEEDS PRUNING at next milestone audit) | reasonings ✓ | evolution ✓ | session-logs ✓
+
+`designer_caught_count: 7` — recurring category: **over-correction on the next turn after a designer correction.** When a correction lands, I default to "definitely won't repeat that mistake" instead of "what is the designer actually asking for, calibrated to this context." Repeatedly swung too far on the next turn. Active gap added to evolution.md.
+
+**Scope:** Designer asked to make the WSUP chat screen actually interactive — type a message, get a (scripted) reply, see the typing-indicator state machine, demonstrate the full chat UX for the dev handoff. Then iterated through:
+1. Auto-suggested replies — pill above ChatBar after 4s idleness, expands to 3 chips, click-to-prefill, with a 2-step "turn off" affordance
+2. Chat 3-dot menu — Memories / Cards / Clear Chat / Switch LLMs / [auto-suggestions toggle] / Add Member / Report
+3. Cross-app menu consistency — extracted shared `MenuPopover` primitive used by chat / profile / public-creator
+4. Toast primitive — confirmation surface for the auto-suggestions toggle
+5. Various polish: pill spacing, chevron, mobile toast scrim, scroll-on-resize bug fix
+
+**What shipped:**
+- **New primitives:** `ui/MenuPopover.tsx`, `ui/Toast.tsx`
+- **New components:** `chat/SuggestedReplies.tsx`, `chat/ChatHeaderMenu.tsx`
+- **New mock data:** `lib/chatReplies.ts` (8 keyword intents + fallback), `lib/chatSuggestions.ts` (8 keyword intents + fallback for what-user-might-say-next)
+- **Refactored:** `chat/ChatBar.tsx` (controlled-input prop, dropped inline bulb), `chat/ChatHeader.tsx` (3-dot wired to menu, coachmark suppressed), `chat/ChatMessages.tsx` (props-driven, ResizeObserver-triggered auto-scroll)
+- **Migrated:** `profile/MenuSheet.tsx`, `profile/PublicMenuSheet.tsx` (75→23 lines, 85→38 lines) — both now thin wrappers over MenuPopover
+- **Style guide:** added `ChatHeaderMenuSection`, `SuggestedRepliesSection`, `ToastSection`. Registered in tabs + nav.
+
+**Designer-caught corrections (7) — recurring category: over-correction:**
+1. **Right-aligned suggestion bubbles read as already-sent** — Gate 8 fail. Position carries semantic meaning; right-aligned slot = sent. Fixed by switching to dark-glass chips in the same band as the pill. New taste rule: *Position carries semantic meaning.*
+2. **Broken segmented-pill kebab hover** — Gate 8.2 (state matrix). `rounded-pill + overflow-hidden` interacts badly with rectangular hover on the segments. Fixed by removing the kebab from the pill (single-action surface) and moving disable to chat menu. New rule: *Don't segment a single-action surface.*
+3. **Doubled padding in chat menu** — Gate 5 / consistency. Outer wrapper had `py-xs` on top of MenuItem's own `py-xs`. Designer compared to profile menu spacing and caught it. Fixed by extracting `MenuPopover` primitive that owns the chrome.
+4. **Profile sheet-style accidentally deleted** — over-correction. Designer said "should be same everywhere" re menu spacing. I interpreted as "use ONE visual style across all menus" and removed sheet-style + icons + Cancel from profile menu. Designer meant within-viewport consistency, not cross-viewport homogeneity. Restored sheet-style on mobile. Per-viewport patterns codified in `MenuPopover` so per-menu code can never drift again.
+5. **Strikethrough overlay was jarring** — Gate 8 (visual review). Manual diagonal line over an `<img>` looked stuck-on. Fixed with single integrated SVG (Lucide-style). New rule: *Icon-with-modifier needs a single integrated SVG.*
+6. **Mobile toast wrapping with too much gutter** — Gate 8.4 (spacing-content fit). Used `max-w-` instead of `w-` so width tracked content not viewport. Fixed.
+7. **Last AI message overlapped by SuggestedReplies on appearance** — Gate 8 in real-use. The input area grew but messages didn't auto-scroll. Fixed with ResizeObserver on the messages container.
+
+**New taste rules added (kept in taste.md):**
+- *Two intents = two affordances: separate "this round dismiss" from "turn off forever"*
+- *Ship the eventual menu shape, not a one-off, when future items are inevitable*
+- *Position carries semantic meaning — don't put preview/option elements where committed elements live*
+- *Trigger and result share spatial position — don't let users hunt for what they just summoned*
+- *Same role + same viewport = same pattern. Different viewports CAN legitimately have different patterns.*
+- *Don't segment a single-action surface to fit a secondary control — find the secondary control another home*
+- *Related controls cluster — don't push them to opposite ends of a row "for balance"*
+- *Toggling element stays at one position across states — open and close from the same spot*
+- *Position carries semantic meaning* (deduplicated)
+- *Scrim what's BEHIND the surface, don't make the surface itself heavier*
+
+**Rules moved from taste.md to knowledge-base.md (5):** these were technique/code/architecture rules masquerading as taste:
+- *Surface chrome lives in ONE place*
+- *Uniform breathing inside a pill/badge: square wrapper sized to container height*
+- *Standardize element heights inside a horizontal control row*
+- *Icon-with-modifier needs a single integrated SVG*
+- *Layout shifts during a click can swallow the click*
+
+**Rules deleted (3):** added based on instinct, designer's next correction falsified them:
+- *Notification position should follow viewport affordances — top desktop, bottom mobile* — designer reverted to top on both. Material instinct, not WSUP-grounded.
+- *One pattern wins app-wide* — too aggressive. Replaced with the per-viewport-correct version.
+- *Spatial separation can replace visual differentiation* — falsified. Right-aligned slot = sent message regardless of the band's separation.
+
+**Coachmark suppressed on chat screen** — single-line state change (`useState(true)` → `useState(false)`). Component, style guide, and dismiss-handler infrastructure all preserved.
+
+**Style guide additions:**
+- `ChatHeaderMenuSection.tsx` (Patterns tab)
+- `SuggestedRepliesSection.tsx` (Patterns tab)
+- `ToastSection.tsx` (Components tab) — added during end-of-session quality gate fix
+- Nav entries registered in `page.tsx`
+
+**Quality Gates run-down:**
+- Gate 1 (Tokens): PASS — `gap-[6px]` is an accepted micro-adjustment exception per QUALITY-GATES.md; everything else uses tokens
+- Gate 2 (Reuse): PASS — leveraged BottomSheet, MenuItem, used existing chat-bound-surface anatomy
+- Gate 3 (Componentize@2): PASS — extracted MenuPopover when 3rd menu (chat) appeared; now used by 4 menus
+- Gate 4 (Patternize@2): PASS — chat-bound-surface pattern extended (DormancyBanner / MemoryLimitPopup / SuggestedReplies)
+- Gate 5 (Style guide sync): PASS — three new style-guide sections added including the Toast cleanup at session wrap
+- Gate 6 (VDA learns): PARTIAL → FIXED at end. Real-time logging worked. But 5 rules ended up in the wrong knowledge file (taste.md instead of knowledge-base.md). Caught during end-of-session audit and relocated.
+- Gate 6.5 (Generalization probe): PASS — every decision with universal language got a sibling rule
+- Gate 7 (UX consistency): PARTIAL — chat menu + profile menu had spacing drift (caught and fixed via MenuPopover extraction)
+- Gate 8 (UX review): **FAIL × 7.** See "Designer-caught corrections" above. Each was a UX issue that I should have caught in self-review.
+
+**Active gap (carried to S28):** *over-correction on the next turn after a designer correction.* Forcing function added to evolution.md: before applying any correction, explicitly write what's being changed AND what's NOT being changed. Constrains the swing.
+
+**Watch items for S28:**
+1. Apply the over-correction guard (write what's NOT being changed before swinging)
+2. CharacterMenuSheet / DormantMenuPopoverItems migration to MenuPopover (deferred)
+3. decisions.md pruning — at 386 entries, way past 100-threshold. Schedule for next milestone audit (S30).
+4. Lead with Gate 8 (UX review) BEFORE shipping, not after — too many post-ship designer catches today
 
 ---
 

@@ -1,8 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Coachmark from './Coachmark'
+import ChatHeaderMenu from './ChatHeaderMenu'
 
 const BackIcon = () => (
   <svg width="20" height="20" viewBox="0 0 16.8333 13.5" fill="none">
@@ -45,14 +46,19 @@ interface ChatHeaderProps {
   characterImage: string
   creatorName: string
   characterState?: CharacterState
+  suggestionsEnabled?: boolean
+  onToggleSuggestions?: () => void
 }
 
-// DEV MODE: coachmark always visible. For production, wire showCoachmark to
+// Coachmark is suppressed on the chat screen demo (already-developed feature, no need to re-introduce on every load).
+// Component + style guide entry are preserved. For production, wire showCoachmark to
 // useState(() => !localStorage.getItem('wsup_game_seen')) and set
 // localStorage.setItem('wsup_game_seen', '1') inside dismissCoachmark().
-export default function ChatHeader({ characterName, characterImage, creatorName, characterState = 'active' }: ChatHeaderProps) {
+export default function ChatHeader({ characterName, characterImage, creatorName, characterState = 'active', suggestionsEnabled = true, onToggleSuggestions }: ChatHeaderProps) {
   const isRemoved = characterState === 'removed'
-  const [showCoachmark, setShowCoachmark] = useState(true)
+  const [showCoachmark, setShowCoachmark] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const dotsBtnRef = useRef<HTMLButtonElement>(null)
 
   return (
     <div className="h-[56px] md:border-b md:border-white-10 flex items-center px-xs shrink-0 md:bg-none bg-gradient-to-b from-black to-transparent">
@@ -127,9 +133,23 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
           )}
         </div>
 
-        <button className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90">
-          <DotsVerticalIcon />
-        </button>
+        <div className="relative">
+          <button
+            ref={dotsBtnRef}
+            onClick={() => setMenuOpen((v) => !v)}
+            className="p-icon-btn rounded-full hover:bg-white-10 transition-colors text-white-90"
+            aria-label="Chat options"
+          >
+            <DotsVerticalIcon />
+          </button>
+          <ChatHeaderMenu
+            open={menuOpen}
+            onClose={() => setMenuOpen(false)}
+            anchorRef={dotsBtnRef}
+            suggestionsEnabled={suggestionsEnabled}
+            onToggleSuggestions={() => onToggleSuggestions?.()}
+          />
+        </div>
       </div>
     </div>
   )
