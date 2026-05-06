@@ -1,7 +1,15 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-05-05
+Last updated: 2026-05-06
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
+
+---
+
+## Menu cluster ordering — management above destructive, never split
+
+Menus that combine non-destructive *management* entries (My cards, Blocked creators, Settings) with *destructive* entries (Log out, Delete account, Remove from collection) order by cluster, not by use-frequency. Management items at the top, destructive items at the bottom. New entries always insert into their matching cluster — never between two destructive items, never separating a destructive item from its sibling. **Two reasons the destructive cluster stays atomic:** (1) finger-rest position — destructive items live at the bottom because that's the hardest position for an accidental tap to land on; (2) visual cohesion — both reds reading as one zone makes severity legible at a glance. Inserting a non-red item between them would fragment the zone and break both signals. **WSUP example:** self `MenuSheet` order is `[My cards, Blocked creators, | Log out, Remove account]` — the imaginary divider lives between the two clusters, never inside either.
+
+**Rule of thumb:** when adding a new menu item, identify its cluster first (management or destructive), then place it at the *end* of that cluster, not somewhere in the middle. Cluster end = farthest from the boundary with the other cluster.
 
 ---
 

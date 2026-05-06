@@ -1,7 +1,29 @@
 # Visual Designer — Workflow
-Last updated: 2026-05-04
+Last updated: 2026-05-06
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
+
+---
+
+## Surface open UX calls BEFORE building, not after (added at S28)
+
+The default apprentice instinct is *"apply your taste, show the result, accept corrections"* — and that's the right instinct for *most* design choices, where one path is clearly correct against codified rules and the rest are wrong. But some choices have **two defensible paths under the same rules**, and the path chosen has downstream architectural or rule consequences. For those, the senior-designer move is to **surface the choice as an open question before building**, not to pick one and ship.
+
+**Symptoms a choice is "open" and needs surfacing:**
+- Both paths can be defended by quoting a different existing taste rule
+- The path chosen will *change which other rules apply* downstream (e.g., flip-CTA invokes the *deliberate-management-context* rule; remove-with-undo invokes the *transient-dismiss* rule — different rule sets are now in play)
+- The path chosen will *generate new code structure* that's hard to reverse cheaply (state shape, animation choreography, persistence model)
+- The user's *intent* in the surface meaningfully shifts which path reads as right (manage-and-leave vs incidental-encounter)
+
+**When you spot one of those symptoms, the protocol is:**
+1. Recognize it before you start coding — not mid-build, not after the first iteration.
+2. Write a 2–3 sentence framing of the tradeoff: *path A vs path B, what each pulls in, and which you'd lean to and why*.
+3. Ask the designer to confirm the path. Don't ask "what should I do?" — ask "I'd lean A because X; would B make sense for Y reason?"
+4. **Only after confirmation, start building.** The decision now has the designer's intent baked in — fewer corrections, less rework, and the rule-conflict cross-check (Gate 6.5 extension) has the right anchor.
+
+**Why this is a workflow rule, not a taste rule:** the ability to *recognize* an open choice is process discipline — it's about pausing before acting. The actual choice between paths is taste. This file governs the pausing.
+
+**Anti-pattern:** asking the designer about every minor choice. That's not surfacing tradeoffs; that's outsourcing taste. Use this protocol only when both paths are genuinely defensible AND the choice has downstream consequences. Single-line copy choices, padding adjustments, color picks — apply taste, ship, accept correction. State-flip vs row-removal (S28 example) — surface, ask, then build.
 
 ---
 

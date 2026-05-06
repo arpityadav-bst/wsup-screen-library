@@ -96,6 +96,14 @@ export const FOLLOWING = [
   { name: 'Annette Black', img: '/chars/char15.webp' },
 ]
 
+export const BLOCKED_CREATORS = [
+  { name: 'Honeybadger', img: '/chars/char3.webp' },
+  { name: 'Vex Karrigan', img: '/chars/char11.webp' },
+  { name: 'Mara Slade', img: '/chars/char13.webp' },
+  { name: 'Tyr Cassian', img: '/chars/char7.webp' },
+  { name: 'Dora Kestrel', img: '/chars/char15.webp' },
+]
+
 // ── Public creator profile (Honeybadger — Billie's creator, viewed from chat) ───
 
 export const HONEYBADGER_PROFILE = {

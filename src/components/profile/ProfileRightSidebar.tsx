@@ -3,6 +3,7 @@ import ProfileHero from './ProfileHero'
 import StatsRow from './StatsRow'
 import ActivePersonaCard from './ActivePersonaCard'
 import SocialView from './SocialView'
+import BlockedListView from './BlockedListView'
 import type { Badge } from './BadgesWidget'
 
 interface Person {
@@ -38,6 +39,10 @@ interface ProfileRightSidebarProps {
   onFollowToggle?: () => void
   isBlocked?: boolean
   onUnblock?: () => void
+  /** Self-only — opened from MenuSheet "Blocked creators". Mounts a sidebar-mode overlay parallel to SocialView. */
+  blockedOpen?: boolean
+  onBlockedClose?: () => void
+  blocked?: Person[]
 }
 
 export default function ProfileRightSidebar({
@@ -47,6 +52,7 @@ export default function ProfileRightSidebar({
   followers, following, followersCount, followingCount,
   viewMode = 'self', isFollowing = false, onFollowToggle,
   isBlocked = false, onUnblock,
+  blockedOpen = false, onBlockedClose, blocked = [],
 }: ProfileRightSidebarProps) {
   const isSelf = viewMode === 'self'
   return (
@@ -62,6 +68,16 @@ export default function ProfileRightSidebar({
           following={following}
           followersCount={followersCount}
           followingCount={followingCount}
+          mode="sidebar"
+        />
+      )}
+
+      {/* BlockedListView overlay inside sidebar — self only */}
+      {isSelf && blockedOpen && onBlockedClose && (
+        <BlockedListView
+          open={blockedOpen}
+          onClose={onBlockedClose}
+          blocked={blocked}
           mode="sidebar"
         />
       )}

@@ -204,6 +204,23 @@ The decision entry captures **the moment** (this specific choice in this specifi
 
 If you write a decision with universal language but skip the taste/reasonings sibling, the audit (Health Check #6 — Purpose Fit) will catch it as a misroute.
 
+### Rule-conflict cross-check (added at S28)
+
+After logging a decision AND running the generalization probe, run a third pass:
+
+> *"Does this decision contradict any codified rule in `taste.md`, `knowledge-base.md`, or prior `decisions.md`? If yes, is the contradiction the right one — and how should the existing rule be amended?"*
+
+A new decision can superficially violate an existing rule without being wrong. The S28 example: *"Unblock from the blocked-list flips CTA in place, single-tap, no confirm"* superficially conflicts with the codified rule *"Block needs confirm."* The resolution wasn't to ignore the conflict; it was to amend the codified rule with a scope clause: *deliberate-management-context relaxes confirmation friction.*
+
+**Three possible outcomes when a conflict surfaces:**
+1. **The new decision is wrong** → don't ship; revisit the design with the existing rule in force.
+2. **The existing rule needs a scope clause** → amend the rule with the boundary condition (when it applies, when it doesn't); ship the decision.
+3. **The existing rule is wrong** → delete it; ship the decision; log the deletion in `decisions.md` as a meta-decision.
+
+**Why this is its own check:** Gate 6 logs the moment. Gate 6.5's generalization probe surfaces the principle. The rule-conflict pass surfaces the *cross-rule consistency* — without it, `taste.md` accumulates contradictory rules over sessions and VDA can defend any decision by citing whichever rule supports it. The cross-check forces the rule library to stay internally coherent.
+
+**Hard signal:** if a decision uses qualifiers like *"in this case"*, *"because of the management context"*, *"unlike the public profile"* — those qualifiers are the sign that an existing rule's scope is being narrowed. Capture the narrowing on the existing rule, not just the decision.
+
 ---
 
 ## GATE 7 — UX CONSISTENCY

@@ -22,11 +22,12 @@ import LogoutConfirmSheet from '@/components/profile/LogoutConfirmSheet'
 import RemoveAccountConfirmSheet from '@/components/profile/RemoveAccountConfirmSheet'
 import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 import SocialView from '@/components/profile/SocialView'
+import BlockedListView from '@/components/profile/BlockedListView'
 import MyCardsView from '@/components/profile/MyCardsView'
 import ProfileRightSidebar from '@/components/profile/ProfileRightSidebar'
 import {
   PROFILE, PERSONA, BADGES, CHARACTERS, STORIES,
-  FOLLOWERS, FOLLOWING, MY_CARDS,
+  FOLLOWERS, FOLLOWING, MY_CARDS, BLOCKED_CREATORS,
   NEEDS_ATTENTION_CHARACTERS,
 } from '@/lib/mockData'
 
@@ -43,6 +44,7 @@ export default function ProfilePage() {
   const [socialOpen, setSocialOpen] = useState(false)
   const [socialTab, setSocialTab] = useState('Followers')
   const [myCardsOpen, setMyCardsOpen] = useState(false)
+  const [blockedOpen, setBlockedOpen] = useState(false)
   const [charMenuOpen, setCharMenuOpen] = useState(false)
   const [charMenuChar, setCharMenuChar] = useState<string | null>(null)
   const [statesSheetOpen, setStatesSheetOpen] = useState(false)
@@ -214,6 +216,9 @@ export default function ProfilePage() {
           following={FOLLOWING}
           followersCount="3.2k"
           followingCount="284"
+          blockedOpen={blockedOpen}
+          onBlockedClose={() => setBlockedOpen(false)}
+          blocked={BLOCKED_CREATORS}
         />
       </main>
 
@@ -228,6 +233,11 @@ export default function ProfilePage() {
           followersCount="3.2k"
           followingCount="284"
         />
+        <BlockedListView
+          open={blockedOpen}
+          onClose={() => setBlockedOpen(false)}
+          blocked={BLOCKED_CREATORS}
+        />
       </div>
       <MyCardsView open={myCardsOpen} onClose={() => setMyCardsOpen(false)} cards={MY_CARDS} />
 
@@ -237,6 +247,7 @@ export default function ProfilePage() {
         onClose={() => setMenuOpen(false)}
         anchorRef={dotsBtnRef}
         onMyCards={() => setMyCardsOpen(true)}
+        onBlockedCreators={() => setBlockedOpen(true)}
         onLogout={() => { setMenuOpen(false); setLogoutOpen(true) }}
         onRemoveAccount={() => { setMenuOpen(false); setRemoveAccountOpen(true) }}
       />

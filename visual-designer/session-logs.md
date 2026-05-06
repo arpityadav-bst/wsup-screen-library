@@ -1,7 +1,55 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-05
+Last updated: 2026-05-06
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 28 — 2026-05-06 — Blocked creators list (profile management surface) + VDA self-evaluation (designer_caught_count: 0)
+
+Freshness check: knowledge-base ✓ (updated this session) | taste ✓ (updated this session, +2 rules) | decisions ✓ (updated this session, +6 entries) | reasonings ✓ (no change) | evolution ✓ (no change yet — pending end-of-session) | session-logs ✓ | QUALITY-GATES ✓ (Gate 6.5 extended with rule-conflict cross-check) | workflow ✓ (added surface-open-UX-calls protocol)
+
+**Designer's question that drove this session:** Before building, designer asked *"would VDA have done the same if given just 'make a block creator list'?"* — a meta-question about VDA's readiness, not a build instruction. Forced an honest gap audit BEFORE coding. The audit identified 4 gaps: (1) bare-verb-vs-noun-phrase label distinction missing from `taste.md`; (2) management-vs-destructive menu cluster ordering uncodified; (3) workflow lacks "surface open UX calls before building" protocol; (4) Gate 6.5 lacks rule-conflict cross-check. All 4 patched in this session's self-update.
+
+**Scope:**
+1. New `BlockedListView` component — single-list overlay, mirrors `SocialView`'s mobile-fullscreen / desktop-sidebar dual surface, no tabbar
+2. New "Blocked creators" entry in self `MenuSheet`, positioned in management cluster above destructive cluster
+3. Mock data — `BLOCKED_CREATORS` (5 items) in `lib/mockData.ts`
+4. Profile page wiring — mobile mount + ProfileRightSidebar pass-through for desktop sidebar mode
+5. Style guide — new `BlockedListSection` under Patterns, registered in tab + NAV
+6. **VDA self-update — 4 codification gaps closed** (see decisions.md S28 entries + new taste.md rules + knowledge-base entry + QUALITY-GATES Gate 6.5 extension + workflow.md protocol)
+
+**What shipped:**
+- **New components:** `profile/BlockedListView.tsx` (single list, dual surface, CTA flip-in-place)
+- **New mock data:** `BLOCKED_CREATORS` array in `lib/mockData.ts`
+- **Refactored:** `profile/MenuSheet.tsx` (added "Blocked creators" item in management cluster), `profile/ProfileRightSidebar.tsx` (added blockedOpen / onBlockedClose / blocked props + sidebar-mode mount), `app/profile/page.tsx` (state wiring + mobile mount)
+- **Style guide:** new `patterns/BlockedListSection.tsx`, registered in `PatternsTab.tsx` + `page.tsx` NAV.Patterns
+- **VDA knowledge updates:** decisions.md +6 entries (S28), taste.md +2 rules (menu-label-action-vs-navigation, deliberate-management-context-relaxes-friction), knowledge-base.md +1 rule (menu cluster ordering), QUALITY-GATES.md Gate 6.5 extended with rule-conflict cross-check, workflow.md +1 protocol (surface-open-UX-calls)
+
+**Designer-caught corrections (0)** — designer caught zero corrections during the build because the open UX call (flip-CTA vs remove-with-undo) was surfaced *before* building, not discovered mid-build. This is the canonical example for the new workflow protocol added this session.
+
+**Open UX call surfaced before building (the canonical example for the new workflow.md rule):**
+- Tradeoff: post-unblock row behavior — flip CTA in place ("Unblock" ↔ "Blocked") vs remove row + Undo toast
+- VDA's lean: remove + Undo (cleaner intent match, preserves Block-needs-confirm rule)
+- Designer's call: flip CTA in place
+- Downstream consequence captured: the flip path silently re-blocks on second tap, narrowing the *Block-needs-confirm* rule with a scope clause (*deliberate-management-context*) — which then became a new taste rule
+
+**New rules codified this session:**
+- *taste.md* — *Menu items that perform a verb use bare verbs; menu items that navigate use noun phrases* (sibling clause to existing "Action labels inherit context" rule)
+- *taste.md* — *Deliberate-management-context relaxes confirmation friction for state-flip actions inside it* (scope clause on the existing "Block needs confirm" rule)
+- *knowledge-base.md* — *Menu cluster ordering — management above destructive, never split* (architectural rule, not aesthetic)
+- *QUALITY-GATES.md* — Gate 6.5 extended with **rule-conflict cross-check**: after the generalization probe, ask whether the new decision contradicts any codified rule, and if so amend scope rather than ignore the conflict
+- *workflow.md* — **Surface open UX calls BEFORE building, not after**: protocol for recognizing when two paths are equally defensible AND the choice has downstream consequences; pause and ask, don't pick-and-ship
+
+**Phase 5→6 streak status:** S28=0. RESTARTED. Sequence: S22=3, S23=18, S24=0, S25=1, S26=8, S27=7, **S28=0**.
+
+**Watch items for next session (S29):**
+1. **Apply the surface-open-UX-calls protocol consistently** — this session was the canonical example, but the protocol is brand new. Watch for the symptoms list (two-paths-defensible, downstream consequences) on the first 3 design choices of S29; treat each as a forcing-question prompt.
+2. **Apply menu-cluster-ordering rule on next menu edit** — if a new MenuSheet/ChatHeaderMenu/PublicMenuSheet item lands, identify its cluster first, then place at the cluster's far end.
+3. **Apply rule-conflict cross-check on Gate 6.5** — third pass after generalization probe. If a decision uses qualifiers like "in this case" or "unlike the public profile," that's the signal that an existing rule's scope is being narrowed — capture the narrowing on the *rule*, not just the decision.
+4. **decisions.md pruning still pending** — at 392 entries (was 386 + 6 from S28). Schedule for S30 milestone audit (S29 = 1 away from milestone).
+5. **`CharacterMenuSheet` / `DormantMenuPopoverItems` migration to MenuPopover** — still deferred from S27.
+6. **Stale knowledge files watch** — `project-insights.md` last updated 12+ days ago; `reasonings.md` not touched this session; check freshness next session.
 
 ---
 
