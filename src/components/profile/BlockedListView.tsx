@@ -19,9 +19,10 @@ interface BlockedListViewProps {
 
 /** Single list of blocked creators with per-row Unblock CTA.
  *  Surface anatomy mirrors SocialView (mobile fullscreen / desktop sidebar overlay), minus the tabbar — only one list lives here.
- *  CTA flips in place: "Unblock" (filled) ↔ "Blocked" (outlined). Single-tap, no confirm — taste rule:
- *  *deliberate-management-context relaxes confirmation friction*. The user navigated here to manage their blocked list;
- *  the friction was paid by the navigation itself. */
+ *  CTA flips in place: "Unblock" (filled) ↔ "Block" (outlined). Both labels are *verbs* (next available action), NOT a verb-then-status
+ *  pattern like Follow/Following — because the toggled state in this surface ("just unblocked") has no accurate positive status word.
+ *  Single-tap, no confirm — taste rule: *deliberate-management-context relaxes confirmation friction*. The user navigated here to manage
+ *  their blocked list; the friction was paid by the navigation itself. */
 export default function BlockedListView({ open, onClose, blocked, mode = 'fullscreen' }: BlockedListViewProps) {
   const [unblocked, setUnblocked] = useState<Record<string, boolean>>({})
 
@@ -35,7 +36,7 @@ export default function BlockedListView({ open, onClose, blocked, mode = 'fullsc
       ) : blocked.map((b, i) => {
         const isUnblocked = unblocked[b.name]
         const toggle = () => setUnblocked(prev => ({ ...prev, [b.name]: !prev[b.name] }))
-        const label = isUnblocked ? 'Blocked' : 'Unblock'
+        const label = isUnblocked ? 'Block' : 'Unblock'
         const filled = !isUnblocked
 
         return (

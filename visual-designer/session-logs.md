@@ -5,9 +5,13 @@ Chronological log of every VDA session. Each entry captures what was built, what
 
 ---
 
-## Session 28 — 2026-05-06 — Blocked creators list (profile management surface) + VDA self-evaluation (designer_caught_count: 0)
+## Session 28 — 2026-05-06 — Blocked creators list (profile management surface) + VDA self-evaluation (designer_caught_count: 1, post-bye)
 
-Freshness check: knowledge-base ✓ (updated this session) | taste ✓ (updated this session, +2 rules) | decisions ✓ (updated this session, +6 entries) | reasonings ✓ (no change) | evolution ✓ (no change yet — pending end-of-session) | session-logs ✓ | QUALITY-GATES ✓ (Gate 6.5 extended with rule-conflict cross-check) | workflow ✓ (added surface-open-UX-calls protocol)
+Freshness check: knowledge-base ✓ (updated this session) | taste ✓ (updated this session, +3 rules) | decisions ✓ (updated this session, +9 entries) | reasonings ✓ (no change) | evolution ✓ (no change yet — pending end-of-session) | session-logs ✓ | QUALITY-GATES ✓ (Gate 6.5 extended with rule-conflict cross-check) | workflow ✓ (added surface-open-UX-calls protocol)
+
+**Post-bye correction (after this entry was first written):** designer caught the toggled-state CTA reading "Blocked" — that label describes the user's CURRENT status ("this person is blocked") at exactly the moment when the user just unblocked. Misleads. **Root cause:** I copied SocialView's `Follow ↔ Following` toggle pattern without checking the linguistics. *Following* works as a status flip ("I am following them" — true positive status). *Blocked* doesn't work — after unblock, user is NOT in blocked state, so the label is contradictory. **Fix:** label changed to `'Block'` (verb-then-verb pattern). New taste rule added: *Toggle CTAs need a verb-or-status check* — read the toggled label aloud as "I am [label]" or "this person IS [label]"; if false/contradictory, use verb-then-verb. This explicitly invalidates "copy precedent across toggles" as an acceptable shortcut.
+
+**Recurring category for this catch:** *precedent-copying without per-instance check* — same family as S27's "right-aligned suggestion bubbles" (copied chat-bubble anatomy without checking that the position-slot wasn't already semantic). Both catches are *consistency-by-precedent breaking at a layer the precedent didn't anchor* (position semantics for S27; toggle linguistics for S28). **Active gap:** before copying a precedent across instances, identify what the precedent actually anchors and what it doesn't.
 
 **Designer's question that drove this session:** Before building, designer asked *"would VDA have done the same if given just 'make a block creator list'?"* — a meta-question about VDA's readiness, not a build instruction. Forced an honest gap audit BEFORE coding. The audit identified 4 gaps: (1) bare-verb-vs-noun-phrase label distinction missing from `taste.md`; (2) management-vs-destructive menu cluster ordering uncodified; (3) workflow lacks "surface open UX calls before building" protocol; (4) Gate 6.5 lacks rule-conflict cross-check. All 4 patched in this session's self-update.
 
