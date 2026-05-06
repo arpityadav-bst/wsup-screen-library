@@ -1,5 +1,24 @@
 # Visual Designer — Designer's Reasonings
-Last updated: 2026-05-05
+Last updated: 2026-05-07
+
+## On *which side* to adjust when fixing a visual hierarchy mismatch
+
+When two elements next to each other read with the wrong relative weight (icons feel bigger than the title; a label feels louder than its parent section heading; a sublabel competes with body copy), there are TWO valid fixes — *shrink the bigger thing* or *bump the smaller thing*. Both produce a "correct" hierarchy on paper. **They are NOT equivalent in the final design.**
+
+- **Bumping the smaller thing** inflates the surface footprint. The whole surface gets heavier, padding gets pushed, neighboring elements feel more cramped. You traded a hierarchy fix for a density problem.
+- **Shrinking the bigger thing** keeps the surface footprint tight. The hierarchy resolves without bloating. Neighboring elements stay on their original rhythm.
+
+**Default to shrinking the bigger thing.** It's the conservative move — keeps the design slim (which the WSUP designer's taste consistently favors). Reach for bumping the smaller thing only when the smaller thing is genuinely under-sized for its semantic role on its own (e.g., a primary CTA that's under-discoverable at its current size).
+
+**Pre-flight check when a hierarchy issue surfaces:** ask *"if I shrink the bigger element by ~20%, does the hierarchy resolve?"* If yes, do that. If no (because the smaller element is genuinely too small for its role), then bump the smaller. Don't auto-pick the inflate path.
+
+**Generalizes to:** any pair of adjacent visual elements competing for attention (icon-vs-label, button-vs-text, badge-vs-content, illustration-vs-heading). The principle is *correction direction is itself a design decision — don't let muscle-memory pick "bump up" because it feels safer.* The agent's instinct is often "make the underweight thing match" — that's the wrong direction by default in WSUP's slim-first aesthetic.
+
+WSUP example (S29): SafetyBanner header had icons (20px) reading as larger than the title (text-sm font-medium). My first fix bumped the title to text-base font-semibold → designer redirected → shrunk icons to 16px close + 14px bulb-off, kept title at original size. The shrink path kept the panel compact; the bump path would have made the whole header taller for no semantic gain.
+
+---
+
+
 
 ## On showing *flow*, not just *states*, in a design-only handoff
 

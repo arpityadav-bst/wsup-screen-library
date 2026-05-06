@@ -1,7 +1,35 @@
 # Visual Designer — Workflow
-Last updated: 2026-05-06
+Last updated: 2026-05-07
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
+
+---
+
+## Gate 0 — Precedent grep BEFORE picking any cross-component token, anatomy, or chrome (mechanical step, added at S29)
+
+The recurring failure mode across S27, S28, S29 is *"I picked a value/anatomy/chrome that already had a canonical instance in the codebase, but I didn't grep for it first, so I drifted."* The codified Gate 7 ("UX consistency — check how it already works elsewhere") is too soft — it phrases the check as "ask before writing" instead of "grep before writing." Soft hints get rationalized past. **This step is mechanical: no rationalization, no judgment call.**
+
+**The protocol — run BEFORE writing classNames or component anatomy on any of the following:**
+
+| About to write... | Grep this first |
+|---|---|
+| A new banner / surface bg | `grep "border-b" + existing top-of-chat banner files (DormancyBanner, SafetyBanner, LowCreditsBanner)` — match the canonical bg/border |
+| A close button (×) | `CloseButton` primitive in `ui/CloseButton.tsx` — use the primitive; don't hand-roll |
+| Icon button placement at panel edge | `-mr-icon-btn` / `-ml-icon-btn` — grep existing usages (ConfirmSheet, BuyCreditsSheet) — that's the WSUP idiom for optical alignment |
+| A popup/sheet header with title + actions | `font-semibold text-base text-text-title` — match ConfirmSheet desktop dialog convention |
+| A new card/sheet surface chrome | grep `rounded-card`, `rounded-popup`, `bg-profile-sheet-bg` — match the precedent for the surface class (sheet vs popover vs banner) |
+| A toggling pill / chip cluster anatomy | grep `bg-black-60 backdrop-blur-popup` — that's the chat-bound glass convention |
+| Action button row inside a popup | `Button variant="primary"` + `variant="secondary"` — use the primitive; don't hand-roll button-styled anchors |
+| Empty-state messaging | `EmptyState` component — use the primitive variants |
+| Mobile-vs-desktop banner positioning | grep `md:hidden` / `hidden md:block` on existing banners — match the precedent split |
+
+**The mechanical rule:** *if there's a precedent in WSUP for the kind of thing you're about to write, you grep for it BEFORE writing. No exceptions for "but my context is different" — first you grep, then you justify any deviation in the decision log.*
+
+**Why this is Gate 0 (not Gate 7):** Gate 7 runs at "before implementing." Gate 0 runs *before* picking the tokens that go into the implementation. By the time Gate 7 fires you've already decided on the chrome — you're just reviewing it. Gate 0 prevents the drift at the *decision* layer.
+
+**The grep is part of the change, not preparation for the change.** If you finish a component and realize you didn't grep precedent — you didn't run Gate 0, regardless of how clean the result looks. Treat as a Gate 0 fail and log it in decisions.md as a watch item.
+
+**Recurring family this fixes:** S27 style-guide drift (multiple sections didn't match the components they referenced); S28 BlockedListView's `Block`-vs-`Blocked` toggle linguistics; S29 SafetyBanner's `bg-profile-sheet-bg` instead of DormancyBanner's `bg-white-05`; S29 SuggestedReplies hand-rolled close buttons; S29 asymmetric padding instead of `-mr-icon-btn`. **Five misses across three sessions, all the same root cause: didn't grep precedent first.**
 
 ---
 

@@ -1,7 +1,40 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-05-06
+Last updated: 2026-05-07
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
+
+---
+
+## TopOfChatBanner shared anatomy — single chrome spec for all banners that occupy the top-of-chat slot
+
+Any banner that occupies the top-of-chat slot (the row directly under `ChatHeader` on desktop, or the absolute-overlay-at-top on mobile) shares ONE codified chrome. As of S29, two banners use this slot — `DormancyBanner` (character state) and `SafetyBanner` (platform intervention). Future banners that fire here MUST match this spec. **No new tokens, no new chrome variations — same surface treatment, same role-position.**
+
+### The spec
+
+| Aspect | Value |
+|---|---|
+| **Desktop bg** | `bg-white-05` (5% white over `bg-page-bg` — the canonical "elevated dark surface" for in-chat banners) |
+| **Mobile bg (in-flow banner)** | `bg-white-05` if banner is in the flex flow (DormancyBanner pattern) |
+| **Mobile bg (absolute overlay)** | `bg-profile-sheet-bg` (#1a1a1a solid) — needed because the banner sits over arbitrary chat content (character image / messages) and needs full opacity |
+| **Border bottom** | `border-b border-white-10` (always — separates banner from chat content beneath) |
+| **Border outer** | None — edge-to-edge with chat column (no rounded outer corners, no horizontal margin) |
+| **Horizontal padding** | `px-m` (16px) on the banner's outer wrapper |
+| **Vertical padding** | scoped per banner content density — `py-s` for short status banners (DormancyBanner desktop), `py-m` for taller decision banners (SafetyBanner). Both within the WSUP scale |
+| **flex-shrink** | `shrink-0` — banner never compresses when chat content is tall |
+| **Close button** | `<CloseButton>` primitive (NOT hand-rolled) with `-mr-icon-btn` for optical edge alignment |
+| **Mobile vs desktop position** | Character-state banners (DormancyBanner): in flex flow under header on both viewports. Platform-intervention banners (SafetyBanner): absolute overlay at top on mobile (`absolute top-0 left-0 right-0 z-20`); in flex flow under header on desktop |
+
+### Mutual exclusion
+
+When two top-of-chat banners could fire simultaneously, **platform intervention wins** — safety/medical/financial alerts override character-state messaging because the urgency is categorically higher. Implementation: page-level state checks safety variant first; renders DormancyBanner only if no safety alert is active.
+
+### Why this entry exists
+
+S29 introduced SafetyBanner without grepping DormancyBanner's chrome first. The result was `bg-profile-sheet-bg` everywhere instead of `bg-white-05` desktop — a Gate 7 miss the designer caught at the end of the build. **The shared anatomy was implicit before this entry; now it's explicit.** Future banners landing in the top-of-chat slot read this spec FIRST, then build.
+
+### Rule of thumb
+
+Before adding a new banner-class component to chat: (a) check whether it occupies the top-of-chat slot (under header) or above-ChatBar slot (session-state, different anatomy entirely — see banner-position taste rule); (b) if top-of-chat, this entry's spec is the only valid chrome; (c) only the content/illustration/copy/buttons differ per variant.
 
 ---
 

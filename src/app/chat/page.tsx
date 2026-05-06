@@ -13,38 +13,24 @@ import ChatRightSidebar from '@/components/chat/ChatRightSidebar'
 import DormancyBanner from '@/components/chat/DormancyBanner'
 import MemoryLimitPopup from '@/components/chat/MemoryLimitPopup'
 import SuggestedReplies from '@/components/chat/SuggestedReplies'
+import SafetyBanner from '@/components/chat/SafetyBanner'
 import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 import Toast from '@/components/ui/Toast'
 import { getReplyFor, REPLY_DELAY_MS } from '@/lib/chatReplies'
 import { getSuggestionsFor, SUGGESTION_IDLE_MS } from '@/lib/chatSuggestions'
-
-const SUGGESTIONS_PREF_KEY = 'wsup_chat_suggestions_enabled'
-
-const SEED_MESSAGES: ChatMessage[] = [
-  { id: 'seed-u1', role: 'user', text: 'Namaskar Sara ji', emotion: 'laugh softly with gentle smile looking into your eyes' },
-  { id: 'seed-a1', role: 'ai', text: 'I am Billie! You can call me Billie. I have a Katana ✌', emotion: 'She blinks, smiles and say,' },
-]
-
-const CHARACTER_IMAGE = '/chars/char5.webp'
-const CHARACTER_AVATAR = '/chars/avatars/char5.jpg'
-
-type ChatDemoState = CharacterState | 'context-exhausted-popup'
-
-const STATES: ChatDemoState[] = ['active', 'dormant-inactive', 'dormant-moderation', 'removed', 'context-exhausted-popup']
-const STATE_LABELS: Record<ChatDemoState, string> = {
-  'active': 'Active',
-  'dormant-inactive': 'Dormant (Inactive)',
-  'dormant-moderation': 'Dormant (Moderation)',
-  'removed': 'Removed',
-  'context-exhausted-popup': 'Memory full',
-}
-
-function getBannerVariant(state: ChatDemoState) {
-  if (state === 'dormant-inactive') return 'inactivity'
-  if (state === 'dormant-moderation') return 'moderation'
-  if (state === 'removed') return 'removed'
-  return null
-}
+import { detectSafetyCategory } from '@/lib/safetyDetect'
+import type { SafetyVariant } from '@/lib/safetyVariants'
+import {
+  SUGGESTIONS_PREF_KEY,
+  SEED_MESSAGES,
+  CHARACTER_IMAGE,
+  CHARACTER_AVATAR,
+  STATES,
+  STATE_LABELS,
+  SAFETY_STATE_TO_VARIANT,
+  getBannerVariant,
+  type ChatDemoState,
+} from './chat-config'
 
 export default function ChatPage() {
   const [chatState, setChatState] = useState<ChatDemoState>('active')
@@ -55,14 +41,23 @@ export default function ChatPage() {
   const [suggestionsEnabled, setSuggestionsEnabled] = useState(true)
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
+  const [safetyBanner, setSafetyBanner] = useState<SafetyVariant | null>(null)
   const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const inputAreaRef = useRef<HTMLDivElement>(null)
   const bannerVariant = getBannerVariant(chatState)
   const isRemoved = chatState === 'removed'
   const showInstallPopup = chatState === 'context-exhausted-popup'
+  // Safety banner overrides character-state banners and other surfaces — it's the highest-priority intervention.
+  const devSafetyVariant = SAFETY_STATE_TO_VARIANT[chatState] ?? null
+  const activeSafetyVariant = safetyBanner ?? devSafetyVariant
   const headerCharacterState: CharacterState =
-    chatState === 'context-exhausted-popup' ? 'active' : chatState
+    chatState === 'context-exhausted-popup' ||
+    chatState === 'safety-self-harm' ||
+    chatState === 'safety-medical' ||
+    chatState === 'safety-financial'
+      ? 'active'
+      : chatState
 
   // Hydrate suggestions preference from localStorage on mount
   useEffect(() => {
@@ -86,6 +81,9 @@ export default function ChatPage() {
     setIsTyping(true)
     setShowSuggestions(false)
     cancelIdleTimer()
+    // Detect safety category in the user's message — first match wins; existing banner upgrades only on more-severe match (severity order is in detectSafetyCategory).
+    const detected = detectSafetyCategory(text)
+    if (detected) setSafetyBanner(detected)
     if (replyTimerRef.current) clearTimeout(replyTimerRef.current)
     replyTimerRef.current = setTimeout(() => {
       const reply = getReplyFor(text)
@@ -189,6 +187,20 @@ export default function ChatPage() {
 
           {/* Chat UI */}
           <div className="relative z-10 flex flex-col h-full">
+            {/* Safety banner — mobile: absolute overlay anchored to the top of the chat viewport.
+                Doesn't push ChatHeader down; header stays in flow underneath and is visually covered by the banner.
+                On desktop the banner sits BELOW ChatHeader (rendered further down) — header still anchors who-am-I-talking-to context. */}
+            {activeSafetyVariant && (
+              <div className="md:hidden absolute top-0 left-0 right-0 z-20">
+                <SafetyBanner
+                  variant={activeSafetyVariant}
+                  onClose={() => {
+                    setSafetyBanner(null)
+                    if (devSafetyVariant) setChatState('active')
+                  }}
+                />
+              </div>
+            )}
             <ChatHeader
               characterName="Billie Eilish"
               characterImage={CHARACTER_AVATAR}
@@ -197,7 +209,20 @@ export default function ChatPage() {
               suggestionsEnabled={suggestionsEnabled}
               onToggleSuggestions={handleToggleSuggestions}
             />
-            {bannerVariant && <DormancyBanner variant={bannerVariant} />}
+            {/* Desktop SafetyBanner / DormancyBanner (mutually exclusive, safety wins) */}
+            {activeSafetyVariant ? (
+              <div className="hidden md:block">
+                <SafetyBanner
+                  variant={activeSafetyVariant}
+                  onClose={() => {
+                    setSafetyBanner(null)
+                    if (devSafetyVariant) setChatState('active')
+                  }}
+                />
+              </div>
+            ) : (
+              bannerVariant && <DormancyBanner variant={bannerVariant} />
+            )}
             <ChatMessages messages={messages} isTyping={isTyping} characterName="Billie Eilish" />
             {isRemoved ? (
               <div className="flex items-center justify-center px-m py-m bg-page-bg border-t border-white-10 shrink-0 md:bg-transparent">
