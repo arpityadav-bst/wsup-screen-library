@@ -34,9 +34,9 @@ export default function ToastSection({ onSectionVisible }: { onSectionVisible: (
             ['Text: text-sm text-white-90 leading-snug', 'leading-snug keeps multi-line wrap tight if it has to wrap'],
             ['Width: w-[calc(100vw-32px)] md:w-auto md:max-w-[520px]', 'Mobile: fills viewport minus 16px each side. Desktop: auto-sizes up to 520px max'],
             ['Mobile: md:whitespace-nowrap on inner <p>', 'Forces single-line on desktop; mobile allowed to wrap if needed'],
-            ['Position: fixed left-1/2 -translate-x-1/2 top-[80px]', 'Top-center on both viewports'],
+            ['Position: fixed left-1/2 -translate-x-1/2 bottom-[88px]', 'Bottom-center on both viewports — sits above ChatBar so chat-context messages (auto-suggestions toggle, model switch) appear near the input area where the user\'s attention is'],
             ['z-index: 80', 'Above modals (40), bottom sheets (60), popovers (50)'],
-            ['Mobile-only scrim: 220px-tall gradient (top→bottom: rgba 0.8→0.5→0)', 'Sibling element at z-[79], md:hidden — guarantees readability over character-image chat bg. Renders ONLY when toast is open'],
+            ['Mobile readability — relies on existing chat-area bottom scrim', 'No dedicated toast scrim needed because the chat page already renders a bottom gradient scrim above ChatBar (mobile only) for chatbar readability over the character image bg. The toast lives within that scrim\'s y-range'],
             ['pointer-events-none on outer wrapper, pointer-events-auto on inner card', 'Toast doesn\'t block clicks on content beneath, but the toast itself remains interactive if needed'],
             ['Lives in src/components/ui/Toast.tsx', 'Shared primitive — reuse for any non-modal notification'],
           ].map(([cls, label]) => (

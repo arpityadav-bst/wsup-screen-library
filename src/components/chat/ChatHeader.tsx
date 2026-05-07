@@ -48,13 +48,14 @@ interface ChatHeaderProps {
   characterState?: CharacterState
   suggestionsEnabled?: boolean
   onToggleSuggestions?: () => void
+  onSwitchLLMs?: () => void
 }
 
 // Coachmark is suppressed on the chat screen demo (already-developed feature, no need to re-introduce on every load).
 // Component + style guide entry are preserved. For production, wire showCoachmark to
 // useState(() => !localStorage.getItem('wsup_game_seen')) and set
 // localStorage.setItem('wsup_game_seen', '1') inside dismissCoachmark().
-export default function ChatHeader({ characterName, characterImage, creatorName, characterState = 'active', suggestionsEnabled = true, onToggleSuggestions }: ChatHeaderProps) {
+export default function ChatHeader({ characterName, characterImage, creatorName, characterState = 'active', suggestionsEnabled = true, onToggleSuggestions, onSwitchLLMs }: ChatHeaderProps) {
   const isRemoved = characterState === 'removed'
   const [showCoachmark, setShowCoachmark] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -148,6 +149,7 @@ export default function ChatHeader({ characterName, characterImage, creatorName,
             anchorRef={dotsBtnRef}
             suggestionsEnabled={suggestionsEnabled}
             onToggleSuggestions={() => onToggleSuggestions?.()}
+            onSwitchLLMs={() => { setMenuOpen(false); onSwitchLLMs?.() }}
           />
         </div>
       </div>

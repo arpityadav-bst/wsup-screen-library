@@ -12,6 +12,7 @@ export default function ChatBarSection({ onSectionVisible }: { onSectionVisible:
           <div className="bg-gradient-to-b from-transparent to-black-40 px-m py-s">
             <div className="bg-chat-ai-bubble rounded-[20px] p-icon-btn flex items-center gap-s">
               <div className="flex items-center gap-s flex-1 min-w-0">
+                <div className="w-5 h-5 rounded-pill bg-white-10 flex items-center justify-center shrink-0" />
                 <button className="shrink-0 hover:opacity-80 transition-opacity">
                   <div className="w-5 h-5 rounded-sm bg-white-10" />
                 </button>
@@ -41,6 +42,7 @@ export default function ChatBarSection({ onSectionVisible }: { onSectionVisible:
                   </span>
                 </div>
                 <div className="flex items-center gap-xxs">
+                  <div className="w-5 h-5 rounded-pill bg-white-10 flex items-center justify-center shrink-0" />
                   <button className="backdrop-blur-popup bg-black-30 border border-white-10 rounded-pill px-xs py-[2px] flex items-center gap-xxs shadow-popup">
                     <span className="text-xs text-white-90 whitespace-nowrap">Claude 4.5 Opus</span>
                     <span className="text-xxs text-white-50">›</span>
@@ -70,6 +72,7 @@ export default function ChatBarSection({ onSectionVisible }: { onSectionVisible:
                   <span className="flex-1 text-sm text-white">Hey, how&apos;s it going?</span>
                 </div>
                 <div className="flex items-center gap-xxs">
+                  <div className="w-5 h-5 rounded-pill bg-white-10 flex items-center justify-center shrink-0" />
                   <button className="backdrop-blur-popup bg-black-30 border border-white-10 rounded-pill px-xs py-[2px] flex items-center gap-xxs shadow-popup">
                     <span className="text-xs text-white-90 whitespace-nowrap">Claude 4.5 Opus</span>
                     <span className="text-xxs text-white-50">›</span>
@@ -102,7 +105,7 @@ export default function ChatBarSection({ onSectionVisible }: { onSectionVisible:
             ['onFocus → setIsActive(true); click-outside collapses', 'State trigger — input focus expands; outside click collapses'],
             ['stays expanded while input has value', 'Typed text keeps the expanded layout after blur'],
             ['<img> icon-sparkle.svg 20×20', 'Sparkle icon — clickable, focuses input'],
-            ['Bulb / auto-suggest icon REMOVED from ChatBar', 'Auto-suggest now lives in dedicated SuggestedReplies pill above ChatBar — duplicate entry points forbidden. See "Suggested Replies" pattern.'],
+            ['w-5 h-5 rounded-pill bg-white-10 / <img> icon-bulb.svg 12×12', 'Bulb — on-demand auto-suggestions trigger; opens panel directly. Renders in both states (left of sparkle when collapsed; left of model pill when expanded). Pairs with the SuggestedReplies pill above ChatBar — pill = passive auto entry, bulb = active on-demand entry.'],
             ['flex-1 bg-transparent text-sm text-white placeholder:text-white-50 caret-white outline-none min-w-0', 'Input field'],
             ['backdrop-blur-popup bg-black-30 border border-white-10 rounded-pill px-xs py-[2px] shadow-popup', 'Model picker pill — active state only'],
             ['gap-m (right icons)', 'More spacing between media action icons than gap-s'],

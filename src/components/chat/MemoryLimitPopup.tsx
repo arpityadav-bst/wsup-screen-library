@@ -57,7 +57,7 @@ export default function MemoryLimitPopup({
 
   return (
     <div
-      className="relative w-full max-w-[420px] mx-auto"
+      className="relative w-full max-w-popup-narrow mx-auto"
       style={{ animation: 'slide-up-fade 0.4s ease-out' }}
     >
 

@@ -1,7 +1,20 @@
 # Visual Designer — Workflow
-Last updated: 2026-05-07
+Last updated: 2026-05-08 (S30 close)
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
+
+---
+
+## Audit-question protocol — verify before answering, never rubber-stamp from memory (added S30)
+
+Memory is an optimistic narrator. Greps and file-checks are the honest record. The S30-close audit caught three real gaps (Gate 1 `420px` past the 3-instance threshold without action, Gate 3 duplicates between component and style guide, Gate 5 missing primitive section) that would have been answered "yes everything's good" from memory alone — and all three required code changes to actually be done. **Rule:** when the designer asks "is X complete / done / synced / consistent?", the answer is NEVER yes-from-memory. Run the verification first; report what was found, not what was assumed. The few seconds of grep is cheap; the trust cost of a wrong yes-answer is high.
+
+**Pre-flight checks for common audit questions:**
+- *"Is everything tokenized?"* → grep raw values across today's files: `grep -rE 'p[xytrlbm]?-\[[0-9]+px\]|gap-\[[0-9]+px\]|text-\[[0-9]+px\]|leading-\[[0-9]+px\]|max-w-\[[0-9]+px\]|w-\[[0-9]+px\]|bottom-\[[0-9]+px\]|rounded-\[[0-9]+px\]'`. For each hit, decide accepted-exception vs needs-token by the 3-instance threshold.
+- *"Is everything componentized?"* → grep for inline duplicates of components / icons / helper functions across more than one file. If the same anatomy appears in 2+ files, extract.
+- *"Is everything in the style guide?"* → for each new primitive in `ui/`, verify (a) section file exists, (b) imported in ComponentsTab, (c) entry in `NAV.Components`. For new patterns, same check against PatternsTab + NAV.Patterns.
+
+**Why mechanical not soft:** soft check ("did I add the section?") rationalizes past. Mechanical check ("does the file exist? was it added to the array?") is binary and grep-able. Always use the mechanical form when answering audit questions.
 
 ---
 

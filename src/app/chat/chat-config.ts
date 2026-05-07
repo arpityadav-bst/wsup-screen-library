@@ -17,6 +17,7 @@ export const CHARACTER_AVATAR = '/chars/avatars/char5.jpg'
 export type ChatDemoState =
   | CharacterState
   | 'context-exhausted-popup'
+  | 'chat-style-popup'
   | 'safety-self-harm'
   | 'safety-medical'
   | 'safety-financial'
@@ -27,6 +28,7 @@ export const STATES: ChatDemoState[] = [
   'dormant-moderation',
   'removed',
   'context-exhausted-popup',
+  'chat-style-popup',
   'safety-self-harm',
   'safety-medical',
   'safety-financial',
@@ -38,6 +40,7 @@ export const STATE_LABELS: Record<ChatDemoState, string> = {
   'dormant-moderation': 'Dormant (Moderation)',
   'removed': 'Removed',
   'context-exhausted-popup': 'Memory full',
+  'chat-style-popup': 'Model selection',
   'safety-self-harm': 'Safety: Self-harm',
   'safety-medical': 'Safety: Medical',
   'safety-financial': 'Safety: Financial',

@@ -8,9 +8,10 @@ interface ChatHeaderMenuProps {
   anchorRef?: React.RefObject<HTMLElement | null>
   suggestionsEnabled: boolean
   onToggleSuggestions: () => void
+  onSwitchLLMs: () => void
 }
 
-export default function ChatHeaderMenu({ open, onClose, anchorRef, suggestionsEnabled, onToggleSuggestions }: ChatHeaderMenuProps) {
+export default function ChatHeaderMenu({ open, onClose, anchorRef, suggestionsEnabled, onToggleSuggestions, onSwitchLLMs }: ChatHeaderMenuProps) {
   const toggleLabel = suggestionsEnabled ? 'Turn off auto-suggestions' : 'Turn on auto-suggestions'
   return (
     <MenuPopover
@@ -22,7 +23,7 @@ export default function ChatHeaderMenu({ open, onClose, anchorRef, suggestionsEn
         { label: 'Memories', onClick: () => {} },
         { label: 'Cards', onClick: () => {} },
         { label: 'Clear Chat', onClick: () => {} },
-        { label: 'Switch LLMs', onClick: () => {} },
+        { label: 'Switch LLMs', onClick: onSwitchLLMs },
         { label: toggleLabel, onClick: onToggleSuggestions },
         { label: 'Add Member', onClick: () => {} },
         { label: 'Report', destructive: true, onClick: () => {} },

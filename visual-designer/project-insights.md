@@ -1,7 +1,32 @@
 # Visual Designer — Project Insights
-Last updated: 2026-05-04
+Last updated: 2026-05-08 (S30 close — chat-screen surface inventory refreshed)
 
 WSUP-specific observations and screen-level learnings. Updated as new screens are built.
+
+---
+
+## Chat screen surface inventory (S30 close)
+
+Surfaces that mount on `/chat` and how they coexist:
+
+| Surface | Trigger | Position | Z-index | Mutual-exclusion |
+|---|---|---|---|---|
+| **ChatHeader** | always | top of chat column, in flex flow | base | — |
+| **ChatBar** | always (or `removed-state` UI when isRemoved) | bottom of chat column, in flex flow | base | — |
+| **DormancyBanner** | `chatState === 'dormant-*'` | below ChatHeader, in flex flow | base | suppressed when SafetyBanner active |
+| **SafetyBanner** | `safetyVariant !== null` | mobile = absolute top overlay (covers ChatHeader); desktop = absolute centered floating card | 20 | suppresses DormancyBanner |
+| **SuggestedReplies** | 4s idle after AI message OR ChatBar bulb tap | absolute above ChatBar | n/a | — |
+| **MemoryLimitOverlay** | `chatState === 'context-exhausted-popup'` | full-area backdrop + popup anchored at `bottom-[88px]` | 20–30 | — |
+| **ModelPickerSheet** | ChatBar pill click OR ChatHeaderMenu "Switch LLMs" | BottomSheet (mobile) / CenterPopup (desktop) | 70 | — |
+| **ChatStyleSheet** | `chatState === 'chat-style-popup'` (dev cycle) | BottomSheet / CenterPopup | 70 | — |
+| **Toast** | various (model switch, suggestions toggle) | fixed `bottom-[88px]` center-horizontal | 80 | — |
+
+**Two model-picker surfaces, one feature, two audiences (S30 codified):**
+- **ModelPickerSheet** — in-chat switching, power-user dense rows (3 chips per row: latency / personality / cost)
+- **ChatStyleSheet** — start-of-chat onboarding, general-user light rows (avatar + name + tagline)
+Both consume the same `MODELS` array in `lib/models.ts`. Different row anatomies because different audiences. Selection state is shared (`selectedModelId` in chat/page.tsx).
+
+**SafetyBanner desktop is now in the centered-popup family**, not the top-of-chat banner family (PM-directive override S30). DormancyBanner remains the canonical top-of-chat banner on both viewports. SafetyBanner mobile still uses the top-of-chat-overlay slot.
 
 ---
 

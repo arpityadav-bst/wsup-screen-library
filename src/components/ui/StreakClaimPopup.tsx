@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import BottomSheet from './BottomSheet'
 import CenterPopup from './CenterPopup'
 import CloseButton from './CloseButton'
-import CoinIcon from './CoinIcon'
+import CreditsBalancePill from './CreditsBalancePill'
 import ChevronIcon from './ChevronIcon'
 import LoginSheet from './LoginSheet'
 import DailyCheckInCard from './DailyCheckInCard'
@@ -49,18 +49,6 @@ export const STREAK_LOGIN_VARIANTS: Record<StreakLoginVariant, StreakLoginPreset
   },
 }
 
-function BalancePill({ balance }: { balance: number }) {
-  return (
-    <div className="flex items-center gap-xs px-xs py-xxxs rounded-pill bg-white-10 shrink-0">
-      <span className="text-xs text-text-small">Balance</span>
-      <div className="flex items-center gap-xxxs">
-        <CoinIcon size={12} />
-        <span className="text-xs text-text-title tabular-nums">{balance}</span>
-      </div>
-    </div>
-  )
-}
-
 function ExploreEarnLink({ onClick }: { onClick?: () => void }) {
   return (
     <button
@@ -99,7 +87,7 @@ function PopupContent({
         <h2 className="font-semibold text-base text-text-title pr-xxxl">Claim your free credits!</h2>
         <div className="flex items-center justify-between gap-xs">
           <p className="text-sm text-text-small">Credits let you use premium features</p>
-          <BalancePill balance={balance} />
+          <CreditsBalancePill label="Balance" value={balance} />
         </div>
       </div>
 

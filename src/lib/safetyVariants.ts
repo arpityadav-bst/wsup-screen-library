@@ -5,7 +5,7 @@ export type SafetyVariant = 'self-harm' | 'medical' | 'financial'
 
 export interface SafetyVariantConfig {
   heading: string
-  primaryAction: { label: string; href: string }
+  primaryAction?: { label: string; href: string }
   secondaryAction?: { label: string; href: string }
   sourceText: string
   learnMoreHref: string
@@ -21,13 +21,11 @@ export const SAFETY_VARIANTS: Record<SafetyVariant, SafetyVariantConfig> = {
   },
   'medical': {
     heading: 'wsup.ai is not a medical professional. For health questions, please consult a qualified doctor.',
-    primaryAction: { label: 'Find a doctor', href: 'https://www.healthcare.gov/' },
     sourceText: 'AI responses can be inaccurate. Always verify medical guidance with a healthcare provider.',
     learnMoreHref: 'https://www.healthcare.gov/',
   },
   'financial': {
     heading: 'wsup.ai is not a financial advisor. For money decisions, please consult a qualified professional.',
-    primaryAction: { label: 'Find an advisor', href: 'https://www.cfp.net/find-a-cfp-professional' },
     sourceText: 'AI responses can be inaccurate. Always verify financial guidance with a licensed advisor.',
     learnMoreHref: 'https://www.cfp.net/',
   },

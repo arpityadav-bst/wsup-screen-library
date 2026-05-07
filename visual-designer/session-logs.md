@@ -1,7 +1,69 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-06
+Last updated: 2026-05-08
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 30 — 2026-05-08 — ChatBar bulb restored + SafetyBanner overhaul + ModelPickerSheet + ChatStyleSheet + S30-close audit (designer_caught_count: ~12 substantive across the arc)
+
+Freshness check: knowledge-base ✓ (SVG ID multi-mount pitfall added) | taste ✓ (~7 rules: passive-vs-active entry, items-baseline content-type caveat, fill-ratio-not-box-height, two-audience-two-anatomy, set-chrome, viewBox-tightening, CTA-to-real-resource) | decisions ✓ (~13 new entries; **PRUNED at session close** — 51 active above an Archive divider, 387 historical entries below) | reasonings ✓ (no class-of-decisions rules emerged today) | workflow ✓ (audit-question protocol added — verify before answering, never rubber-stamp from memory) | evolution ✓ (refreshed at S30 close — was STALE since S27) | project-insights ✓ (refreshed with chat screen surface inventory — was STALE 13+ days) | QUALITY-GATES ✓
+
+**Long arc, ~5 build threads:**
+
+**Thread 1 — ChatBar bulb restored** (carryover from S27 removal). Designer: "we need that back." Bulb (20×20 white-10 round, 12×12 icon-bulb.svg) re-added in both states (collapsed leftmost; expanded left of Claude pill). Wired to open SuggestedReplies panel directly via new `onOpenSuggestions` prop. Required lifting `expanded` state from SuggestedReplies to chat/page.tsx so both pill-tap AND bulb-tap drive the panel. **Rule-conflict resolved** — S27's *"duplicate entry points forbidden"* rationale was over-narrow. New taste rule: *"Two trigger semantics warrant two affordances — passive (auto/idle) and active (on-demand) are distinct intents, not duplicate entry points."*
+
+**Thread 2 — SafetyBanner desktop pivoted to centered floating card (PM directive)** + asset swaps + typography. Designer-tagged as not-aesthetically-endorsed but PM wanted production parity. Stripped desktop horizontal banner branch; rendered mobile vertical layout on both viewports with desktop chrome modifiers (`md:rounded-card md:max-w-popup-narrow md:mx-auto md:shadow-popup`). Mobile mount = absolute top overlay; desktop mount = absolute centered overlay (no scrim). Heart-hands SVG swapped to designer-supplied "give-love" asset (510×510 viewBox, gradient-rich). Medical swapped to "medicines" SVG (53×53). Financial swapped to "wallet" SVG (500×500, prefixed gradient IDs `fi-`). Heading typography iterated text-sm-normal → text-base-medium → text-[15px] medium. Row alignment items-start → items-center (illustration vertically centers with heading). CTAs removed from medical/financial (informational disclaimers only — *"don't ship CTAs that point at generic external directories"* taste rule). Self-catch — duplicate-mount caused gradient-ID collisions on the heart-hands SVG (paths painted as transparent because URL refs found gradient defs in the display:none mobile subtree). Fix: consolidated to single mount with viewport-conditional positioning. **New knowledge-base entry: "SVG illustrations with internal id references are fragile under multi-mount."**
+
+**Thread 3 — ModelPickerSheet shipped** (5 rounds of iteration). Chat-LLM picker with 7 models, BottomSheet+CenterPopup paired pattern. Reuse-mapped: Badge primitive for personality + cost chips (initially) → replaced with local Chip helper (rectangle radius, bg-white-10, uniform height) when designer asked for non-pill chrome; ring-2 ring-accent for selected; CreditPackRow chrome precedent. 5 rounds of designer-caught iteration: chip uniformity, baseline mismatch (items-center → items-baseline → items-center with uniform heights), bar dimensions (1px → 2px wide × 2px gap), per-model uniform color (round-3 misread of "always full bars" → corrected in round-4), selected-state height delta (CheckBadge moved out of flex flow to absolute positioning). Toast on selection ("Switched to {model}") fires from chat/page.tsx, repositioned to `bottom-[88px]` near ChatBar. **CreditsBalancePill primitive extracted** (was duplicated as private function in StreakClaimPopup + inline in ModelPickerSheet header).
+
+**Thread 4 — ChatStyleSheet shipped** (c.ai-inspired, WSUP-styled). Two-step new-chat picker — current models (3) + Legacy disclosure + CTA on step 1; legacy models (4) + description + Continue chat CTA on step 2. Header back arrow on step 2 (matches BuyCreditsSheet StepHeader pattern). Personality-mapped avatars (7 unique icons in `chat/ChatStyleAvatars.tsx`: bolt / interlocked rings / crosshair / book / 5-point star / cube / eye) — initially complexity-tier-mapped (3 icons) but designer caught duplicates within tier-4 (DeepSeek V4 Pro and Claude Opus 4.6 both got SparkleIcon). Re-mapped to personality (each unique). Selection draft + commit pattern (different from ModelPickerSheet's tap-commits — explicit Start/Continue chat CTA needed for the new-chat intent). **Lib/models.ts extended** with `tier: 'current' | 'legacy'` and `tagline: string` fields. **MemoryLimitOverlay extracted** from chat/page.tsx (defensive line-budget split — chat/page.tsx was at 299, would have hit 305 with the new mount).
+
+**Thread 5 — S30-close audit + fixes.** Designer asked "everything tokenized, componentized, in style guide?" Honest grep found 3 gaps: (1) `420px` past 3-instance threshold without a token → added `popup-narrow` to tailwind config maxWidth, migrated 5 instances. (2) SignalIcon + CheckBadge + Chip duplicated between component and style guide → extracted to `chat/ModelPickerInternals.tsx`. (3) CreditsBalancePill primitive had no standalone style guide section → created `CreditsBalancePillSection.tsx`, registered in ComponentsTab + NAV.Components. **decisions.md pruned** at session close — 437 entries → 51 active above an Archive divider, 387 historical below for paper-trail. **evolution.md + project-insights.md refreshed** (both were STALE since S27 / 13+ days).
+
+**Recurring category this session:** *"Gate 8 pre-flight pass is the weakest gate."* designer_caught_count is high specifically on visual issues that should have been caught by reading the rendered output as a designer before declaring done — chip uniformity, baseline misalignment, selected-state height delta, avatar dupes within complexity tier, "Chat style" / "Legacy models" same-size hierarchy, signal-icon spec ambiguity. Each was caught after designer pointed out, not before. **Forcing function for S31:** screenshot-and-ask before declaring done — *"would the designer point out anything specific here that I'd then have to fix?"* If yes, fix BEFORE saying done.
+
+**New rules codified this session:**
+- *taste.md (×7)* — passive-vs-active entry semantics, items-baseline-only-for-consistent-baseline-semantics, items-center-with-corner-anchor-via-self-start, fill-ratio-not-box-height, two-audience-two-anatomy, set-chrome-for-coherent-metadata-affordances, don't-ship-CTAs-to-generic-external-directories, when-icon-looks-small-tighten-viewBox-not-render-size, two-trigger-semantics-warrant-two-affordances
+- *knowledge-base.md (×1)* — SVG illustrations with internal id references are fragile under multi-mount (3 remediation options + pre-flight grep)
+- *workflow.md (×1)* — audit-question protocol: verify before answering, never rubber-stamp from memory
+- *Banner-position-reflects-scope rule amended* — desktop scope clause for PM-directive-reclassified popups
+
+**Active gaps for S31:**
+1. **Gate 8 catch-rate** — top priority. Run mental Gate 8 + screenshot pre-flight before every "done" declaration.
+2. **Open-UX-call protocol** — surface ambiguous spec language as a clarifying question, don't pick-and-ship. The round-3 SignalIcon "always full bars" misread was the canonical violation.
+3. **Iteration count creep** — when introducing a new visual primitive, run Gate 6.5 generalization + Gate 8 visual pre-flight before first ship; don't ship-then-iterate-5-rounds.
+4. **Verbosity in decisions.md entries** — today's 13 new entries average 200+ words. Target 100. (decisions.md was just pruned to 51 active; new entries should be tight.)
+5. **Carry-overs unchanged from S29** — `<UserListRow>` extraction (S28); `CharacterMenuSheet` / `DormantMenuPopoverItems` MenuPopover migration (S27).
+
+**Code shipped:** ~30 files changed (mix of new + modified). New: `chat/ChatStyleSheet.tsx`, `chat/ChatStyleAvatars.tsx`, `chat/ModelPickerSheet.tsx`, `chat/ModelPickerInternals.tsx`, `chat/MemoryLimitOverlay.tsx`, `lib/models.ts`, `ui/CreditsBalancePill.tsx`, plus 3 style guide sections (ChatStyleSheetSection, ModelPickerSheetSection, CreditsBalancePillSection). Modified: SafetyBanner + SafetyIllustrations (asset swaps + layout overhaul), ChatBar (bulb restored), ChatHeader/ChatHeaderMenu (Switch LLMs wiring), Toast (bottom positioning), StreakClaimPopup (BalancePill → CreditsBalancePill primitive), MemoryLimitPopup (max-w-popup-narrow), EmptyState (max-w-popup-narrow), SafetyBannerSection (5+ rounds of anatomy updates), tailwind.config (popup-narrow maxWidth token), 7 VDA knowledge files. **Phase 5→6 streak: BROKEN** (S30=~12 substantive). Sequence: S22=3, S23=18, S24=0, S25=1, S26=8, S27=7, **S28=0**, S29=14, **S30=~12**.
+
+---
+
+## Session 29 — 2026-05-07 — SuggestedReplies labeled-panel rebuild + SafetyBanner pattern + 5-rule promotion sweep (designer_caught_count: 14, ~8-9 substantive)
+
+Freshness check: knowledge-base ✓ (TopOfChatBanner spec added) | taste ✓ (4 rules added — small-surface flow, optical padding via `-mr-icon-btn`, banner-position viewport clause, solid-vs-glass surface, plus 2 from end-of-session sweep) | decisions ✓ (~14+ entries, but **426 total, past pruning milestone for 3rd session**) | reasonings ✓ (correction-direction reasoning added, first update in 13+ days) | workflow ✓ (Gate 0 precedent grep added as mechanical step) | evolution ⚠️ STALE | project-insights ⚠️ STALE | QUALITY-GATES ✓
+
+**Two-arc session:**
+
+**Arc 1 — SuggestedReplies redesign (chip row → labeled vertical panel):** designer surfaced gap that production generates roleplay-style replies (italic action + spoken text) that would render as 600–1200px chips → unusable horizontal scroll. Pivoted to labeled vertical panel with header (label + bulb-off + ×) + 3 stacked rows (italic action narration like AI-bubble emotion convention + spoken text). 5+ designer catches across the arc — pill should not overlay (only popup-sized surfaces earn overlay), × at top-right of labeled panel (not leftmost like sliver toggles), `-mr-icon-btn` WSUP idiom over asymmetric padding I invented, icons should shrink (not title bump) for hierarchy, asymmetric mobile button stretch (Browse resources content-driven nowrap, Call now flex-1).
+
+**Arc 2 — SafetyBanner pattern (3 variants):** new top-of-chat platform-intervention banner with self-harm / medical / financial variants. Keyword classifier (`safetyDetect.ts`), variant data (`safetyVariants.ts`), brand SVG illustrations supplied by designer (medical iterated 5×, financial iterated 3×). Layout iterations — mobile pivoted from in-flow → absolute overlay (covers header, doesn't push); desktop pivoted from 3-row stacked → single-row inline with column-aligned source line under heading. Chrome iterations — bg-page-bg → bg-profile-sheet-bg → bg-white-05 (matches DormancyBanner desktop exactly). 9+ designer catches.
+
+**Recurring category for this session:** *"didn't grep precedent before picking tokens / anatomy / chrome."* Same root cause as S27 style-guide drift, S28 BlockedListView toggle linguistics. Five misses across three sessions all from the same failure mode → **fixed structurally this session** by promoting `Gate 0 — Precedent grep` into `workflow.md` as a mechanical step with explicit grep target table. **Active gap closed.**
+
+**Post-session 5-rule promotion sweep** (response to designer's "is VDA armed?" audit): 5 rules promoted from `decisions.md` to taste/reasonings/workflow/knowledge-base — closes the gap from "decisions logged but not retrievable." Highest-leverage entries: Gate 0 precedent grep (`workflow.md`) + TopOfChatBanner shared anatomy spec (`knowledge-base.md`) — these fix recurring failure modes at the structural level, not just at the case level.
+
+**Gate verdict:** Gate 4 partial closed at end of session via TopOfChatBanner promotion. Gate 7 misses (×2) recurred — closed structurally via Gate 0 promotion. Gate 8 partial — multiple designer catches on hierarchy/layout. Gate 8.4 not run explicitly during illustration swaps (watch item).
+
+**Active gaps for S30:**
+1. **decisions.md pruning is now blocking** — 426 entries, third session past the 100 milestone. Pre-S30 work, not deferred further. Active rules getting buried.
+2. Run Gate 0 visibly on first cross-component token decision (write grep result in decision entry).
+3. Run Gate 8.4 explicitly after content-density changes (illustration swaps qualify).
+4. Refresh `evolution.md`, `project-insights.md` — both stale 13+ days despite substantial work.
+5. Carry-overs: `<UserListRow>` extraction (S28); `CharacterMenuSheet` / `DormantMenuPopoverItems` MenuPopover migration (S27).
+
+**Code shipped:** 17 files changed, +688/-154 lines. New: `chat/SafetyBanner.tsx`, `chat/SafetyIllustrations.tsx`, `chat/chat-config.ts` (file-split for 300-line rule), `lib/safetyVariants.ts`, `lib/safetyDetect.ts`, `style-guide/sections/patterns/SafetyBannerSection.tsx`. Modified: `chat/page.tsx`, `chat/SuggestedReplies.tsx`, `lib/chatSuggestions.ts` (shape change), style-guide registration files. Commit `e6b7322` pushed to both remotes (`arpityadav-bst/wsup-screen-library` master + `ashish-pathak-bst/wsup-prd` designs, fast-forward).
 
 ---
 

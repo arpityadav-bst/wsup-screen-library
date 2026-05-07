@@ -46,6 +46,14 @@ const config: Config = {
         'pill':   '9999px',
       },
 
+      // ─── Max Width ─────────────────────────────────────────
+      maxWidth: {
+        // Centered chat-context popup width — ModelPickerSheet, ChatStyleSheet,
+        // SafetyBanner desktop card, MemoryLimitPopup, EmptyState reading width.
+        // 420px appeared 5+ times before being tokenized at S30 close.
+        'popup-narrow': '420px',
+      },
+
       // ─── Colors ────────────────────────────────────────────
       colors: {
         // Primitives

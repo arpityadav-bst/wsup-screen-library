@@ -33,28 +33,29 @@ export default function SafetyBanner({ variant, onClose }: SafetyBannerProps) {
   const config = SAFETY_VARIANTS[variant]
   const Illustration = ILLUSTRATIONS[variant]
 
-  // Stretch=true (mobile): secondary content-driven + nowrap (longer label fits one line); primary takes flex-1.
-  // Stretch=false (desktop): both content-driven, sit inline.
-  const renderButtons = (stretch: boolean) => (
+  // Secondary content-driven + nowrap (longer label fits one line); primary takes flex-1. Asymmetric stretch — see taste.md.
+  const renderButtons = () => (
     <>
       {config.secondaryAction && (
         <Button
           variant="secondary"
           size="m"
-          className={stretch ? 'shrink-0 whitespace-nowrap' : ''}
+          className="shrink-0 whitespace-nowrap"
           onClick={() => navigate(config.secondaryAction!.href)}
         >
           {config.secondaryAction.label}
         </Button>
       )}
-      <Button
-        variant="primary"
-        size="m"
-        className={stretch ? 'flex-1 whitespace-nowrap' : ''}
-        onClick={() => navigate(config.primaryAction.href)}
-      >
-        {config.primaryAction.label}
-      </Button>
+      {config.primaryAction && (
+        <Button
+          variant="primary"
+          size="m"
+          className="flex-1 whitespace-nowrap"
+          onClick={() => navigate(config.primaryAction!.href)}
+        >
+          {config.primaryAction.label}
+        </Button>
+      )}
     </>
   )
 
@@ -75,45 +76,29 @@ export default function SafetyBanner({ variant, onClose }: SafetyBannerProps) {
     </div>
   )
 
+  // Single vertical layout for both viewports (PM directive — match production wsup.ai).
+  // Mobile: full-bleed banner anchored to top of viewport (border-b only).
+  // Desktop: same layout chrome wrapped as a centered card (rounded-card + full border + max-width). Parent mount handles centering.
   return (
     <aside
       role="alert"
-      // Mobile: bg-profile-sheet-bg (#1a1a1a solid) — opaque; needed because the mobile banner is an absolute overlay over arbitrary chat content.
-      // Desktop: bg-white-05 — matches DormancyBanner desktop exactly so both top-of-chat banners read as the same elevated-dark surface family.
-      className="bg-profile-sheet-bg md:bg-white-05 border-b border-white-10 shrink-0 px-m py-m"
+      className="bg-profile-sheet-bg shrink-0 px-m py-m border-b border-white-10 md:border md:rounded-card md:max-w-popup-narrow md:mx-auto md:shadow-popup"
       style={{ animation: 'fade-in 0.25s ease-out' }}
     >
-      {/* MOBILE — vertical stacked: row 1 [illust + heading + ×], row 2 [buttons full-row], row 3 [source line] */}
-      <div className="md:hidden">
-        <div className="flex items-start gap-m">
-          <div className="shrink-0">
-            <Illustration size={56} />
-          </div>
-          <p className="flex-1 min-w-0 text-sm text-text-title leading-snug pt-xxs">{config.heading}</p>
-          <CloseButton onClose={onClose} ariaLabel="Dismiss alert" className="-mr-icon-btn -mt-icon-btn shrink-0" />
-        </div>
-        <div className="flex items-stretch gap-s mt-m">
-          {renderButtons(true)}
-        </div>
-        <div className="mt-m">
-          {sourceLine}
-        </div>
-      </div>
-
-      {/* DESKTOP — single horizontal row with the heading + source line stacked in their own column to the right of a smaller illustration.
-          Heading and source line share the same left edge (column-aligned). items-center vertically centers the illustration / buttons / × against the text column. */}
-      <div className="hidden md:flex items-center gap-m">
+      <div className="flex items-center gap-m">
         <div className="shrink-0">
-          <Illustration size={48} />
+          <Illustration size={56} />
         </div>
-        <div className="flex-1 min-w-0 flex flex-col gap-xs">
-          <p className="text-sm text-text-title leading-snug">{config.heading}</p>
-          {sourceLine}
+        <p className="flex-1 min-w-0 text-[15px] font-medium text-text-title leading-snug">{config.heading}</p>
+        <CloseButton onClose={onClose} ariaLabel="Dismiss alert" className="self-start -mr-icon-btn -mt-icon-btn shrink-0" />
+      </div>
+      {(config.primaryAction || config.secondaryAction) && (
+        <div className="flex items-stretch gap-s mt-m">
+          {renderButtons()}
         </div>
-        <div className="flex items-center gap-s shrink-0">
-          {renderButtons(false)}
-        </div>
-        <CloseButton onClose={onClose} ariaLabel="Dismiss alert" className="-mr-icon-btn shrink-0" />
+      )}
+      <div className="mt-m">
+        {sourceLine}
       </div>
     </aside>
   )

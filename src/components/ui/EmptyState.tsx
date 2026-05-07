@@ -19,7 +19,7 @@ export default function EmptyState({ message, variant = 'default', children }: E
   return (
     <div className="flex flex-col items-center justify-center py-4xl px-l gap-s text-center">
       <span className="text-[32px]">{EMOJI[variant]}</span>
-      <p className="text-sm text-text-dim max-w-[420px]">{message}</p>
+      <p className="text-sm text-text-dim max-w-popup-narrow">{message}</p>
       {children}
     </div>
   )

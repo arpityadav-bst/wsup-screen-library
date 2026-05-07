@@ -13,6 +13,7 @@ import BottomNavSection from './components/BottomNavSection'
 import OverlaysSection from './components/OverlaysSection'
 import MenuPopoverSection from './components/MenuPopoverSection'
 import ToastSection from './components/ToastSection'
+import CreditsBalancePillSection from './components/CreditsBalancePillSection'
 import FilterPillsSection from './components/FilterPillsSection'
 import LifecycleSection from './components/LifecycleSection'
 import ProfileCardsSection from './components/ProfileCardsSection'
@@ -36,6 +37,7 @@ export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: 
       <OverlaysSection onSectionVisible={onSectionVisible} />
       <MenuPopoverSection onSectionVisible={onSectionVisible} />
       <ToastSection onSectionVisible={onSectionVisible} />
+      <CreditsBalancePillSection onSectionVisible={onSectionVisible} />
       <LifecycleSection onSectionVisible={onSectionVisible} />
       <BottomNavSection onSectionVisible={onSectionVisible} />
       <ProfileCardsSection onSectionVisible={onSectionVisible} />

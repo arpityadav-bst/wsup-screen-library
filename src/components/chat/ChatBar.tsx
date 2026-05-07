@@ -6,10 +6,15 @@ type ChatBarProps = {
   value?: string
   onChange?: (text: string) => void
   onSend?: (text: string) => void
+  onOpenSuggestions?: () => void
+  onOpenModels?: () => void
+  selectedModelName?: string
+  // When true, ChatBar stays expanded and ignores click-outside (used while ModelPickerSheet is open).
+  forceExpanded?: boolean
   containerRef?: React.RefObject<HTMLElement | null>
 }
 
-export default function ChatBar({ value: valueProp, onChange, onSend, containerRef }: ChatBarProps = {}) {
+export default function ChatBar({ value: valueProp, onChange, onSend, onOpenSuggestions, onOpenModels, selectedModelName = 'Claude Opus 4.6', forceExpanded = false, containerRef }: ChatBarProps = {}) {
   const [isActive, setIsActive] = useState(false)
   const [internal, setInternal] = useState('')
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -23,7 +28,7 @@ export default function ChatBar({ value: valueProp, onChange, onSend, containerR
   }
 
   const hasValue = value.length > 0
-  const expanded = isActive || hasValue
+  const expanded = isActive || hasValue || forceExpanded
 
   const submit = () => {
     const trimmed = value.trim()
@@ -38,13 +43,26 @@ export default function ChatBar({ value: valueProp, onChange, onSend, containerR
       const inside = containerRef?.current
         ? containerRef.current.contains(e.target as Node)
         : wrapperRef.current?.contains(e.target as Node)
-      if (!inside) setIsActive(false)
+      if (!inside && !forceExpanded) setIsActive(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isActive, containerRef])
+  }, [isActive, containerRef, forceExpanded])
 
   const keepInputFocus = (e: React.MouseEvent) => e.preventDefault()
+
+  const bulbCircle = (
+    <button
+      type="button"
+      onMouseDown={keepInputFocus}
+      onClick={() => onOpenSuggestions?.()}
+      className="w-5 h-5 rounded-pill bg-white-10 flex items-center justify-center shrink-0 hover:bg-white-20 transition-colors"
+      aria-label="Auto-suggestions"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/icons/icon-bulb.svg" alt="" width={12} height={12} />
+    </button>
+  )
 
   const micButton = (
     <button
@@ -111,6 +129,7 @@ export default function ChatBar({ value: valueProp, onChange, onSend, containerR
         {/* Left column — input + (when expanded) model picker row */}
         <div className="flex flex-col gap-m flex-1 min-w-0">
           <div className="flex items-center gap-s w-full">
+            {!expanded && bulbCircle}
             <button
               type="button"
               onMouseDown={keepInputFocus}
@@ -134,13 +153,15 @@ export default function ChatBar({ value: valueProp, onChange, onSend, containerR
           </div>
           {expanded && (
             <div className="flex items-center gap-xxs">
+              {bulbCircle}
               <button
                 type="button"
                 onMouseDown={keepInputFocus}
+                onClick={() => onOpenModels?.()}
                 className="backdrop-blur-popup bg-black-30 border border-white-10 rounded-pill px-xs py-[2px] flex items-center gap-xxs shadow-popup hover:bg-black-40 transition-colors"
                 aria-label="Select model"
               >
-                <span className="text-xs text-white-90 whitespace-nowrap">Claude 4.5 Opus</span>
+                <span className="text-xs text-white-90 whitespace-nowrap">{selectedModelName}</span>
                 <svg width="4" height="8" viewBox="0 0 4 8" fill="none" className="shrink-0" aria-hidden>
                   <path d="M0.5 0.5L3.5 4L0.5 7.5" stroke="white" strokeOpacity="0.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

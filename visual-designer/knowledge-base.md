@@ -5,9 +5,36 @@ Patterns, rules, and technical knowledge learned from working with the designer.
 
 ---
 
+## SVG illustrations with internal `id` references are fragile under multi-mount
+
+Whenever a component contains an inline SVG that uses internal `<linearGradient id=...>`, `<radialGradient id=...>`, `<clipPath id=...>`, `<mask id=...>`, or any other element with an `id` referenced via `xlinkHref` / `clip-path="url(#...)"` / `fill="url(#...)"`, the IDs are document-scoped — not SVG-scoped. If the same component renders at two mount points on the same page, both DOM trees ship the SAME ids, and the browser resolves URL references to the FIRST occurrence in document order. If that first occurrence is inside a `display:none` subtree, paint silently fails — paths are filled with the unresolved-paint fallback (typically transparent or black) and the illustration vanishes even though `gradientCount` looks correct under DOM inspection.
+
+**WSUP example (S30 bug):** SafetyBanner had two viewport-conditional mounts (`md:hidden` for mobile + `hidden md:flex` for desktop). Both rendered the heart-hands SVG with 24 internal gradient IDs (`shi-SVGID_1_` etc). On desktop, the visible card's gradients pointed to the mobile (display:none) gradient definitions — empty paint.
+
+### Three remediation options
+
+1. **Mount once with viewport-conditional positioning classes** — default. Use Tailwind responsive prefixes (`md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2`) to switch between mobile and desktop layouts on a single DOM tree. Works when both mount points render identical content with only positioning differing.
+2. **Generate per-instance ID prefixes via `useId()`** — escape hatch when content / positioning differs enough that one mount can't serve both viewports. React's `useId()` returns a stable unique string per render instance; prefix all internal SVG IDs with it. More wiring, but lets the same component mount in multiple positions safely.
+3. **Avoid internal IDs in the asset entirely** — requires re-authoring the SVG to use only inline `fill` / `stroke` / `opacity` (no gradients, no clipPaths, no masks). Cleanest when feasible but loses fidelity for gradient-rich illustrations.
+
+### Pre-flight check before adding any new SVG-containing component
+
+Run this grep before declaring a new component done:
+```
+grep -E '<linearGradient|<radialGradient|<clipPath|<mask|<filter|<pattern' <component-file>
+grep -c '<NewComponent' <pages-or-other-mounts>
+```
+If the SVG has any internal-id elements AND the component mounts more than once per page → you need one of the three options above. The DOM-presence test (`querySelectorAll('svg path').length`) is **NOT** sufficient to catch this bug. Only a visual-output test (Playwright screenshot of the actual painted pixels) catches it.
+
+### Why this is its own knowledge-base entry
+
+S30 shipped a refactor (multi-mount with viewport-conditional `display:none`) that passed every gate except Gate 8 (visual output). DOM inspection said all 21 paths existed, all 24 gradients existed, all `fill` attributes referenced valid URLs. The painted pixels said "nothing visible." The miss class is *DOM-correctness vs paint-correctness divergence* — and it's invisible to any audit that checks the DOM only. Codifying this entry makes the trap explicit so future SVG-bearing components route through one of the three options BEFORE landing.
+
+---
+
 ## TopOfChatBanner shared anatomy — single chrome spec for all banners that occupy the top-of-chat slot
 
-Any banner that occupies the top-of-chat slot (the row directly under `ChatHeader` on desktop, or the absolute-overlay-at-top on mobile) shares ONE codified chrome. As of S29, two banners use this slot — `DormancyBanner` (character state) and `SafetyBanner` (platform intervention). Future banners that fire here MUST match this spec. **No new tokens, no new chrome variations — same surface treatment, same role-position.**
+Any banner that occupies the top-of-chat slot (the row directly under `ChatHeader` on desktop, or the absolute-overlay-at-top on mobile) shares ONE codified chrome. **As of S30:** `DormancyBanner` (character state) is the sole canonical member of this family on BOTH viewports. `SafetyBanner` (platform intervention) uses this spec only on MOBILE — its desktop layout was re-classified by PM directive to the *centered-popup* family (matches MemoryLimitPopup precedent: `rounded-card` + `bg-profile-sheet-bg` + `border` + `shadow-popup`, mounted via absolute centered overlay in chat column). Future banner-class surfaces still match this spec; surfaces classified as popups follow the centered-popup family instead. See decisions.md S30 entry for the override context.
 
 ### The spec
 
@@ -22,7 +49,7 @@ Any banner that occupies the top-of-chat slot (the row directly under `ChatHeade
 | **Vertical padding** | scoped per banner content density — `py-s` for short status banners (DormancyBanner desktop), `py-m` for taller decision banners (SafetyBanner). Both within the WSUP scale |
 | **flex-shrink** | `shrink-0` — banner never compresses when chat content is tall |
 | **Close button** | `<CloseButton>` primitive (NOT hand-rolled) with `-mr-icon-btn` for optical edge alignment |
-| **Mobile vs desktop position** | Character-state banners (DormancyBanner): in flex flow under header on both viewports. Platform-intervention banners (SafetyBanner): absolute overlay at top on mobile (`absolute top-0 left-0 right-0 z-20`); in flex flow under header on desktop |
+| **Mobile vs desktop position** | Character-state banners (DormancyBanner): in flex flow under header on both viewports — this remains the canonical banner-class behavior. SafetyBanner mobile uses this slot via absolute overlay at top (`absolute top-0 left-0 right-0 z-20`). SafetyBanner desktop is **NOT** in this family as of S30 — see centered-popup family in decisions.md |
 
 ### Mutual exclusion
 

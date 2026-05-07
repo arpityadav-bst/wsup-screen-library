@@ -7,6 +7,8 @@ interface SuggestedRepliesProps {
   suggestions: Suggestion[]
   onPick: (text: string) => void
   onDisable: () => void
+  expanded?: boolean
+  onExpandedChange?: (next: boolean) => void
 }
 
 const BulbIcon = () => (
@@ -32,8 +34,14 @@ const CloseIcon = () => (
   </svg>
 )
 
-export default function SuggestedReplies({ suggestions, onPick, onDisable }: SuggestedRepliesProps) {
-  const [expanded, setExpanded] = useState(false)
+export default function SuggestedReplies({ suggestions, onPick, onDisable, expanded: expandedProp, onExpandedChange }: SuggestedRepliesProps) {
+  const [internalExpanded, setInternalExpanded] = useState(false)
+  const controlled = expandedProp !== undefined
+  const expanded = controlled ? expandedProp : internalExpanded
+  const setExpanded = (next: boolean) => {
+    if (!controlled) setInternalExpanded(next)
+    onExpandedChange?.(next)
+  }
   const [confirmingDisable, setConfirmingDisable] = useState(false)
   const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 

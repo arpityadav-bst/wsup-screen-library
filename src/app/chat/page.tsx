@@ -11,9 +11,12 @@ import type { ChatMessage } from '@/components/chat/ChatMessages'
 import ChatBar from '@/components/chat/ChatBar'
 import ChatRightSidebar from '@/components/chat/ChatRightSidebar'
 import DormancyBanner from '@/components/chat/DormancyBanner'
-import MemoryLimitPopup from '@/components/chat/MemoryLimitPopup'
+import MemoryLimitOverlay from '@/components/chat/MemoryLimitOverlay'
 import SuggestedReplies from '@/components/chat/SuggestedReplies'
 import SafetyBanner from '@/components/chat/SafetyBanner'
+import ModelPickerSheet from '@/components/chat/ModelPickerSheet'
+import ChatStyleSheet from '@/components/chat/ChatStyleSheet'
+import { DEFAULT_MODEL_ID, getModel, type ModelId } from '@/lib/models'
 import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
 import Toast from '@/components/ui/Toast'
 import { getReplyFor, REPLY_DELAY_MS } from '@/lib/chatReplies'
@@ -40,8 +43,11 @@ export default function ChatPage() {
   const [draft, setDraft] = useState('')
   const [suggestionsEnabled, setSuggestionsEnabled] = useState(true)
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [suggestionsExpanded, setSuggestionsExpanded] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const [safetyBanner, setSafetyBanner] = useState<SafetyVariant | null>(null)
+  const [selectedModelId, setSelectedModelId] = useState<ModelId>(DEFAULT_MODEL_ID)
+  const [modelPickerOpen, setModelPickerOpen] = useState(false)
   const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const inputAreaRef = useRef<HTMLDivElement>(null)
@@ -80,6 +86,7 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, userMsg])
     setIsTyping(true)
     setShowSuggestions(false)
+    setSuggestionsExpanded(false)
     cancelIdleTimer()
     // Detect safety category in the user's message — first match wins; existing banner upgrades only on more-severe match (severity order is in detectSafetyCategory).
     const detected = detectSafetyCategory(text)
@@ -102,6 +109,18 @@ export default function ChatPage() {
   const handlePickSuggestion = (text: string) => {
     setDraft(text)
     setShowSuggestions(false)
+    setSuggestionsExpanded(false)
+  }
+
+  const handleOpenSuggestions = () => {
+    cancelIdleTimer()
+    setShowSuggestions(true)
+    setSuggestionsExpanded(true)
+  }
+
+  const handleSafetyClose = () => {
+    setSafetyBanner(null)
+    if (devSafetyVariant) setChatState('active')
   }
 
   const handleToggleSuggestions = () => {
@@ -110,6 +129,7 @@ export default function ChatPage() {
       localStorage.setItem(SUGGESTIONS_PREF_KEY, next ? '1' : '0')
       if (!next) {
         setShowSuggestions(false)
+    setSuggestionsExpanded(false)
         cancelIdleTimer()
         setToast('Auto-suggestions off. Turn back on from the chat menu.')
       } else {
@@ -130,16 +150,9 @@ export default function ChatPage() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
-      if (e.key === 'r' || e.key === 'R') {
-        if (e.shiftKey) {
-          setChatState(prev => {
-            const i = STATES.indexOf(prev)
-            return STATES[(i + 1) % STATES.length]
-          })
-        } else {
-          setShowToggle(prev => !prev)
-        }
-      }
+      if (e.key !== 'r' && e.key !== 'R') return
+      if (e.shiftKey) setChatState((p) => STATES[(STATES.indexOf(p) + 1) % STATES.length])
+      else setShowToggle((p) => !p)
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
@@ -187,20 +200,6 @@ export default function ChatPage() {
 
           {/* Chat UI */}
           <div className="relative z-10 flex flex-col h-full">
-            {/* Safety banner — mobile: absolute overlay anchored to the top of the chat viewport.
-                Doesn't push ChatHeader down; header stays in flow underneath and is visually covered by the banner.
-                On desktop the banner sits BELOW ChatHeader (rendered further down) — header still anchors who-am-I-talking-to context. */}
-            {activeSafetyVariant && (
-              <div className="md:hidden absolute top-0 left-0 right-0 z-20">
-                <SafetyBanner
-                  variant={activeSafetyVariant}
-                  onClose={() => {
-                    setSafetyBanner(null)
-                    if (devSafetyVariant) setChatState('active')
-                  }}
-                />
-              </div>
-            )}
             <ChatHeader
               characterName="Billie Eilish"
               characterImage={CHARACTER_AVATAR}
@@ -208,21 +207,15 @@ export default function ChatPage() {
               characterState={headerCharacterState}
               suggestionsEnabled={suggestionsEnabled}
               onToggleSuggestions={handleToggleSuggestions}
+              onSwitchLLMs={() => setModelPickerOpen(true)}
             />
-            {/* Desktop SafetyBanner / DormancyBanner (mutually exclusive, safety wins) */}
-            {activeSafetyVariant ? (
-              <div className="hidden md:block">
-                <SafetyBanner
-                  variant={activeSafetyVariant}
-                  onClose={() => {
-                    setSafetyBanner(null)
-                    if (devSafetyVariant) setChatState('active')
-                  }}
-                />
+            {/* Single SafetyBanner mount — mobile: full-bleed top overlay (covers header); desktop: centered floating card per PM directive. Single mount avoids duplicate gradient-ID collisions in the SVG illustrations. */}
+            {activeSafetyVariant && (
+              <div className="absolute z-20 top-0 left-0 right-0 md:top-1/2 md:left-1/2 md:right-auto md:-translate-x-1/2 md:-translate-y-1/2">
+                <SafetyBanner variant={activeSafetyVariant} onClose={handleSafetyClose} />
               </div>
-            ) : (
-              bannerVariant && <DormancyBanner variant={bannerVariant} />
             )}
+            {!activeSafetyVariant && bannerVariant && <DormancyBanner variant={bannerVariant} />}
             <ChatMessages messages={messages} isTyping={isTyping} characterName="Billie Eilish" />
             {isRemoved ? (
               <div className="flex items-center justify-center px-m py-m bg-page-bg border-t border-white-10 shrink-0 md:bg-transparent">
@@ -235,36 +228,29 @@ export default function ChatPage() {
                     suggestions={suggestions}
                     onPick={handlePickSuggestion}
                     onDisable={handleToggleSuggestions}
+                    expanded={suggestionsExpanded}
+                    onExpandedChange={setSuggestionsExpanded}
                   />
                 )}
                 <ChatBar
                   value={draft}
                   onChange={handleDraftChange}
                   onSend={handleSend}
+                  onOpenSuggestions={handleOpenSuggestions}
+                  onOpenModels={() => setModelPickerOpen(true)}
+                  selectedModelName={getModel(selectedModelId).name}
+                  forceExpanded={modelPickerOpen}
                   containerRef={inputAreaRef}
                 />
               </div>
             )}
 
-            {/* Backdrop overlay — full chat area, modal-style, when popup is showing */}
-            {showInstallPopup && !isRemoved && (
-              <>
-                <div
-                  className="absolute inset-0 bg-black-60 pointer-events-none z-20"
-                  aria-hidden
-                />
-                {/* Popup — anchored above ChatBar */}
-                <div className="absolute bottom-[88px] left-0 right-0 px-m md:px-2xxxl pt-12 z-30 pointer-events-none">
-                  <div className="pointer-events-auto">
-                    <MemoryLimitPopup
-                      characterName="Billie"
-                      characterImage={CHARACTER_AVATAR}
-                      onDismiss={() => setChatState('active')}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
+            <MemoryLimitOverlay
+              open={showInstallPopup && !isRemoved}
+              characterName="Billie"
+              characterImage={CHARACTER_AVATAR}
+              onDismiss={() => setChatState('active')}
+            />
           </div>
         </div>
 
@@ -273,6 +259,27 @@ export default function ChatPage() {
       </main>
 
       <Toast open={!!toast} message={toast ?? ''} onClose={() => setToast(null)} />
+
+      <ModelPickerSheet
+        open={modelPickerOpen}
+        onClose={() => setModelPickerOpen(false)}
+        selectedId={selectedModelId}
+        onSelect={(id) => {
+          if (id !== selectedModelId) setToast(`Switched to ${getModel(id).name}`)
+          setSelectedModelId(id)
+        }}
+        creditsBalance={498}
+      />
+
+      <ChatStyleSheet
+        open={chatState === 'chat-style-popup'}
+        onClose={() => setChatState('active')}
+        selectedModelId={selectedModelId}
+        onCommit={(id) => {
+          setSelectedModelId(id)
+          setToast(`Switched to ${getModel(id).name}`)
+        }}
+      />
 
       <DevStateToggle open={showToggle} title="State" hint="R toggle · Shift+R cycle">
         {STATES.map((state) => (

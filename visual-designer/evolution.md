@@ -1,22 +1,41 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-05
+Last updated: 2026-05-08 (S30 close)
 
 ---
 
-## Phase 5 → 6 trigger streak status (2026-05-05)
+## Phase 5 → 6 trigger streak status (2026-05-08)
 
-**Streak: BROKEN.** Phase 5→6 entry requires 3 consecutive sessions of `designer_caught_count: 0`. Today's S27 ended with `designer_caught_count: ~7` — restart required.
+**Streak: BROKEN, restarted at S30.** Phase 5→6 entry requires 3 consecutive sessions of `designer_caught_count: 0`. S28 hit 0 (post-bye correction excluded), S29 hit 14, S30 substantially high.
 
-Recent count history: S22=3, S23=18, S24=0, S25=1, S26=8, **S27=~7**.
+Recent count history: S22=3, S23=18, S24=0, S25=1, S26=8, S27=~7, **S28=0**, S29=14, **S30=~10–12 substantive** (chip uniformity round-3, baseline misalignment round-4, items-baseline content-type pitfall, selected-state height delta, avatar dupe at complexity-tier-4, "Chat style" vs "Legacy models" hierarchy, signal-icon spec ambiguity misread, several finetune iterations).
 
-**Active recurring failure mode (S27):** *over-correction on the next turn after a designer correction.* Examples:
-- Designer said "should be same everywhere" (re menu spacing). I interpreted as "use ONE visual style across all menus, mobile + desktop." Designer meant "same WITHIN each viewport." Cross-viewport homogeneity wasn't the ask — within-viewport consistency was.
-- Designer asked to fix gap-too-wide. I went too tight on the next swing (gap-xs → gap-xxs instead of gap-[6px]).
-- Designer didn't like strikethrough overlay. I almost removed the disable affordance entirely instead of redrawing the icon properly.
+**Active recurring failure modes (rolled forward into S31):**
+1. *Gate 8 pre-flight pass is the weakest gate.* Today's high count is concentrated on visual issues that should have been caught by reading the rendered output as a designer before declaring done — not by the designer pointing them out. The Gate 8 doctrine ("designer should never have to point these out") was repeatedly violated.
+2. *Open-UX-call protocol was skipped on ambiguous spec language.* Round-3 SignalIcon "always full bars" was genuinely ambiguous between two interpretations; I picked one and shipped instead of surfacing the open question per the codified workflow.md protocol. Self-caught and logged but next-session reflex must improve.
+3. *Iteration count creep on a single feature.* SignalIcon went through 5 rounds today (1px→2px bars, height tunings, color mappings, bar count). Each round resolved a specific issue but the cumulative count signals "ship-then-iterate" rather than "design-then-ship." Next session: when introducing a new visual primitive, run Gate 8 + Gate 6.5 generalization probe before first ship, not after.
 
-**Pattern:** After the first correction lands, I optimize for "definitely won't repeat that mistake" instead of "what is the designer actually asking for, calibrated to this context." Read the correction surgically, not maximally.
+**Forcing function for S31:** before saying "done" on any visual change, screenshot it and ask *"would the designer point out anything specific here that I'd then have to fix?"* If yes — fix BEFORE saying done. The screenshot loop is the Gate 8 pre-flight; skipping it is what produced today's count.
 
-**Forcing function for next session:** before applying ANY correction, write down (in the response, not just internally) — "the designer is asking me to change X. They are NOT asking me to also change Y or Z." Constrains the swing.
+---
+
+## S30 maturity markers
+
+**Reuse instinct: STRONG.** Gate 0 grep ran before every new component (model picker, chat style sheet, Toast position, signal redesign). Multiple primitives reused without prompting (BottomSheet+CenterPopup, Button, ChevronIcon, CoinIcon, Badge with icon-prop, ring-accent, CreditPackRow card chrome).
+
+**Componentize@2 trigger: WORKED.** CreditsBalancePill extracted at the second instance (StreakClaimPopup ↔ ModelPickerSheet). ChatStyleAvatars extracted at the second instance (sheet ↔ style guide section). MemoryLimitOverlay extracted defensively for line-budget. No false-extractions for single-use code.
+
+**Generalization probe: HEALTHY.** ~7 new taste rules promoted from decisions in real-time, each with concrete pre-flight check. Some quietly retracted/rewritten (items-baseline rule went through two refinements as new content types entered the row). Healthy refinement, not contradictory accumulation.
+
+**Style guide sync: STRONG.** Every visual change today mirrored same-edit. No drift between code and style guide demos.
+
+**Knowledge file health (post-prune):**
+- `decisions.md` — pruned to 51 active entries above an Archive divider; 387 historical entries kept below for paper-trail. Active rules are now front-of-mind retrievable.
+- `taste.md` — fresh, ~7 new rules added today
+- `knowledge-base.md` — 1 new entry (SVG ID prefix multi-mount pitfall)
+- `reasonings.md` — untouched today (no class-of-decisions rules emerged)
+- `workflow.md` — untouched today (existing protocols still hold)
+- `project-insights.md` — refreshed at S30 close with active project state
+- `evolution.md` — this file, refreshed at S30 close
 
 
 
