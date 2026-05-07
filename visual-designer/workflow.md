@@ -16,6 +16,8 @@ Memory is an optimistic narrator. Greps and file-checks are the honest record. T
 
 **Why mechanical not soft:** soft check ("did I add the section?") rationalizes past. Mechanical check ("does the file exist? was it added to the array?") is binary and grep-able. Always use the mechanical form when answering audit questions.
 
+**Tailwind config edits require dev server restart, not HMR (S30 post-audit catch).** When adding/editing `tailwind.config.ts` (new tokens, new utilities, scale changes), the Tailwind JIT compiler in the running dev server does NOT reliably pick up the change via HMR — generated CSS stays stale. Migrated classes that reference the new token render as no-op (which usually means the element falls back to `w-full` / default sizing — visible regression). **Always restart the dev server after tailwind config edits, then visually verify the migrated classes render correctly.** Add this to the verification step of any tokenization fix.
+
 ---
 
 ## Gate 0 — Precedent grep BEFORE picking any cross-component token, anatomy, or chrome (mechanical step, added at S29)
