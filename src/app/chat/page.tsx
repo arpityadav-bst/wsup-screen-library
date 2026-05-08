@@ -59,6 +59,7 @@ export default function ChatPage() {
   const activeSafetyVariant = safetyBanner ?? devSafetyVariant
   const headerCharacterState: CharacterState =
     chatState === 'context-exhausted-popup' ||
+    chatState === 'chat-style-popup' ||
     chatState === 'safety-self-harm' ||
     chatState === 'safety-medical' ||
     chatState === 'safety-financial'

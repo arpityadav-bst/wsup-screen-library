@@ -18,6 +18,8 @@ Memory is an optimistic narrator. Greps and file-checks are the honest record. T
 
 **Tailwind config edits require dev server restart, not HMR (S30 post-audit catch).** When adding/editing `tailwind.config.ts` (new tokens, new utilities, scale changes), the Tailwind JIT compiler in the running dev server does NOT reliably pick up the change via HMR — generated CSS stays stale. Migrated classes that reference the new token render as no-op (which usually means the element falls back to `w-full` / default sizing — visible regression). **Always restart the dev server after tailwind config edits, then visually verify the migrated classes render correctly.** Add this to the verification step of any tokenization fix.
 
+**`npx next build` is mandatory before every push — `next dev` skips strict typecheck (S30 post-close catch).** Vercel runs `next build` (strict TS), `next dev` does not. A union type added to `ChatDemoState` (`'chat-style-popup'`) ran fine in dev but failed prod build at `chat/page.tsx:60` because the narrowing chain that returns a `CharacterState` didn't include the new variant. Result: BOTH S30 commits (`57ab42b`, `6f73cc7`) failed Vercel; production stayed on S29. Local dev gave no warning. **Pre-push checklist:** `npx next build` → 0 errors → THEN push. Same-edit rule for union edits: when adding to a discriminated union, grep the codebase for every consumer that narrows to a sub-type and update those chains in the same edit.
+
 ---
 
 ## Gate 0 — Precedent grep BEFORE picking any cross-component token, anatomy, or chrome (mechanical step, added at S29)
