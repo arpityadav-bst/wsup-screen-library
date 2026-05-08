@@ -16,8 +16,14 @@ import SuggestedReplies from '@/components/chat/SuggestedReplies'
 import SafetyBanner from '@/components/chat/SafetyBanner'
 import ModelPickerSheet from '@/components/chat/ModelPickerSheet'
 import ChatStyleSheet from '@/components/chat/ChatStyleSheet'
+import ChatSendGates from '@/components/chat/ChatSendGates'
+import StreakClaimPopup from '@/components/ui/StreakClaimPopup'
+import CreditServicePopup from '@/components/chat/CreditServicePopup'
+import BuyCreditsSheet from '@/components/ui/BuyCreditsSheet'
+import ChatDevPanel from '@/components/chat/ChatDevPanel'
 import { DEFAULT_MODEL_ID, getModel, type ModelId } from '@/lib/models'
-import DevStateToggle, { DevStateOption } from '@/components/ui/DevStateToggle'
+import { useSendGate } from './useSendGate'
+import { useDevStateCycle } from './useDevStateCycle'
 import Toast from '@/components/ui/Toast'
 import { getReplyFor, REPLY_DELAY_MS } from '@/lib/chatReplies'
 import { getSuggestionsFor, SUGGESTION_IDLE_MS } from '@/lib/chatSuggestions'
@@ -28,11 +34,10 @@ import {
   SEED_MESSAGES,
   CHARACTER_IMAGE,
   CHARACTER_AVATAR,
-  STATES,
-  STATE_LABELS,
   SAFETY_STATE_TO_VARIANT,
   getBannerVariant,
   type ChatDemoState,
+  type FlowMode,
 } from './chat-config'
 
 export default function ChatPage() {
@@ -48,6 +53,9 @@ export default function ChatPage() {
   const [safetyBanner, setSafetyBanner] = useState<SafetyVariant | null>(null)
   const [selectedModelId, setSelectedModelId] = useState<ModelId>(DEFAULT_MODEL_ID)
   const [modelPickerOpen, setModelPickerOpen] = useState(false)
+  const [buyCreditsOpen, setBuyCreditsOpen] = useState(false)
+  const [flowMode, setFlowMode] = useState<FlowMode>('new-user')
+  const sendGate = useSendGate(flowMode, setChatState, setToast)
   const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const inputAreaRef = useRef<HTMLDivElement>(null)
@@ -60,6 +68,8 @@ export default function ChatPage() {
   const headerCharacterState: CharacterState =
     chatState === 'context-exhausted-popup' ||
     chatState === 'chat-style-popup' ||
+    chatState === 'claim-credits-popup' ||
+    chatState === 'credit-service-popup' ||
     chatState === 'safety-self-harm' ||
     chatState === 'safety-medical' ||
     chatState === 'safety-financial'
@@ -83,6 +93,8 @@ export default function ChatPage() {
   }
 
   const handleSend = (text: string) => {
+    if (sendGate.checkBeforeSend()) return
+    sendGate.recordSent()
     const userMsg: ChatMessage = { id: `u-${Date.now()}`, role: 'user', text }
     setMessages((prev) => [...prev, userMsg])
     setIsTyping(true)
@@ -124,6 +136,9 @@ export default function ChatPage() {
     if (devSafetyVariant) setChatState('active')
   }
 
+  // Flow toggle resets the journey so designer can re-walk a flow without reload.
+  const handleFlowChange = (newFlow: FlowMode) => { if (newFlow !== flowMode) { setFlowMode(newFlow); sendGate.reset(); setChatState('active'); setModelPickerOpen(false); setBuyCreditsOpen(false) } }
+
   const handleToggleSuggestions = () => {
     setSuggestionsEnabled((prev) => {
       const next = !prev
@@ -148,24 +163,7 @@ export default function ChatPage() {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
   }, [])
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
-      if (e.key !== 'r' && e.key !== 'R') return
-      if (e.shiftKey) setChatState((p) => STATES[(STATES.indexOf(p) + 1) % STATES.length])
-      else setShowToggle((p) => !p)
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [])
-
-  // Auto-fire the memory limit popup 2s after page load — only if user hasn't manually changed state
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setChatState(prev => (prev === 'active' ? 'context-exhausted-popup' : prev))
-    }, 2000)
-    return () => clearTimeout(timer)
-  }, [])
+  useDevStateCycle(setChatState, setShowToggle)
 
   return (
     <div className="bg-page-bg">
@@ -245,19 +243,20 @@ export default function ChatPage() {
                 />
               </div>
             )}
-
-            <MemoryLimitOverlay
-              open={showInstallPopup && !isRemoved}
-              characterName="Billie"
-              characterImage={CHARACTER_AVATAR}
-              onDismiss={() => setChatState('active')}
-            />
           </div>
         </div>
 
         {/* Right sidebar — desktop only */}
         <ChatRightSidebar />
       </main>
+
+      {/* Page-level mount — outside chat column's z-10 stacking context so z-70 covers Header + Sidebar globally. */}
+      <MemoryLimitOverlay
+        open={showInstallPopup && !isRemoved}
+        characterName="Billie"
+        characterImage={CHARACTER_AVATAR}
+        onDismiss={() => setChatState('active')}
+      />
 
       <Toast open={!!toast} message={toast ?? ''} onClose={() => setToast(null)} />
 
@@ -275,24 +274,27 @@ export default function ChatPage() {
       <ChatStyleSheet
         open={chatState === 'chat-style-popup'}
         onClose={() => setChatState('active')}
-        selectedModelId={selectedModelId}
         onCommit={(id) => {
           setSelectedModelId(id)
           setToast(`Switched to ${getModel(id).name}`)
         }}
       />
 
-      <DevStateToggle open={showToggle} title="State" hint="R toggle · Shift+R cycle">
-        {STATES.map((state) => (
-          <DevStateOption
-            key={state}
-            active={chatState === state}
-            onClick={() => setChatState(state)}
-          >
-            {STATE_LABELS[state]}
-          </DevStateOption>
-        ))}
-      </DevStateToggle>
+      <ChatSendGates {...sendGate.gateState} onSignIn={sendGate.handleSignIn} />
+
+      <StreakClaimPopup
+        open={chatState === 'claim-credits-popup'}
+        onClose={() => setChatState('active')}
+        balance={10}
+        streakDay={3}
+        tomorrowReward={15}
+        dailyCheckInEarn={15}
+      />
+
+      <CreditServicePopup open={chatState === 'credit-service-popup'} onClose={() => setChatState('active')} onBuyCredits={() => { setChatState('active'); setBuyCreditsOpen(true) }} />
+      <BuyCreditsSheet open={buyCreditsOpen} onClose={() => setBuyCreditsOpen(false)} />
+
+      <ChatDevPanel open={showToggle} flowMode={flowMode} setFlowMode={handleFlowChange} chatState={chatState} setChatState={setChatState} />
     </div>
   )
 }

@@ -1,10 +1,8 @@
 'use client'
 
 import Button from '@/components/ui/Button'
-import ExternalLinkIcon from '@/components/ui/ExternalLinkIcon'
 
 export type ResultVariant = 'success' | 'failure'
-export type ResultMode = 'one-time' | 'subscription'
 
 interface CreditPack {
   credits: number
@@ -13,29 +11,16 @@ interface CreditPack {
 interface ResultStepProps {
   pack: CreditPack
   variant: ResultVariant
-  mode?: ResultMode
   currentBalance: number
   onClose: () => void
   onRetry: () => void
-  onManageSubscription?: () => void
   header: React.ReactNode
 }
 
-export default function BuyCreditsResultStep({ pack, variant, mode = 'one-time', currentBalance, onClose, onRetry, onManageSubscription, header }: ResultStepProps) {
+// Result of a one-time credit purchase. Subscription/Patreon variant was removed in S31 (going
+// forward with one-time only); add it back as a `mode` prop if monthly returns later.
+export default function BuyCreditsResultStep({ pack, variant, currentBalance, onClose, onRetry, header }: ResultStepProps) {
   const isSuccess = variant === 'success'
-  const isSubscription = mode === 'subscription'
-
-  const title = isSuccess
-    ? isSubscription ? 'Subscription active' : 'Credits added'
-    : 'Payment failed'
-
-  const successPill = isSubscription
-    ? `+${pack.credits} credits/mo`
-    : `+${pack.credits} credits · ${pack.credits + currentBalance} total`
-
-  const failureCopy = isSubscription
-    ? 'Your Patreon subscription wasn’t activated. Try again or contact support.'
-    : 'Your card wasn’t charged. Try again or contact support.'
 
   return (
     <>
@@ -53,22 +38,13 @@ export default function BuyCreditsResultStep({ pack, variant, mode = 'one-time',
               </svg>
             )}
           </div>
-          <h2 className="text-xl font-semibold text-text-title">{title}</h2>
+          <h2 className="text-xl font-semibold text-text-title">{isSuccess ? 'Credits added' : 'Payment failed'}</h2>
           {isSuccess ? (
             <div className="inline-flex items-center px-m py-xs rounded-pill bg-status-success/[0.15] border border-status-success/[0.30]">
-              <span className="text-sm font-semibold text-status-success">{successPill}</span>
+              <span className="text-sm font-semibold text-status-success">+{pack.credits} credits · {pack.credits + currentBalance} total</span>
             </div>
           ) : (
-            <p className="text-sm text-text-body max-w-[280px]">{failureCopy}</p>
-          )}
-          {isSuccess && isSubscription && (
-            <button
-              onClick={onManageSubscription}
-              className="link text-xs inline-flex items-center gap-xxxs bg-transparent border-none cursor-pointer"
-            >
-              Manage subscription
-              <ExternalLinkIcon size={12} className="shrink-0" />
-            </button>
+            <p className="text-sm text-text-body max-w-[280px]">Your card wasn’t charged. Try again or contact support.</p>
           )}
         </div>
         <div className="flex flex-col gap-s items-center w-full">
@@ -78,7 +54,7 @@ export default function BuyCreditsResultStep({ pack, variant, mode = 'one-time',
               <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Button>
-          {isSuccess && !isSubscription && (
+          {isSuccess && (
             <p className="text-xs text-text-small">Receipt emailed to you@example.com</p>
           )}
           {!isSuccess && (

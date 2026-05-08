@@ -1,18 +1,25 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-08 (S30 close)
+Last updated: 2026-05-08 (S31 close — broad-scope session, 7 new taste rules, 2 new KB entries, Gate 6 partial-fail recovered via close-audit backfill)
 
 ---
 
-## Phase 5 → 6 trigger streak status (2026-05-08)
+## Phase 5 → 6 trigger streak status (2026-05-08, S31 close)
 
-**Streak: BROKEN, restarted at S30.** Phase 5→6 entry requires 3 consecutive sessions of `designer_caught_count: 0`. S28 hit 0 (post-bye correction excluded), S29 hit 14, S30 substantially high.
+**Streak: still BROKEN.** Phase 5→6 entry requires 3 consecutive sessions of `designer_caught_count: 0`. S31 had high catch count (~15–20 substantive iterations) but DIFFERENT shape than S30: less concentrated misreads, more legitimate product/curation iteration.
 
-Recent count history: S22=3, S23=18, S24=0, S25=1, S26=8, S27=~7, **S28=0**, S29=14, **S30=~10–12 substantive** (chip uniformity round-3, baseline misalignment round-4, items-baseline content-type pitfall, selected-state height delta, avatar dupe at complexity-tier-4, "Chat style" vs "Legacy models" hierarchy, signal-icon spec ambiguity misread, several finetune iterations).
+**Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27=~7, **S28=0**, S29=14, **S30=~10–12**, **S31≈15–20** (broad-scope session covering: chat-send gating, model curation reshuffles ×3, LoginSheet copy iterations ×2, MemoryLimitOverlay positioning fix, monthly subscription removal, two-axis dev panel + reset, CreditServicePopup + AppHandoffStep + GradientChip system).
 
-**Active recurring failure modes (rolled forward into S31):**
-1. *Gate 8 pre-flight pass is the weakest gate.* Today's high count is concentrated on visual issues that should have been caught by reading the rendered output as a designer before declaring done — not by the designer pointing them out. The Gate 8 doctrine ("designer should never have to point these out") was repeatedly violated.
-2. *Open-UX-call protocol was skipped on ambiguous spec language.* Round-3 SignalIcon "always full bars" was genuinely ambiguous between two interpretations; I picked one and shipped instead of surfacing the open question per the codified workflow.md protocol. Self-caught and logged but next-session reflex must improve.
-3. *Iteration count creep on a single feature.* SignalIcon went through 5 rounds today (1px→2px bars, height tunings, color mappings, bar count). Each round resolved a specific issue but the cumulative count signals "ship-then-iterate" rather than "design-then-ship." Next session: when introducing a new visual primitive, run Gate 8 + Gate 6.5 generalization probe before first ship, not after.
+**S31 catches by category:**
+- Genuine product calls (re-add Llama 3 + Mistral Nemo, scope credits to new users, switch to one-time only): ~6 — these aren't VDA failures, they're designer iteration on a long flow
+- Visual/UX catches the designer pointed out (claim-daily-rewards row redundant after promo card; "Take me there" should be secondary; Cancel redundant on QR view): ~4 — Gate 8 misses
+- Open-UX-call protocol skips (banner color → asked 3 options correctly; QR copy → didn't ask, just wrote a version): ~2 — partial improvement over S30
+- Architecture/engineering bugs designer caught (Vercel build fix, MemoryLimitOverlay stacking-context trap, dev-server-vs-build cache pollution): 3 — Gate 8 doesn't apply; these were caught in development, codified in KB
+
+**Active recurring failure modes (rolled forward into S32):**
+1. *Gate 6 logging discipline.* S31 close audit found 7+ unlogged decisions. Per Gate 6 protocol "log → reply, in that order"; multiple turns shipped replies without logging. Recovered via close-audit backfill but the at-the-moment-of-decision discipline slipped throughout the session. **Forcing function for S32:** before sending any reply that resolves a designer correction or a substantive design call, write the decisions.md row first. If the row isn't written, the reply isn't ready.
+2. *Open-UX-call protocol — partial improvement.* S31 had several copy decisions where I just picked-and-shipped instead of offering options (the QR step copy "Scan the QR code to get the wsup app and chat with free models!" — designer's draft was reused with light editing, no options surfaced). Improved over S30 (banner color presented as 3 options correctly), but inconsistent. **Forcing function:** any copy decision that exceeds 5 words gets options.
+3. *Gate 8 pre-flight pass — still weak but lower-impact this session.* Most S31 Gate 8 catches were small (button variant, row redundancy) not big visual flubs. Reading rendered output as designer before declaring done is improving but not yet automatic.
+4. *Architecture knowledge gaps surfaced this session* — both codified in KB now: stacking-context trap for fixed overlays, next-build-vs-dev cache pollution. Each cost ~10 minutes to diagnose; codification should prevent recurrence.
 
 **Forcing function for S31:** before saying "done" on any visual change, screenshot it and ask *"would the designer point out anything specific here that I'd then have to fix?"* If yes — fix BEFORE saying done. The screenshot loop is the Gate 8 pre-flight; skipping it is what produced today's count.
 

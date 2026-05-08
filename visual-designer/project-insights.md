@@ -1,11 +1,11 @@
 # Visual Designer — Project Insights
-Last updated: 2026-05-08 (S30 close — chat-screen surface inventory refreshed)
+Last updated: 2026-05-08 (S31 close — chat-send funnel + dev panel two-axis architecture documented; surface inventory expanded)
 
 WSUP-specific observations and screen-level learnings. Updated as new screens are built.
 
 ---
 
-## Chat screen surface inventory (S30 close)
+## Chat screen surface inventory (S31 close)
 
 Surfaces that mount on `/chat` and how they coexist:
 
@@ -16,17 +16,70 @@ Surfaces that mount on `/chat` and how they coexist:
 | **DormancyBanner** | `chatState === 'dormant-*'` | below ChatHeader, in flex flow | base | suppressed when SafetyBanner active |
 | **SafetyBanner** | `safetyVariant !== null` | mobile = absolute top overlay (covers ChatHeader); desktop = absolute centered floating card | 20 | suppresses DormancyBanner |
 | **SuggestedReplies** | 4s idle after AI message OR ChatBar bulb tap | absolute above ChatBar | n/a | — |
-| **MemoryLimitOverlay** | `chatState === 'context-exhausted-popup'` | full-area backdrop + popup anchored at `bottom-[88px]` | 20–30 | — |
+| **MemoryLimitOverlay** | `chatState === 'context-exhausted-popup'` (dev cycle only — auto-fire removed S31) | **page-level fixed inset-0** + popup viewport-centered, custom scrim (NOT CenterPopup — preserves DP overhang) | 70 | — |
 | **ModelPickerSheet** | ChatBar pill click OR ChatHeaderMenu "Switch LLMs" | BottomSheet (mobile) / CenterPopup (desktop) | 70 | — |
-| **ChatStyleSheet** | `chatState === 'chat-style-popup'` (dev cycle) | BottomSheet / CenterPopup | 70 | — |
-| **Toast** | various (model switch, suggestions toggle) | fixed `bottom-[88px]` center-horizontal | 80 | — |
+| **ChatStyleSheet** | `chatState === 'chat-style-popup'` (dev cycle) OR returning-user post-login routing | BottomSheet / CenterPopup, 3-step machine: `'primary' \| 'other' \| 'app-handoff'` | 70 | — |
+| **StreakClaimPopup** | `chatState === 'claim-credits-popup'` (dev cycle) OR new-user post-login routing | BottomSheet / CenterPopup | 70 | — |
+| **CreditServicePopup** | `chatState === 'credit-service-popup'` (dev cycle) OR `paidMsgsUsed >= 3` send-gate trigger | BottomSheet / CenterPopup | 70 | — |
+| **BuyCreditsSheet** | `buyCreditsOpen === true` (page-level state, set by CreditServicePopup's "Buy Credits" CTA) | BottomSheet / CenterPopup | 80 | — |
+| **LoginSheet (chat-gate)** | `loginGateOpen === true` (set by useSendGate when `freeMsgsUsed >= 3` while logged out) | LoginSheet primitive's own overlay | 90 | — |
+| **Toast** | various (model switch, etc.) | fixed `bottom-[88px]` center-horizontal | 80 | — |
 
-**Two model-picker surfaces, one feature, two audiences (S30 codified):**
-- **ModelPickerSheet** — in-chat switching, power-user dense rows (3 chips per row: latency / personality / cost)
-- **ChatStyleSheet** — start-of-chat onboarding, general-user light rows (avatar + name + tagline)
-Both consume the same `MODELS` array in `lib/models.ts`. Different row anatomies because different audiences. Selection state is shared (`selectedModelId` in chat/page.tsx).
+**Two model-picker surfaces, one feature, SAME row anatomy (S31 amendment to S30 rule):**
+- **ModelPickerSheet** — in-chat switching; renders title + 3 chips (signal/personality/cost) + description + CheckBadge. Auto-commits on row tap.
+- **ChatStyleSheet** — start-of-chat picker (no pre-selection); renders title + cost chip only (signal + personality hidden via `showSignal={false} showPersonality={false}` props on ModelRow) + GradientChip "Available only in mobile app" if `model.appOnly` + description + CheckBadge. Drafts via tap, commits on Continue chat. 3-step state machine includes app-handoff QR step for appOnly models.
 
-**SafetyBanner desktop is now in the centered-popup family**, not the top-of-chat banner family (PM-directive override S30). DormancyBanner remains the canonical top-of-chat banner on both viewports. SafetyBanner mobile still uses the top-of-chat-overlay slot.
+Both consume the same `MODELS` array (7 entries: 4 primary + 3 other) and share `ModelRow` from `chat/ModelPickerInternals.tsx`. Different chip visibility because different *information needs at point of choice* (S31 amended the S30 "audience density" rule — see taste.md).
+
+**SafetyBanner desktop is in the centered-popup family**, not the top-of-chat banner family (PM-directive override S30). DormancyBanner remains the canonical top-of-chat banner on both viewports. SafetyBanner mobile still uses the top-of-chat-overlay slot.
+
+**MemoryLimitOverlay mount location is load-bearing (S31 fix):** must be page-level (sibling of `<main>`), NOT inside the chat column wrapper which has `relative z-10` creating a stacking context. See knowledge-base.md *"Fixed-positioned overlays must mount in the highest-applicable stacking context"* for the trap details.
+
+---
+
+## Chat-send funnel architecture (S31)
+
+The `/chat` page now models a complete user journey from sign-in to credit purchase. The architecture isolates concerns:
+
+```
+useSendGate(flowMode, setChatState, setToast) ── checkBeforeSend / recordSent / handleSignIn / reset
+        │
+        ├─ checkBeforeSend: true if freeMsgsUsed ≥ 3 (logged out) → opens LoginSheet
+        │                  true if paidMsgsUsed ≥ 3 (logged in)  → setChatState('credit-service-popup')
+        │
+        ├─ handleSignIn: login() → reset paid counter → FLOW_AFTER_LOGIN[flowMode] dispatches:
+        │    new-user → setChatState('claim-credits-popup') (StreakClaimPopup)
+        │    returning → setChatState('chat-style-popup') (ChatStyleSheet)
+        │
+        └─ reset: logout() + zero counters + close login gate (used by Flow toggle in dev panel)
+```
+
+**State sources:**
+- `flowMode: FlowMode` — page.tsx state, reset wraps `setFlowMode` to also reset journey state
+- `chatState: ChatDemoState` — page.tsx state, source of truth for which popup is rendering
+- `freeMsgsUsed`, `paidMsgsUsed` — useSendGate internal counters, reset via `sendGate.reset()`
+- `isLoggedIn` — global via AuthContext, set/cleared via login/logout
+- `buyCreditsOpen` — page.tsx state, set by CreditServicePopup's onBuyCredits callback
+
+**Flow demos (selectable via R-key dev panel "Flow" section):**
+- **New user:** chat 3 msgs → LoginSheet ("Free messages used up. New users get 50 credits on sign-in.") → sign in → StreakClaimPopup auto-opens (announces +50 credits) → continue chatting → 3 paid msgs → CreditServicePopup → Buy Credits → BuyCreditsSheet
+- **Returning user:** chat 3 msgs → LoginSheet → sign in → ChatStyleSheet auto-opens (model selection) → pick model → continue chatting → 3 paid msgs → CreditServicePopup → Buy Credits → BuyCreditsSheet
+
+**Discrete state previews (R-key dev panel "State" section):** Active, Dormant variants, Memory full, Model selection, Claim free credits, Out of credits popup, Safety variants. Each maps to a `ChatDemoState` value and renders the corresponding popup directly.
+
+---
+
+## R-key dev panel two-axis architecture (S31)
+
+The chat dev panel (R toggle) is a two-axis state machine:
+- **Axis 1 — Flow** (top section): which end-to-end demo journey is active (New user / Returning user). Drives post-login routing inside useSendGate.
+- **Axis 2 — State** (bottom section): which discrete state is currently rendering. Source of truth for popup visibility.
+
+Both axes can show "active" simultaneously — Flow indicates *which path I'm on*, State indicates *where in the path I am*. Flipping Flow resets the journey (logout + zero counters + close popups) so the designer can re-walk a flow without page reload.
+
+**Component:** `src/components/chat/ChatDevPanel.tsx` — composes the existing `DevStateToggle` + `DevStateOption` primitives into the two-section layout with an inline divider. Its `setFlowMode` prop is the wrapped `handleFlowChange` from page.tsx, not the raw setter, so the reset behavior fires.
+
+**Generalization (workflow.md territory):** for demo screens with multiple end-to-end journeys, separate the journey-selector from the discrete-state-preview into two visible axes.
 
 ---
 

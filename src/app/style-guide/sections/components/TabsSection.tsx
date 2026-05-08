@@ -30,7 +30,7 @@ export default function TabsSection({ onSectionVisible }: { onSectionVisible: (i
       <div className="min-w-[440px] flex-1">
         <SubLabel>Underline tabs — shared primitive</SubLabel>
         <div className="text-xs text-text-body mb-s leading-relaxed max-w-[520px]">
-          Compound component <code className="text-accent-light">{'<Tabs>'}</code> + <code className="text-accent-light">{'<Tab>'}</code> from <code className="text-accent-light">src/components/ui/Tabs.tsx</code>. Active tab: font-semibold + text-text-title + accent underline under the content. Inactive: font-normal + text-text-dim. Underline matches the content width, not the full tab width. Used by ProfileTabBar and PackModeToggle.
+          Compound component <code className="text-accent-light">{'<Tabs>'}</code> + <code className="text-accent-light">{'<Tab>'}</code> from <code className="text-accent-light">src/components/ui/Tabs.tsx</code>. Active tab: font-semibold + text-text-title + accent underline under the content. Inactive: font-normal + text-text-dim. Underline matches the content width, not the full tab width. Used by ProfileTabBar.
         </div>
 
         <PreviewBox>
@@ -57,7 +57,7 @@ export default function TabsSection({ onSectionVisible }: { onSectionVisible: (i
             </Tabs>
           </div>
         </PreviewBox>
-        <StateLabel>With a badge — PackModeToggle pattern. Underline widens to include the badge.</StateLabel>
+        <StateLabel>With a badge — underline widens to include the badge. (Pattern previously used by PackModeToggle, removed in S31; kept here as a generic Tabs example.)</StateLabel>
 
         <div className="mt-m" />
         <PreviewBox>
@@ -82,7 +82,7 @@ export default function TabsSection({ onSectionVisible }: { onSectionVisible: (i
           <TokenRow token="Inactive state" desc="font-normal + text-text-dim (40%)" />
           <TokenRow token="Underline width" desc="Matches content via inline-flex inner span, absolute underline with left-0 right-0" />
           <TokenRow token="Padding" desc="Inside span: pt-xs pb-[10px]. Button has no vertical padding — keeps underline flush with border-b line" />
-          <TokenRow token="Consumers" desc="ProfileTabBar (profile content tabs), PackModeToggle (buy-credits one-time/monthly)" />
+          <TokenRow token="Consumers" desc="ProfileTabBar (profile content tabs)" />
         </div>
       </div>
     </Section>

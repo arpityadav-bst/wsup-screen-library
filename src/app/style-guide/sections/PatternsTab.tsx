@@ -14,6 +14,7 @@ import ChatBarSection from './patterns/ChatBarSection'
 import SuggestedRepliesSection from './patterns/SuggestedRepliesSection'
 import ModelPickerSheetSection from './patterns/ModelPickerSheetSection'
 import ChatStyleSheetSection from './patterns/ChatStyleSheetSection'
+import CreditServicePopupSection from './patterns/CreditServicePopupSection'
 import ChatRightSidebarSection from './patterns/ChatRightSidebarSection'
 import DormancyBannerSection from './patterns/DormancyBannerSection'
 import SafetyBannerSection from './patterns/SafetyBannerSection'
@@ -40,6 +41,7 @@ export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (i
       <SuggestedRepliesSection onSectionVisible={onSectionVisible} />
       <ModelPickerSheetSection onSectionVisible={onSectionVisible} />
       <ChatStyleSheetSection onSectionVisible={onSectionVisible} />
+      <CreditServicePopupSection onSectionVisible={onSectionVisible} />
       <ChatRightSidebarSection onSectionVisible={onSectionVisible} />
       <DormancyBannerSection onSectionVisible={onSectionVisible} />
       <SafetyBannerSection onSectionVisible={onSectionVisible} />

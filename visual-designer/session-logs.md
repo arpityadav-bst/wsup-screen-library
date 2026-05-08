@@ -1,7 +1,79 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-08
+Last updated: 2026-05-08 (S31 close)
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 31 — 2026-05-08 — Vercel hotfix · chat-send funnel · model picker reshuffle ×3 · monthly removal · close-audit backfill (designer_caught_count: ~15–20 substantive across a broad arc)
+
+**Designer:** Arpit. **Scope:** Broad — Vercel build hotfix at the top of session expanded into a full chat-send-flow build (login gate + post-login routing + credit-out gate + QR app handoff), multiple model-curation reshuffles, major buy-credits cleanup (monthly subscription removal), two-axis dev panel architecture, close-audit + VDA file backfill.
+
+Freshness check: knowledge-base ✓ (stacking-context fix + next-build cache pollution + discriminated-union narrowing rule added) | taste ✓ (~7 rules: per-row promo signal, intervention-subtitle scoping, self-chromed-popup-overflow, contextNote-prop-pattern, no-`<br />`-in-headlines, action-first-headlines, density-by-consequence) | decisions ✓ (12 entries logged in real-time + 7 backfilled at close-audit per Gate 6 partial fail) | reasonings ✓ (no class-of-decisions rules emerged today) | workflow ✓ (4 new rules: pre-push typecheck, dev-vs-build cache, dev-panel-option-audit, removed-feature-breadcrumb) | evolution ✓ (refreshed at S31 close — phase status, S31 catch-category breakdown, S32 forcing functions) | project-insights ✓ (chat surface inventory expanded with CreditServicePopup / BuyCreditsSheet / LoginSheet-chat-gate / dev-panel two-axis architecture / chat-send funnel diagram) | QUALITY-GATES ✓
+
+### What shipped (code)
+
+**New components / hooks:**
+- `chat/ChatSendGates.tsx` — LoginSheet preset for chat-send flow
+- `chat/ChatDevPanel.tsx` — two-axis (Flow + State) dev panel
+- `chat/CreditServicePopup.tsx` — out-of-credits gate (replaces direct BuyCreditsSheet trigger)
+- `chat/ModelPickerInternals.tsx` — extended with `ModelRow` (Gate-3 share with ChatStyleSheet) + new `GradientChip` primitive
+- `shared/BuyCreditsPromoCard.tsx` — extracted from CreditSidebar (Gate-3 share with CreditServicePopup)
+- `app/chat/useSendGate.ts` — gate state + counters + post-login routing + reset
+- `app/chat/useDevStateCycle.ts` — R-key dev toggle hook (extracted to free file-budget for new mounts)
+
+**Major rewrites:**
+- `chat/ChatStyleSheet.tsx` — full rebuild: 3-step machine (`'primary' | 'other' | 'app-handoff'`), shared ModelRow with hide-signal/personality flags, dynamic "Continue in app →" CTA based on `model.appOnly`, AppHandoffStep QR view
+- `chat/MemoryLimitOverlay.tsx` — full-viewport scrim, page-level mount (stacking-context fix)
+- `ui/BuyCreditsSheet.tsx` — monthly mode removed, FlowBody simplified
+- `ui/BuyCreditsPackagesStep.tsx` — single one-time list, per-row Buy CTA
+- `ui/CreditPackRow.tsx` — single render variant
+- `ui/BuyCreditsResultStep.tsx` — only success/failure (subscription dropped)
+
+**Deleted:** `chat/ChatStyleAvatars.tsx` (orphaned), `ui/PackModeToggle.tsx` (orphaned).
+
+**Data changes (`lib/models.ts`):** Llama 3 + Mistral Nemo dropped then re-added; final curation 4 primary (Llama 3 / Qwen Plus Character / DeepSeek V3 / Claude Opus 4.6) + 3 other (Mistral Nemo / MiniMax M2 Her / DeepSeek V4 Pro); tier `'advanced'` → `'other'`; `appOnly?: boolean` flag added (Llama 3 + Mistral Nemo); `tagline` field dropped; DEFAULT_MODEL_ID → `'qwen-plus-character'`.
+
+**Demo state additions (`chat-config.ts`):** `'claim-credits-popup'`, `'credit-service-popup'`; `FlowMode` type + `FLOWS` + `FLOW_LABELS` + `FLOW_AFTER_LOGIN`.
+
+**Vercel hotfix (top of session):** `chat-style-popup` missing from `headerCharacterState: CharacterState =` narrowing chain in `chat/page.tsx:60`. `next dev` (loose) passed; `next build` (strict) failed. Both S30 commits had failed Vercel; production stuck on S29. Fix: added missing branch. Codified `npx next build` mandatory pre-push.
+
+### Designer-driven iteration (concentrated areas)
+
+**ChatStyleSheet — 7+ rounds:** rebuild → hide signal/personality → DeepSeek V4 reassign → curation reshuffle (Llama+Mistral re-added, Advanced→Other) → GradientChip + dynamic CTA + AppHandoffStep → banner removed (redundant) → casing/link-style fix.
+
+**LoginSheet copy — 4 rounds:** initial forced-break headline → "Keep chatting" + 14-word subtitle → scope to new users (14 words) → tighten to 10 words ("Free messages used up. New users get 50 credits on sign-in.").
+
+**CreditServicePopup — 3 rounds:** initial (claim row + buy promo) → "Take me there" secondary → claim row removed entirely.
+
+### Quality Gates verdict (S31 close)
+
+| Gate | Verdict |
+|---|---|
+| 1 — Tokens | ✅ Strong |
+| 2 — Reuse | ✅ Strong (BuyCreditsPromoCard, ModelRow, GradientChip all extracted Gate-3 style) |
+| 3 — Componentize@2 | ✅ Strong |
+| 4 — Patternize@2 | ✅ (BottomSheet+CenterPopup pair pattern reused 4× this session) |
+| 5 — Style guide sync | ✅ Strong (every new pattern registered same-edit) |
+| 6 — VDA learns | ⚠️ **Partial fail** — close audit caught 7+ unlogged decisions. Recovered via backfill; **logging discipline is the #1 forcing function for S32** |
+| 6.5 — Generalization + cross-check | ✅ Strong (S30 audience-density rule correctly narrowed with scope clause when ChatStyleSheet adopted dense anatomy) |
+| 7 — UX consistency | ✅ Strong |
+| 8 — UX review (catch-before-designer) | ⚠️ Mixed — fewer concentrated misreads than S30, but several Gate-8 misses (claim-row redundancy, button variant, Cancel-on-QR) |
+
+### Active gaps for S32
+
+1. **Gate 6 logging discipline (top priority).** Forcing function: write the decisions.md row BEFORE sending the reply that resolves a correction or design call. If the row isn't written, the reply isn't ready.
+2. **Open-UX-call protocol on copy.** Improved but inconsistent — copy decisions exceeding 5 words should get options, not just-written-versions.
+3. **Gate 8 catch-rate** still has room — screenshot-and-ask before declaring done.
+4. **Architecture knowledge codified** — stacking-context for fixed overlays, next-build-vs-dev cache pollution. Each was a ~10-minute diagnostic this session; codification should prevent recurrence.
+
+### Push state
+
+Not pushed at session end (per designer preference — confirm-before-push memory). Local branch ahead of origin/master + ashish/designs by S31's full session of commits + this close-audit's VDA file updates.
+
+### Dev server
+
+Running. Restarted twice during session (after `next build` cache pollution).
 
 ---
 

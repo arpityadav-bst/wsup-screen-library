@@ -12,18 +12,21 @@ import CloseButton from '@/components/ui/CloseButton'
 import ResultVariantToggle from '@/components/ui/ResultVariantToggle'
 import LoginSheet from '@/components/ui/LoginSheet'
 import { ScanQRStep, FinishInAppStep } from '@/components/ui/BuyCreditsScanSteps'
-import BuyCreditsResultStep, { type ResultVariant, type ResultMode } from '@/components/ui/BuyCreditsResultStep'
-import BuyCreditsPackagesStep, { type CreditPack, applyMonthlyBonus } from '@/components/ui/BuyCreditsPackagesStep'
-import type { PackMode } from '@/components/ui/PackModeToggle'
+import BuyCreditsResultStep, { type ResultVariant } from '@/components/ui/BuyCreditsResultStep'
+import BuyCreditsPackagesStep, { type CreditPack } from '@/components/ui/BuyCreditsPackagesStep'
 import { useAuth } from '@/lib/AuthContext'
 
 interface BuyCreditsSheetProps {
   open: boolean
   onClose: () => void
+  // Optional contextual line shown below the packages-step title — used when the sheet is
+  // triggered from a specific gate (e.g. chat send blocked by zero credits) and the user
+  // benefits from knowing why they landed here.
+  contextNote?: string
 }
 
 const PACKS: CreditPack[] = [
-  { id: 'handful', name: 'Handful of Credits', credits: 350, rate: '₹1 = 1.67 Credits', price: '₹210.00', priceAmount: '₹ 210', oneTimeOnly: true },
+  { id: 'handful', name: 'Handful of Credits', credits: 350, rate: '₹1 = 1.67 Credits', price: '₹210.00', priceAmount: '₹ 210' },
   { id: 'stack', name: 'Stack of Credits', credits: 1000, rate: '₹1 = 1.92 Credits', price: '₹520.00', priceAmount: '₹ 520', featured: true },
   { id: 'bag', name: 'Bag of Credits', credits: 1800, rate: '₹1 = 1.71 Credits', price: '₹1050.00', priceAmount: '₹ 1050' },
   { id: 'chest', name: 'Chest of Credits', credits: 4000, rate: '₹1 = 1.86 Credits', price: '₹2150.00', priceAmount: '₹ 2150' },
@@ -32,12 +35,10 @@ const PACKS: CreditPack[] = [
 type Step = 'packages' | 'payment' | 'scan' | 'result'
 
 const CURRENT_BALANCE = 10 // mock existing balance; production: from user state
-const DEFAULT_MODE: PackMode = 'monthly'
 
-// Single gate copy across all 4 payment-progression CTAs (one-time, monthly, payment, scan)
+// Single gate copy across all payment-progression CTAs (one-time buy, payment, scan)
 const GATE_HEADLINE = <>Sign in to continue</>
 const GATE_SUBTITLE = 'Keep your credits across every device.'
-const DEFAULT_SELECTED_ID = 'stack'
 
 const SURFACE_CLASS = 'bg-profile-sheet-bg bg-surface-premium' // solid base + gradient overlay — see Overlays > Surface styles
 
@@ -99,46 +100,33 @@ function PaymentStep({ pack, onBack, onClose, onContinue }: { pack: CreditPack; 
 interface FlowBodyProps {
   step: Step
   pack: CreditPack | null
-  mode: PackMode
-  setMode: (m: PackMode) => void
-  selectedId: string | null
-  setSelected: (id: string) => void
   setStep: (s: Step) => void
   setPack: (p: CreditPack) => void
   onClose: () => void
   scanVariant: 'qr' | 'app'
   resultVariant: ResultVariant
-  resultMode: ResultMode
   gateAction: (action: () => void, headline: ReactNode, subtitle: string) => void
+  contextNote?: string
 }
 
-function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep, setPack, onClose, scanVariant, resultVariant, resultMode, gateAction }: FlowBodyProps) {
+function FlowBody({ step, pack, setStep, setPack, onClose, scanVariant, resultVariant, gateAction, contextNote }: FlowBodyProps) {
   if (step === 'packages') {
     return (
       <BuyCreditsPackagesStep
         packs={PACKS}
-        mode={mode}
-        onModeChange={setMode}
-        selectedPackId={selectedId}
-        onSelectPack={(p) => { setSelected(p.id); setPack(p) }}
         onOneTimeBuy={(p) => gateAction(
           () => { setPack(p); setStep('payment') },
           GATE_HEADLINE,
           GATE_SUBTITLE,
         )}
-        onMonthlyContinue={() => gateAction(
-          () => {
-            const selected = PACKS.find(p => p.id === selectedId)
-            if (selected) {
-              const { credits } = applyMonthlyBonus(selected)
-              setPack({ ...selected, credits })
-              setStep('result')
-            }
-          },
-          GATE_HEADLINE,
-          GATE_SUBTITLE,
-        )}
-        header={<StepHeader title="Buy credits" onClose={onClose} />}
+        header={
+          <>
+            <StepHeader title="Buy credits" onClose={onClose} />
+            {contextNote && (
+              <p className="px-l pb-xs text-xs text-text-body text-center">{contextNote}</p>
+            )}
+          </>
+        }
       />
     )
   }
@@ -164,7 +152,6 @@ function FlowBody({ step, pack, mode, setMode, selectedId, setSelected, setStep,
       <BuyCreditsResultStep
         pack={pack}
         variant={resultVariant}
-        mode={resultMode}
         currentBalance={CURRENT_BALANCE}
         onClose={onClose}
         onRetry={() => setStep('packages')}
@@ -181,17 +168,13 @@ interface LoginGate {
   resume: () => void
 }
 
-export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps) {
+export default function BuyCreditsSheet({ open, onClose, contextNote }: BuyCreditsSheetProps) {
   const [step, setStep] = useState<Step>('packages')
   const [pack, setPack] = useState<CreditPack | null>(null)
-  const [mode, setMode] = useState<PackMode>(DEFAULT_MODE)
-  const [selectedId, setSelectedId] = useState<string | null>(DEFAULT_SELECTED_ID)
   const [resultVariant, setResultVariant] = useState<ResultVariant>('success') // production: set by payment callback
   const [showToggle, setShowToggle] = useState(false)
   const [loginGate, setLoginGate] = useState<LoginGate | null>(null)
   const { isLoggedIn, login } = useAuth()
-
-  const resultMode: ResultMode = mode === 'monthly' ? 'subscription' : 'one-time'
 
   const gateAction = (action: () => void, headline: ReactNode, subtitle: string) => {
     if (isLoggedIn) action()
@@ -209,8 +192,6 @@ export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps)
     if (!open) {
       setStep('packages')
       setPack(null)
-      setMode(DEFAULT_MODE)
-      setSelectedId(DEFAULT_SELECTED_ID)
       setShowToggle(false)
       setLoginGate(null)
     }
@@ -233,8 +214,7 @@ export default function BuyCreditsSheet({ open, onClose }: BuyCreditsSheetProps)
   }, [open, step])
 
   const bodyProps = {
-    step, pack, mode, setMode, selectedId, setSelected: setSelectedId,
-    setStep, setPack, onClose, resultVariant, resultMode, gateAction,
+    step, pack, setStep, setPack, onClose, resultVariant, gateAction, contextNote,
   }
 
   return (

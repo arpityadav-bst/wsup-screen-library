@@ -7,21 +7,23 @@ interface MemoryLimitOverlayProps {
   onDismiss: () => void
 }
 
-// Backdrop + anchored MemoryLimitPopup mount — extracted from chat/page.tsx (S30) to keep page.tsx under 300 lines.
+// Full-viewport overlay — backdrop covers Header + Sidebar + chat area, popup centers on screen
+// (S31 — was previously chat-column-anchored at bottom-[88px]; designer asked to match the
+// convention used by ModelPickerSheet / ChatStyleSheet / StreakClaimPopup). MemoryLimitPopup
+// keeps its own popup chrome + DP overhang, so we DON'T wrap it in CenterPopup — that would
+// clip the 48px DP overhang via CenterPopup's overflow-hidden.
 export default function MemoryLimitOverlay({ open, characterName, characterImage, onDismiss }: MemoryLimitOverlayProps) {
   if (!open) return null
   return (
-    <>
-      <div className="absolute inset-0 bg-black-60 pointer-events-none z-20" aria-hidden />
-      <div className="absolute bottom-[88px] left-0 right-0 px-m md:px-2xxxl pt-12 z-30 pointer-events-none">
-        <div className="pointer-events-auto">
-          <MemoryLimitPopup
-            characterName={characterName}
-            characterImage={characterImage}
-            onDismiss={onDismiss}
-          />
-        </div>
+    <div className="fixed inset-0 flex items-center justify-center px-m" style={{ zIndex: 70 }}>
+      <div onClick={onDismiss} className="absolute inset-0 bg-black-55" style={{ animation: 'fade-in 0.2s ease-out' }} aria-hidden />
+      <div className="relative pt-12" style={{ animation: 'slide-up 0.24s cubic-bezier(0.32,0.72,0,1)' }}>
+        <MemoryLimitPopup
+          characterName={characterName}
+          characterImage={characterImage}
+          onDismiss={onDismiss}
+        />
       </div>
-    </>
+    </div>
   )
 }

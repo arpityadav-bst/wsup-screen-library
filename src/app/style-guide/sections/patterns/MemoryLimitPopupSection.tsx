@@ -11,7 +11,7 @@ export default function MemoryLimitPopupSection({ onSectionVisible }: { onSectio
       <div className="w-full max-w-[760px] flex flex-col gap-l">
 
         <div>
-          <SubLabel>Default — anchored above ChatBar, character DP overlapping top edge</SubLabel>
+          <SubLabel>Default — viewport-centered overlay, character DP overlapping top edge</SubLabel>
           <div className="p-m pt-12 bg-page-bg rounded-card">
             <MemoryLimitPopup
               characterName="Billie"
@@ -19,16 +19,16 @@ export default function MemoryLimitPopupSection({ onSectionVisible }: { onSectio
             />
           </div>
           <StateLabel>
-            Anchored above ChatBar with a chat-darkening backdrop (modal-style). Dark base surface (bg-profile-sheet-bg). Character DP overlaps the top edge in B&W; exclamation burst SVG sits as a badge at the top-right of the DP. Close X is at the top-right of the popup itself.
+            Viewport-centered overlay with full-page backdrop (matches ModelPickerSheet / ChatStyleSheet / StreakClaimPopup convention). Dark base surface (bg-profile-sheet-bg). Character DP overlaps the top edge in B&W; exclamation burst SVG sits as a badge at the top-right of the DP. Close X is at the top-right of the popup itself.
           </StateLabel>
         </div>
 
         <div className="mt-s p-s bg-white-05 rounded-card border border-white-10 text-xs text-text-body leading-relaxed max-w-[600px]">
           <p className="font-semibold text-text-title mb-xxs">Anatomy</p>
           <ul className="list-disc pl-l space-y-xxs">
-            <li><strong>Position</strong> — anchored above ChatBar (not a fullscreen modal). Same horizontal padding as ChatBar (<code className="text-accent-light">px-m md:px-2xxxl</code>). Centered in chat column with <code className="text-accent-light">max-w-[420px] mx-auto</code>.</li>
-            <li><strong>Surface</strong> — <code className="text-accent-light">bg-profile-sheet-bg</code> solid (matches WSUP popup convention from BottomSheet, CenterPopup, Popover). No internal animation, no gradient overlay — just the standard dark popup surface. The visual interest comes from the chat scrim behind, the DP overhang, and the exclamation badge.</li>
-            <li><strong>Backdrop overlay (in chat/page.tsx)</strong> — full chat-area dim using <code className="text-accent-light">bg-black-60</code> token, <code className="text-accent-light">absolute inset-0</code> at the chat UI wrapper level. Modal-style backdrop matching the pattern used by other WSUP popups (BottomSheet, CenterPopup). Z-index 20; popup is z-30. <code className="text-accent-light">pointer-events-none</code> so chat behind stays interactable through it.</li>
+            <li><strong>Position</strong> — viewport-centered overlay (S31 — was previously chat-column-anchored at <code className="text-accent-light">bottom-[88px]</code>). MemoryLimitOverlay renders <code className="text-accent-light">fixed inset-0 flex items-center justify-center px-m</code>; popup centers within. Width capped via the popup's own <code className="text-accent-light">max-w-popup-narrow mx-auto</code>.</li>
+            <li><strong>Surface</strong> — <code className="text-accent-light">bg-profile-sheet-bg</code> solid (matches WSUP popup convention from BottomSheet, CenterPopup, Popover). No internal animation, no gradient overlay — just the standard dark popup surface. The visual interest comes from the page scrim behind, the DP overhang, and the exclamation badge.</li>
+            <li><strong>Backdrop overlay (in MemoryLimitOverlay)</strong> — full-viewport scrim <code className="text-accent-light">bg-black-55</code>, <code className="text-accent-light">absolute inset-0</code> inside the fixed wrapper. Click-to-dismiss. <code className="text-accent-light">zIndex 70</code> matches ModelPickerSheet / ChatStyleSheet / StreakClaimPopup. <strong>Mount location matters:</strong> overlay is mounted at the page-level (sibling of <code className="text-accent-light">&lt;main&gt;</code>) — NOT inside the chat column wrapper which has <code className="text-accent-light">relative z-10</code> creating a stacking context that would scope z-70 locally and trap the backdrop under Header (z-50) + Sidebar (z-40). We DON'T wrap MemoryLimitPopup in CenterPopup because CenterPopup's <code className="text-accent-light">overflow-hidden</code> would clip the 48px DP overhang — custom centered scrim preserves the overhang.</li>
             <li><strong>Character DP</strong> — 96px circle, B&W via <code className="text-accent-light">grayscale</code>, ringed in white-20, positioned <code className="text-accent-light">-top-[48px]</code> so half overlaps above the popup edge. Outer wrapper is <strong>not</strong> overflow-hidden so the DP can poke out cleanly.</li>
             <li><strong>Exclamation burst</strong> — 44px badge positioned at the top-right corner of the DP circle (<code className="text-accent-light">absolute -top-[8px] -right-[8px]</code>) with drop-shadow. Marks the alert visually without needing alarm-toned copy.</li>
             <li><strong>Close X</strong> — top-right corner of the popup itself (matches all other WSUP popovers/menus). Dismisses the entire popup.</li>
@@ -41,7 +41,7 @@ export default function MemoryLimitPopupSection({ onSectionVisible }: { onSectio
           <p className="mt-s font-semibold text-text-title">Animation</p>
           <p>Popup card slides up + fades in once on mount (<code className="text-accent-light">slide-up-fade 0.4s ease-out</code>). No continuous internal animation — the popup itself is static, matching all other WSUP popups (BottomSheet, CenterPopup, ConfirmSheet). Calm, non-distracting.</p>
           <p className="mt-s font-semibold text-text-title">Dev toggle</p>
-          <p>Cycle to <code className="text-accent-light">Memory full</code> via the R panel on <code className="text-accent-light">/chat</code>. Auto-fires 2s after a fresh visit on a clean &quot;active&quot; state.</p>
+          <p>Cycle to <code className="text-accent-light">Memory full</code> via the R panel on <code className="text-accent-light">/chat</code> (S31 — auto-fire-after-2s removed; popup is now strictly dev-toggler-driven).</p>
         </div>
 
       </div>

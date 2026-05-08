@@ -1,7 +1,71 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-05-07
+Last updated: 2026-05-08 (S31 close — fixed-overlay stacking context + next-build cache pollution + discriminated-union narrowing-chain rule)
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
+
+---
+
+## Adding to a discriminated union: every narrowing chain that returns a sub-type must be updated in the same edit
+
+`ChatDemoState` is a discriminated union (`'active' | 'context-exhausted-popup' | 'chat-style-popup' | ...`). Multiple consumers narrow it back down to a sub-type — e.g., `headerCharacterState: CharacterState = ...` in `chat/page.tsx` chains conditions to map all popup/safety states to `'active'` and pass everything else through. **The trap:** when you add a new variant to the union, every narrowing chain that does NOT include that new variant fails strict typecheck because the residual type after narrowing still includes the new variant — incompatible with the narrowed annotation.
+
+### S30 → S31 example
+S30 added `'chat-style-popup'` to `ChatDemoState`. The narrowing chain at `chat/page.tsx:60` returned `CharacterState` but only matched 4 popup/safety states — `'chat-style-popup'` slipped through, residual type `CharacterState | 'chat-style-popup'` was incompatible with `: CharacterState`. `next dev` silently passed (loose typecheck); `next build` (strict) failed. Both S30 commits failed Vercel; production stayed stuck on S29 until S31's hotfix added the missing branch.
+
+### Same-edit rule
+When adding to a discriminated union (or modifying its members):
+1. Grep the codebase for every place that narrows the union to a sub-type — search for both `=== 'old-variant'` patterns AND any `: SubType` annotations after a narrowing chain
+2. Update each chain in the SAME EDIT as the union change
+3. Run `npx next build` before pushing (not `next dev` — strict typecheck only kicks in on build)
+
+### S31 confirmation pattern
+When `'claim-credits-popup'`, `'credit-service-popup'`, etc. were added to `ChatDemoState` later in S31, the narrowing chain in `page.tsx` was updated in the same commit — no Vercel surprise. The lesson stuck.
+
+---
+
+## Don't run `npx next build` while `next dev` is alive — it corrupts the `.next/` cache
+
+Both commands write to `.next/` but produce different module manifests. Running them concurrently scrambles the cache; dev server starts returning 500 errors with `MODULE_NOT_FOUND` pointing at stale chunks. Recovery: `npx kill-port 3000` → `rm -rf .next` → `npm run dev`.
+
+### S31 confirmed pattern
+- First hit: mid-session, after a local `next build` to verify the Vercel hotfix locally. Dev server returned 500 immediately after the build finished.
+- Second hit: during the close audit, when running `next build` to verify production-build cleanliness. Same 500 on `/style-guide`.
+
+Both required the kill-cache-restart cycle to recover.
+
+### Pre-build checklist
+If dev is running, stop it (`npx kill-port 3000`) before `next build`. Or run build in a separate clone / CI. The "verify with build" instinct (codified in S30 close audit) is right; the trap is doing it without stopping dev first.
+
+### Why this is its own knowledge-base entry
+This is a concrete, repeatable Next.js infrastructure quirk that bit twice in one session. Not a design rule, not a taste rule — pure tooling knowledge. Belongs here so future sessions don't lose 5 minutes diagnosing the same symptom.
+
+---
+
+## Fixed-positioned overlays must mount in the highest-applicable stacking context
+
+`position: fixed` is supposed to position relative to the viewport. But its EFFECTIVE z-index is always *scoped to its parent stacking context*. So if an overlay is mounted inside an ancestor that has `position: relative` + a non-auto `z-index` (creating a stacking context), the overlay's z-70 only competes within that ancestor's stacking unit — not globally against Header (z-50) or Sidebar (z-40) which live in the root.
+
+### The trap (S31 example)
+MemoryLimitOverlay was mounted inside `<div className="relative z-10 flex flex-col h-full">` (the chat UI inner wrapper). Even though the overlay used `fixed inset-0` + z-70 + bg-black-55, its visual stacking was: *"the chat UI inner's z-10 stacking unit, painted on top of the chat column."* Header + Sidebar (rendered in the global root with their own z-50 / z-40 fixed) painted ON TOP of it because they competed at the global level while the overlay competed only within the local context.
+
+### Diagnosis pattern
+- Bounding rect inspection shows the overlay covers full viewport ✓
+- z-index computed style shows z-70 ✓
+- Visual rendering shows the overlay only darkens part of the screen ✗
+- Walk the parent chain — any ancestor with `position: relative` + non-auto `z-index` is the trap
+
+### Fix
+Move the overlay mount UP the DOM until it shares the root stacking context with Header / Sidebar — typically a direct child of the page wrapper (`<div className="bg-page-bg">` in WSUP). Then z-70 wins globally.
+
+### Pre-flight check before adding a new overlay/popup
+Walk the proposed parent chain. If any ancestor has `position: relative` + non-`auto` z-index, mount the overlay higher (page-level, not feature-level). Same goes for `transform`, `filter`, `perspective`, `will-change`, `contain` — but stacking-context-via-z-index is the most common trap because so many WSUP wrappers use `relative z-10` for layering within their own region.
+
+### Rule of thumb
+The mount location of a fixed overlay is part of its design contract. Two valid mounts:
+1. **Page-level (highest-z-applicable)** — overlay competes globally; correct for full-viewport scrims (ModelPickerSheet, ChatStyleSheet, StreakClaimPopup, MemoryLimitOverlay)
+2. **Feature-level inside a stacking context** — overlay scoped to that region; correct for region-specific affordances that intentionally do NOT cover Header/Sidebar (e.g. a chat-column-only menu popover)
+
+Picking the wrong one is what made the S31 MemoryLimitOverlay fix appear broken even after the CSS itself was correct.
 
 ---
 

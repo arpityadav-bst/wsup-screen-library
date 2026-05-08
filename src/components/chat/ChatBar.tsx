@@ -14,7 +14,7 @@ type ChatBarProps = {
   containerRef?: React.RefObject<HTMLElement | null>
 }
 
-export default function ChatBar({ value: valueProp, onChange, onSend, onOpenSuggestions, onOpenModels, selectedModelName = 'Claude Opus 4.6', forceExpanded = false, containerRef }: ChatBarProps = {}) {
+export default function ChatBar({ value: valueProp, onChange, onSend, onOpenSuggestions, onOpenModels, selectedModelName = 'Qwen Plus Character', forceExpanded = false, containerRef }: ChatBarProps = {}) {
   const [isActive, setIsActive] = useState(false)
   const [internal, setInternal] = useState('')
   const wrapperRef = useRef<HTMLDivElement>(null)
