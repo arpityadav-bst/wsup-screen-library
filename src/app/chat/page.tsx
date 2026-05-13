@@ -11,9 +11,9 @@ import type { ChatMessage } from '@/components/chat/ChatMessages'
 import ChatBar from '@/components/chat/ChatBar'
 import ChatRightSidebar from '@/components/chat/ChatRightSidebar'
 import DormancyBanner from '@/components/chat/DormancyBanner'
+import SafetyBanner from '@/components/chat/SafetyBanner'
 import MemoryLimitOverlay from '@/components/chat/MemoryLimitOverlay'
 import SuggestedReplies from '@/components/chat/SuggestedReplies'
-import SafetyBanner from '@/components/chat/SafetyBanner'
 import ModelPickerSheet from '@/components/chat/ModelPickerSheet'
 import ChatStyleSheet from '@/components/chat/ChatStyleSheet'
 import ChatSendGates from '@/components/chat/ChatSendGates'
@@ -24,6 +24,7 @@ import ChatDevPanel from '@/components/chat/ChatDevPanel'
 import { DEFAULT_MODEL_ID, getModel, type ModelId } from '@/lib/models'
 import { useSendGate } from './useSendGate'
 import { useDevStateCycle } from './useDevStateCycle'
+import { useChatCharacter } from './useChatCharacter'
 import Toast from '@/components/ui/Toast'
 import { getReplyFor, REPLY_DELAY_MS } from '@/lib/chatReplies'
 import { getSuggestionsFor, SUGGESTION_IDLE_MS } from '@/lib/chatSuggestions'
@@ -32,8 +33,6 @@ import type { SafetyVariant } from '@/lib/safetyVariants'
 import {
   SUGGESTIONS_PREF_KEY,
   SEED_MESSAGES,
-  CHARACTER_IMAGE,
-  CHARACTER_AVATAR,
   SAFETY_STATE_TO_VARIANT,
   getBannerVariant,
   type ChatDemoState,
@@ -55,6 +54,7 @@ export default function ChatPage() {
   const [modelPickerOpen, setModelPickerOpen] = useState(false)
   const [buyCreditsOpen, setBuyCreditsOpen] = useState(false)
   const [flowMode, setFlowMode] = useState<FlowMode>('new-user')
+  const character = useChatCharacter()
   const sendGate = useSendGate(flowMode, setChatState, setToast)
   const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -65,16 +65,8 @@ export default function ChatPage() {
   // Safety banner overrides character-state banners and other surfaces — it's the highest-priority intervention.
   const devSafetyVariant = SAFETY_STATE_TO_VARIANT[chatState] ?? null
   const activeSafetyVariant = safetyBanner ?? devSafetyVariant
-  const headerCharacterState: CharacterState =
-    chatState === 'context-exhausted-popup' ||
-    chatState === 'chat-style-popup' ||
-    chatState === 'claim-credits-popup' ||
-    chatState === 'credit-service-popup' ||
-    chatState === 'safety-self-harm' ||
-    chatState === 'safety-medical' ||
-    chatState === 'safety-financial'
-      ? 'active'
-      : chatState
+  const POPUP_STATES = ['context-exhausted-popup', 'chat-style-popup', 'claim-credits-popup', 'credit-service-popup', 'safety-self-harm', 'safety-medical', 'safety-financial'] as const
+  const headerCharacterState: CharacterState = (POPUP_STATES as readonly string[]).includes(chatState) ? 'active' : chatState as CharacterState
 
   // Hydrate suggestions preference from localStorage on mount
   useEffect(() => {
@@ -182,7 +174,7 @@ export default function ChatPage() {
           {/* Character image bg — mobile only */}
           <div className="absolute inset-0 md:hidden">
             <Image
-              src={CHARACTER_IMAGE}
+              src={character.image}
               alt=""
               fill
               className="object-cover object-top"
@@ -200,22 +192,22 @@ export default function ChatPage() {
           {/* Chat UI */}
           <div className="relative z-10 flex flex-col h-full">
             <ChatHeader
-              characterName="Billie Eilish"
-              characterImage={CHARACTER_AVATAR}
+              characterName={character.fullName}
+              characterImage={character.avatar}
               creatorName="Honeybadger"
               characterState={headerCharacterState}
               suggestionsEnabled={suggestionsEnabled}
               onToggleSuggestions={handleToggleSuggestions}
               onSwitchLLMs={() => setModelPickerOpen(true)}
             />
-            {/* Single SafetyBanner mount — mobile: full-bleed top overlay (covers header); desktop: centered floating card per PM directive. Single mount avoids duplicate gradient-ID collisions in the SVG illustrations. */}
+            {/* Safety wins over Dormancy. Safety renders mobile = full-bleed top overlay (covers header), desktop = centered floating card per PM directive — single mount avoids gradient-ID collisions across viewports. */}
             {activeSafetyVariant && (
               <div className="absolute z-20 top-0 left-0 right-0 md:top-1/2 md:left-1/2 md:right-auto md:-translate-x-1/2 md:-translate-y-1/2">
                 <SafetyBanner variant={activeSafetyVariant} onClose={handleSafetyClose} />
               </div>
             )}
             {!activeSafetyVariant && bannerVariant && <DormancyBanner variant={bannerVariant} />}
-            <ChatMessages messages={messages} isTyping={isTyping} characterName="Billie Eilish" />
+            <ChatMessages messages={messages} isTyping={isTyping} characterName={character.fullName} />
             {isRemoved ? (
               <div className="flex items-center justify-center px-m py-m bg-page-bg border-t border-white-10 shrink-0 md:bg-transparent">
                 <span className="text-xs text-white-40">Messaging isn&apos;t available for this character.</span>
@@ -253,8 +245,8 @@ export default function ChatPage() {
       {/* Page-level mount — outside chat column's z-10 stacking context so z-70 covers Header + Sidebar globally. */}
       <MemoryLimitOverlay
         open={showInstallPopup && !isRemoved}
-        characterName="Billie"
-        characterImage={CHARACTER_AVATAR}
+        characterName={character.shortName}
+        characterImage={character.avatar}
         onDismiss={() => setChatState('active')}
       />
 

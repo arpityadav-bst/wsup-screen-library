@@ -1,27 +1,36 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-08 (S31 close — broad-scope session, 7 new taste rules, 2 new KB entries, Gate 6 partial-fail recovered via close-audit backfill)
+Last updated: 2026-05-13 (S32 + 3 follow-up rounds — onboarding flow shipped, dual-cadence model adopted, system-level refactor of how VDA operates)
 
 ---
 
-## Phase 5 → 6 trigger streak status (2026-05-08, S31 close)
+## Phase 5 → 6 trigger streak status (2026-05-13, S32 + follow-ups close)
 
-**Streak: still BROKEN.** Phase 5→6 entry requires 3 consecutive sessions of `designer_caught_count: 0`. S31 had high catch count (~15–20 substantive iterations) but DIFFERENT shape than S30: less concentrated misreads, more legitimate product/curation iteration.
+**Streak: still BROKEN.** Phase 5→6 entry requires 3 consecutive sessions of `designer_caught_count: 0`. S32 + follow-ups had high catch count (~15–20 across the main session + ~12 in follow-up #3) — a pattern-establishing session, not iteration.
 
-**Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27=~7, **S28=0**, S29=14, **S30=~10–12**, **S31≈15–20** (broad-scope session covering: chat-send gating, model curation reshuffles ×3, LoginSheet copy iterations ×2, MemoryLimitOverlay positioning fix, monthly subscription removal, two-axis dev panel + reset, CreditServicePopup + AppHandoffStep + GradientChip system).
+**Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27=~7, **S28=0**, S29=14, **S30=~10–12**, **S31≈15–20**, **S32 main=0** (VDA caught 1 itself), **S32 f1 (drag/animation)=7**, **S32 f2 (banner removal)=0**, **S32 f3 (polish)≈12**.
 
-**S31 catches by category:**
-- Genuine product calls (re-add Llama 3 + Mistral Nemo, scope credits to new users, switch to one-time only): ~6 — these aren't VDA failures, they're designer iteration on a long flow
-- Visual/UX catches the designer pointed out (claim-daily-rewards row redundant after promo card; "Take me there" should be secondary; Cancel redundant on QR view): ~4 — Gate 8 misses
-- Open-UX-call protocol skips (banner color → asked 3 options correctly; QR copy → didn't ask, just wrote a version): ~2 — partial improvement over S30
-- Architecture/engineering bugs designer caught (Vercel build fix, MemoryLimitOverlay stacking-context trap, dev-server-vs-build cache pollution): 3 — Gate 8 doesn't apply; these were caught in development, codified in KB
+**S32 was a NEW-PATTERN session.** End-to-end onboarding flow shipped (Preferences → Deck → Chat-character override), Tinder-class swipe deck with peek behavior + typewriter bubble + end-state, plus a system-level cadence refactor. Heavy designer iteration on new ground is *expected*, not a Phase 5 fail — but the catches reveal where the codified rules didn't yet cover the new pattern.
 
-**Active recurring failure modes (rolled forward into S32):**
-1. *Gate 6 logging discipline.* S31 close audit found 7+ unlogged decisions. Per Gate 6 protocol "log → reply, in that order"; multiple turns shipped replies without logging. Recovered via close-audit backfill but the at-the-moment-of-decision discipline slipped throughout the session. **Forcing function for S32:** before sending any reply that resolves a designer correction or a substantive design call, write the decisions.md row first. If the row isn't written, the reply isn't ready.
-2. *Open-UX-call protocol — partial improvement.* S31 had several copy decisions where I just picked-and-shipped instead of offering options (the QR step copy "Scan the QR code to get the wsup app and chat with free models!" — designer's draft was reused with light editing, no options surfaced). Improved over S30 (banner color presented as 3 options correctly), but inconsistent. **Forcing function:** any copy decision that exceeds 5 words gets options.
-3. *Gate 8 pre-flight pass — still weak but lower-impact this session.* Most S31 Gate 8 catches were small (button variant, row redundancy) not big visual flubs. Reading rendered output as designer before declaring done is improving but not yet automatic.
-4. *Architecture knowledge gaps surfaced this session* — both codified in KB now: stacking-context trap for fixed overlays, next-build-vs-dev cache pollution. Each cost ~10 minutes to diagnose; codification should prevent recurrence.
+**S32 f3 catches by category:**
+- Visual/UX catches the designer pointed out (tags ALL CAPS vs Title Case; bubble avatar top-align vs bottom-align; "Open Explore" duplicates Skip; "Run it back" slang too casual for new users): ~6 — Gate 8 + Gate 7 misses that codified rules (now updated) would have caught
+- Wireframe-misreading ("tags after age" was meta-line role not chip row): 1 — instruction-ambiguity that the new clarifying-Q protocol now covers
+- Aspect/dimension calls (3/2 vs 5/4 vs height-driven; popup height stage-aware): ~3 — discovery of new constraint patterns
+- Design-direction reframes (cards should match explore anatomy; deck needs peek behavior; bubble needs typewriter): ~3 — new pattern discoveries, captured as new taste rules
 
-**Forcing function for S31:** before saying "done" on any visual change, screenshot it and ask *"would the designer point out anything specific here that I'd then have to fix?"* If yes — fix BEFORE saying done. The screenshot loop is the Gate 8 pre-flight; skipping it is what produced today's count.
+**System-level changes this session (the BIG ones):**
+- **Dual-cadence operating model adopted.** Inline cadence runs only light gates (precedent grep, reuse + sibling-inheritance, UX consistency + review, scratchpad write). Audit pass runs heavy gates (style guide sync, decisions.md promotion, token migrations) on designer trigger. Iteration speed unlocked without losing knowledge fidelity.
+- **Gate 2.2 — sibling-surface inheritance** codified. Forces VDA to grep for *role-sibling* surfaces (CharacterCard ↔ DeckCard) before building, not just primitive components.
+- **Clarifying-Q protocol** added to workflow.md. Instruction-ambiguity ("tags after age") triggers a binary clarifying question before edit-shipping.
+- **Swipe-surface conventions catalog** added to knowledge-base.md. Future swipe surfaces inherit the full anatomy + behavior + pre-flight grep checklist.
+- **4 new taste rules** promoted: deck-stack persistent peek, bubble-as-typewriter sequential reveal, exit-affordance uniqueness, form-field mental-sequence ordering. Plus 4 from main S32 (banner priority, progressive intent feedback, converge-trigger-paths-on-one-animation, brand-assets-as-single-files, kbd-hints-earn-their-slot).
+
+**Active recurring failure modes (rolled into S33):**
+1. *Gate 6 logging discipline.* S32 main + f3 both backfilled decisions.md at close instead of logging turn-by-turn — same pattern as S31. The dual-cadence model SHOULD fix this (scratchpad-write is lighter than decisions.md write), but the discipline still has to be observed in practice. **S33 forcing function:** scratchpad-write before reply, every correction, no compounding. If the scratchpad isn't written, the reply isn't ready.
+2. *Gate 8 pre-emptive catching against established WSUP precedents.* S32 f3 had multiple catches that a sibling-precedent diff would have caught (CharacterCard tags case, AIBubble tail alignment, wordmark proportion in Header). Gate 2.2 codifies the precedent-diff requirement — but it's new; needs to actually run on the next swipe/card surface.
+3. *Don't over-correct on Gate 8 fixes.* S32 f3's aspect-ratio fix went 4/5 → 3/2 → 5/4 → height-driven over 4 rounds because each fix sacrificed something. Pre-flight check now: *"does my fix preserve everything the surface was getting right, or does it sacrifice one thing to fix another?"*
+4. *Carry-overs unchanged:* `<UserListRow>` extraction (S28); CharacterMenuSheet / DormantMenuPopoverItems MenuPopover migration (S27).
+
+**Forcing function for S33:** the scratchpad protocol IS the new forcing function. Every correction-resolution gets a scratchpad row before the reply ships. When you trigger the audit pass, scratchpad promotes to decisions.md / taste.md with full reasoning. If a session ends WITHOUT an audit trigger, the next-session bootstrap flags pending scratchpad entries and asks you to audit first.
 
 ---
 

@@ -17,6 +17,7 @@ import ChatStyleSheetSection from './patterns/ChatStyleSheetSection'
 import CreditServicePopupSection from './patterns/CreditServicePopupSection'
 import ChatRightSidebarSection from './patterns/ChatRightSidebarSection'
 import DormancyBannerSection from './patterns/DormancyBannerSection'
+import OnboardingOverlaySection from './patterns/OnboardingOverlaySection'
 import SafetyBannerSection from './patterns/SafetyBannerSection'
 import LowCreditsBannerSection from './patterns/LowCreditsBannerSection'
 import MemoryLimitPopupSection from './patterns/MemoryLimitPopupSection'
@@ -44,6 +45,7 @@ export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (i
       <CreditServicePopupSection onSectionVisible={onSectionVisible} />
       <ChatRightSidebarSection onSectionVisible={onSectionVisible} />
       <DormancyBannerSection onSectionVisible={onSectionVisible} />
+      <OnboardingOverlaySection onSectionVisible={onSectionVisible} />
       <SafetyBannerSection onSectionVisible={onSectionVisible} />
       <LowCreditsBannerSection onSectionVisible={onSectionVisible} />
       <MemoryLimitPopupSection onSectionVisible={onSectionVisible} />

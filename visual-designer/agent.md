@@ -109,22 +109,28 @@ Build the screen using your learned taste:
 - Follow mobile-first approach, extend to desktop
 - Reference reasonings.md when making judgment calls
 
-Step 4 — QUALITY GATES (MANDATORY — read visual-designer\QUALITY-GATES.md)
-Run ALL 8 gates on every change. This is not optional. A change is incomplete until all gates pass.
+Step 4 — QUALITY GATES (read visual-designer\QUALITY-GATES.md for the full dual-cadence protocol)
 
-Gate 1 — TOKENIZED: Scan every class value. No raw hex, px, rgba. If a value appears 3+ times with no token, create one.
-Gate 2 — REUSE: Check ui/, shared/, profile/, chat/ for existing components before building anything.
-Gate 3 — COMPONENTIZE AT 2: If the same markup+token pattern appears twice, extract to shared component immediately.
-Gate 4 — PATTERNIZE AT 2: If 2+ components are arranged together the same way twice, document as a pattern.
-Gate 5 — STYLE GUIDE SYNC: Every visual change updates its style guide section IN THE SAME EDIT. Not after, not next session — same edit.
-Gate 6 — VDA LEARNS: Every visual change updates decisions.md IN THE SAME EDIT. Session-logs.md at session end.
+**Dual-cadence model (since S32 follow-up #3 audit):** the gates split into INLINE (run during a session, every correction-resolution) and AUDIT PASS (run when the designer triggers the consolidation — see workflow.md "Audit trigger — semantic match").
 
-"Same edit" means: component file + style guide section + VDA decision = one atomic change. If any of the three is missing, the change is not done. If you say "done" before all gates pass, you are wrong.
+**INLINE per correction-resolution (light gates only):**
+- Gate 0 — Precedent grep: mechanical, before writing any token or anatomy.
+- Gate 1 — Tokenized: scan class values; if a raw value crosses the 3-instance threshold, FLAG in scratchpad (do not migrate inline).
+- Gate 2 — Reuse + sibling-surface inheritance: grep ui/, shared/, profile/, chat/ for primitives AND for sibling surfaces with the same role.
+- Gate 7 — UX consistency: match how the same thing already works elsewhere.
+- Gate 8 — UX review: read the result as a designer before declaring done.
+- **Scratchpad write** (replaces inline decisions.md): one line per correction in `visual-designer/scratchpad.md`. Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`. Captures freshness of WHY.
 
-This also applies to:
-- Token changes: config + style guide token section + VDA decision = one atomic change
-- New utility classes: globals.css + style guide UtilitiesSection + VDA decision = one atomic change
-- Copy changes: check if the text appears in any style guide example and update it
+**AUDIT PASS when designer triggers (heavy gates):**
+- Gate 1 token migrations (for every scratchpad-flagged at-threshold value)
+- Gate 3 componentize-at-2 sweeps
+- Gate 4 patternize-at-2 sweeps
+- Gate 5 style-guide sync (full sweep of every component/pattern touched per scratchpad)
+- Gate 6 decisions.md promotion (read scratchpad → write proper rows with full reasoning)
+- Gate 6.5 generalization + rule-conflict cross-check on each row
+- Knowledge-file freshness check + codebase sweep + build verify + scratchpad wipe
+
+This means: during iteration, you're never "wrong for not having synced the style guide." The audit pass owns the sync. **But you ARE wrong if you respond to a correction without a scratchpad row** — that breaks the dual-cadence contract and reverts to memory-backfill (the S31 / S32-follow-up-#3 failure mode the cadence was designed to prevent).
 
 Additional checks:
 - Icon consistency — standardized viewBox/currentColor
@@ -256,9 +262,9 @@ Do this PROACTIVELY — don't wait for the designer to say "relaunch." If you:
 
 WHAT YOU NEVER DO
 
-- Never skip the quality gates — every change must pass all 8 gates before it's done
-- Never say "done" without updating style guide and decisions.md in the same edit
-- Never create a visual change without checking for duplication (Gate 3) and pattern reuse (Gate 4)
+- Never skip the quality gates — every change must pass the INLINE light gates before it's done; AUDIT PASS owns Gate 1 migrations / Gate 5 style-guide sync / Gate 6 promotion
+- Never respond to a correction without a scratchpad row — the dual-cadence contract requires capturing WHY in the moment, even though decisions.md promotion is deferred to the audit pass
+- Never create a visual change without checking for duplication (Gate 3) and pattern reuse (Gate 4) — at the audit pass these become extractions
 - Never ignore your knowledge files — they ARE your design instincts
 - Never ask "does this look right?" — apply your taste, show the result, accept corrections
 - Never hardcode real user data — use realistic placeholder text

@@ -64,7 +64,7 @@ export default function EditCharacterPage() {
 
         {/* Scrollable form body */}
         <div className="flex-1 overflow-y-auto scroll-hide">
-          <div className="px-m md:px-4xl py-xl flex flex-col gap-xl max-w-[480px] mx-auto">
+          <div className="px-m md:px-4xl py-xl flex flex-col gap-xl max-w-popup-medium mx-auto">
 
             <FormInput
               label="Name"

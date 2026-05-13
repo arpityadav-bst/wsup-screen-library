@@ -1,13 +1,39 @@
 # Visual Designer — Project Insights
-Last updated: 2026-05-08 (S31 close — chat-send funnel + dev panel two-axis architecture documented; surface inventory expanded)
+Last updated: 2026-05-13 (S32 + follow-ups close — onboarding surface inventory added; chat-side OnboardingDeckBanner removal noted)
 
 WSUP-specific observations and screen-level learnings. Updated as new screens are built.
 
 ---
 
-## Chat screen surface inventory (S31 close)
+## Onboarding surface inventory (S32 + follow-ups)
 
-Surfaces that mount on `/chat` and how they coexist:
+Surfaces that mount on `/explore` for the onboarding flow:
+
+| Surface | Trigger | Position | Z-index | Notes |
+|---|---|---|---|---|
+| **ExploreDevPanel** | `R` key on /explore | fixed bottom-right | 70 | Two-axis: Auth (Logged in / Not logged in) + Demo flow (Default / Onboarding) |
+| **OnboardingOverlay** | `Demo flow → Onboarding` in dev panel | Mobile: `fixed inset-0` full-viewport. Desktop: centered popup, max-w-popup-medium (480px), stage-aware height (preferences = auto, deck = min(880px, 94vh)) | 80 | NOT CenterPopup primitive — custom scrim so the deck stage's tall content doesn't get clipped by `overflow-hidden + 80vh`. Escape key fires onSkipFlow |
+| **OnboardingPreferencesStep** (Stage 1) | `stage === 'preferences'` | inside OnboardingOverlay | inherits | Three wrap-pill pickers: "I am" → "Your age" → "I'm interested in" (identity → demographic → preference ordering). Continue disabled until all three picked |
+| **OnboardingDeckStep** (Stage 2) | `stage === 'deck'` | inside OnboardingOverlay | inherits | Renders 3 cards stacked (top + 2 peeks). On end-of-deck (`index >= ONBOARDING_DECK.length`), renders OnboardingDeckEmptyState instead |
+| **DeckCardSwiper × 3** | always (when in deck stage) | absolute-stacked inside aspect-[9/16] sizing container | top=slot0, peeks=slot1/slot2 with translateY+scale+opacity transforms | Top card only is `interactive`; peeks render `DeckCard` with no drag/animation/bubble. Cards keyed by `character.id` so peek→top promotion preserves the instance |
+| **OnboardingDeckEmptyState** | `index >= ONBOARDING_DECK.length` | replaces OnboardingDeckStep body | inherits | Stacked-cards illustration (dimmed 60% white outline) + "That's the deck." + "Show me more" + "See them again." Skip pill still serves /explore exit (no third CTA per exit-affordance-uniqueness rule) |
+| **StreakClaimPopup** | `streakPopupOpen === true` (auto-opens on /explore load) | BottomSheet (mobile) / CenterPopup (desktop) | 70 | Independent of onboarding flow; auto-opens on every /explore visit |
+
+**Persistence model:** ONLY `wsup_onboarding_liked_id` localStorage key. Deck index is React state (resets when re-entering Onboarding). The deck-resume + chat-banner functionality was shipped in S32 and removed S32-follow-up #2 — designer paused the feature; revisit when product re-introduces a "resume your deck" affordance.
+
+**Matchmaking handoff:** Right-swipe on a card calls `recordLike(character)` which writes the id → `router.push('/chat')`. The chat page's `useChatCharacter()` hook reads the liked id on mount and overrides default Billie's name/image/avatar with the matched character. Avatar path is derived: `/chars/charN.webp` → `/chars/avatars/charN.jpg`.
+
+**Bubble reveal sequence (active card only):** card visible → 1000ms pause → bubble pops in with 3 typing dots (1400ms) → typewriter reveals message at 25ms/char. Peek cards behind the top suppress the bubble entirely (it's the "this card is active" signal, not decoration).
+
+**Three convergent trigger paths to commit:** action buttons (× Pass / ♥ Like), keyboard arrows (← / →), drag-past-threshold (80px). All call `swiperRef.current?.swipe(dir)` which runs the same animation pipeline (translateX ±600, rotate ±30°, opacity → 0, 320ms ease-out).
+
+**Per-category badge mapping (DeckCard.CATEGORY_VISUALS):** Mafia (dark red, spade), Romance (pink, heart), Teacher (green, book), Anime (purple, sparkle), Mentor (amber, bolt), Bold (red, flame), Friend (teal, smile), Sci-Fi (blue, orbit). Adding a new category requires adding the entry to CATEGORY_VISUALS (fallback is neutral white-10 chip).
+
+---
+
+## Chat screen surface inventory (S32 + follow-ups update)
+
+Surfaces that mount on `/chat` and how they coexist. **S32 follow-up #2:** OnboardingDeckBanner + ChatBannerStack + useChatOnboardingBanner all removed; chat back to inline Safety + Dormancy banner chain. **S32 main:** useChatCharacter hook reads `wsup_onboarding_liked_id` from localStorage on mount; overrides default Billie with the matched character (name + image + avatar).
 
 | Surface | Trigger | Position | Z-index | Mutual-exclusion |
 |---|---|---|---|---|

@@ -98,7 +98,7 @@ function AIBubble({ emotion, text }: { emotion?: string; text: string }) {
   return (
     <div className="flex items-start gap-xxs">
       {/* Left: bubble + actions — constrained width */}
-      <div className="flex flex-col max-w-[290px] min-w-[64px]">
+      <div className="flex flex-col max-w-chat-bubble min-w-[64px]">
         <div className="bg-chat-ai-bubble px-s pt-xs pb-[14px] rounded-tl-2xl rounded-tr-2xl rounded-br-2xl">
           {emotion && (
             <p className="text-sm italic text-white-50 leading-snug mb-s">{emotion}</p>

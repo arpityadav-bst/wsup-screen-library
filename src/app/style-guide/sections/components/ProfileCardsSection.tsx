@@ -24,7 +24,7 @@ export default function ProfileCardsSection({ onSectionVisible }: { onSectionVis
       </div>
 
       {/* ProfileCharacterCard grid */}
-      <div className="w-full max-w-[480px]">
+      <div className="w-full max-w-popup-medium">
         <SubLabel>ProfileCharacterCard (active characters grid)</SubLabel>
         <div className="grid grid-cols-2 gap-s">
           {CHARACTERS.slice(0, 4).map((c) => (

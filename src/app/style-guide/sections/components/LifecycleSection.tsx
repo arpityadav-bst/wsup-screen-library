@@ -77,7 +77,7 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
       </div>
 
       {/* Needs Attention cards */}
-      <div className="w-full max-w-[480px]">
+      <div className="w-full max-w-popup-medium">
         <SubLabel>Needs Attention Cards</SubLabel>
         <div className="grid grid-cols-2 gap-s">
           <DormantCharacterCard name="Mika" img="/chars/char10.webp" stateType="inactive" chats="18.1K" lastChatDaysAgo={42} />
@@ -85,7 +85,7 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
         </div>
       </div>
 
-      <div className="w-full max-w-[480px]">
+      <div className="w-full max-w-popup-medium">
         <SubLabel>Needs Attention — Review States</SubLabel>
         <div className="grid grid-cols-2 gap-s">
           <DormantCharacterCard name="Joo Jaekyung" img="/chars/char12.webp" stateType="moderation" chats="48.4K" lastChatDaysAgo={38} />
@@ -93,7 +93,7 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
         </div>
       </div>
 
-      <div className="w-full max-w-[480px]">
+      <div className="w-full max-w-popup-medium">
         <SubLabel>Removed Cards (grayscale, Contact Support)</SubLabel>
         <div className="grid grid-cols-2 gap-s">
           <DormantCharacterCard name="Class 1A MHA" img="/chars/char15.webp" stateType="removed" chats="19.7K" />
@@ -101,7 +101,7 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
       </div>
 
       {/* Empty States */}
-      <div className="w-full max-w-[480px]">
+      <div className="w-full max-w-popup-medium">
         <SubLabel>Empty States (contextual illustrations)</SubLabel>
         <div className="flex flex-col gap-s border border-white-10 rounded-card overflow-hidden">
           <EmptyState message="No active characters" variant="no-active" />
@@ -115,7 +115,7 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
       </div>
 
       {/* Credit Fee Accordion */}
-      <div className="w-full max-w-[480px]">
+      <div className="w-full max-w-popup-medium">
         <SubLabel>Credit Fee Accordion (shared component)</SubLabel>
         <div className="p-m border border-white-10 rounded-card">
           <CreditFeeAccordion />
@@ -123,7 +123,7 @@ export default function LifecycleSection({ onSectionVisible }: { onSectionVisibl
       </div>
 
       {/* ReviveConfirmSheet */}
-      <div className="w-full max-w-[480px]">
+      <div className="w-full max-w-popup-medium">
         <SubLabel>Revival Confirmation (tap to open)</SubLabel>
         <div className="flex gap-s">
           <Button variant="secondary" size="s" onClick={() => setReviveOpen(true)}>

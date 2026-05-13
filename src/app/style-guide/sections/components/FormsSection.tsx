@@ -84,7 +84,22 @@ export default function FormsSection({ onSectionVisible }: { onSectionVisible: (
               required
             />
           </PreviewBox>
+          <PreviewBox>
+            <SelectionPillGroup
+              label="Your age (wrap variant)"
+              options={[
+                { label: '18–20', value: '18-20' },
+                { label: '21–25', value: '21-25' },
+                { label: '26–34', value: '26-34' },
+                { label: '35–44', value: '35-44' },
+                { label: '45+', value: '45+' },
+              ]}
+              value="21-25"
+              wrap
+            />
+          </PreviewBox>
         </div>
+        <p className="text-text-xsmall text-xs mt-2"><code className="text-accent-light">wrap</code> = rounded-pill chrome, options wrap to multiple lines, single-color toggle (white on dark). Used by the onboarding preferences step where the option set exceeds the row-flex variant&apos;s capacity.</p>
       </div>
 
       <div>

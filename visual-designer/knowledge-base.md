@@ -1,7 +1,51 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-05-08 (S31 close — fixed-overlay stacking context + next-build cache pollution + discriminated-union narrowing-chain rule)
+Last updated: 2026-05-13 (S32 follow-up #3 audit — swipe-surface conventions catalog added; dual-cadence model)
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
+
+---
+
+## Swipe-surface conventions catalog (added S32 follow-up #3 audit)
+
+**When VDA touches anything swipe-like next time, read this catalog FIRST** — every pattern below was discovered in S32 and codified here so a v1 build can land closer to the final state.
+
+### Anatomy
+
+| Layer | Convention | WSUP example |
+|---|---|---|
+| **Outer wrapper** | Aspect-locked container sized to parent height (`h-full max-w-full aspect-[9/16]`). Width auto-computes from aspect. No fixed `max-h` — card scales with viewport. | `DeckCardSwiper Wrapper` |
+| **Card surface** | Mirror the explore CharacterCard anatomy: image fills the card (`<Image fill object-cover object-top>`); gradient scrim at bottom (`bg-gradient-to-t from-black via-black-60 via-[42%] to-transparent to-[60%]`); content overlays the bottom 40% of the image. **NO** image-on-top + body-below split. | `DeckCard` |
+| **Top-left badge** | Category/role chip on a per-category linear-gradient background + per-category SVG glyph. Outline of `border-white-20`, shadow `shadow-small`. Sizes: padding `px-xs py-xxs`, glyph `12px`, label `text-xxs font-semibold`. | `DeckCard.CATEGORY_VISUALS` |
+| **Top-right chip (optional)** | "Top pick for you" or similar flag. Glass chrome (`bg-black-60 backdrop-blur-popup border-white-10`), green status dot + `text-xxs font-medium`. | `DeckCard` top-right chip |
+| **Bottom overlay content** | `flex flex-col gap-xs p-s`. Order top-to-bottom: name + meta → description (text-xs leading-snug, NON-italic, line-clamp-2) → tags row (matches CharacterCard chip style) → opening bubble at the very bottom (closest to the card's tail-corner). | `DeckCard` bottom overlay |
+| **Opening bubble** | Mirrors `ChatMessages.AIBubble`: `bg-chat-ai-bubble`, `px-s py-xs rounded-tl-2xl rounded-tr-2xl rounded-br-2xl` (bottom-left flat for the speech tail). Avatar bottom-aligned (`items-end`) to the bubble's tail corner. NO action items (audio, like, regen, kebab). | `DeckCard` opening bubble |
+| **Tags row** | Title case (NOT ALL CAPS) — match explore CharacterCard. Chip chrome: `text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border-white-10`. | `DeckCard` tags |
+| **Action buttons** | Wider pill buttons (NOT round icons). `flex-1` each, 52px tall, icon + label (`× Pass` / `♥ Like`). Outline + low-fill: `border-2 border-status-{alert,success}`, `bg-status-{alert,success}/[0.08]` (hover bumps to 0.18). No "primary" weight — binary decision, equal hierarchy. | `DeckActionButtons` |
+
+### Behavior
+
+| Concern | Convention | WSUP example |
+|---|---|---|
+| **Persistent stack** | Render `slice(index, index + 3)` simultaneously. Top card fully interactive + animated; peeks render `DeckCard` with no interaction, no animation, no bubble. Slot transforms: slot 0 = no transform, slot 1 = `translateY(10px) scale(0.95) opacity(0.7)`, slot 2 = `translateY(20px) scale(0.90) opacity(0.45)`. | `OnboardingDeckStep` |
+| **Coordinated commit motion** | When top card commits a swipe, peek cards animate UP one slot **in parallel** with the top's fly-off (320ms ease-out). Achieved by: parent state `swipingOut` flips on `onCommitStart` callback; peeks compute `effSlot = swipingOut && slot >= 1 ? slot - 1 : slot` and apply the corresponding transform via CSS transition. After commit completes + index advances + `swipingOut` resets, state lines up naturally. | `DeckCardSwiper.onCommitStart` + `OnboardingDeckStep.swipingOut` |
+| **React reconciliation** | Cards keyed by `character.id` so React preserves the underlying instance when a peek promotes to top — no unmount/remount blink. The swiper renders the same wrapper structure for `interactive=true` and `interactive=false` so swap doesn't break the chain. | All deck components |
+| **Three convergent trigger paths** | Action buttons, ←/→ keyboard arrows, drag-past-threshold all fire the same `commit(dir)` pipeline. Imperative ref (`useImperativeHandle`) exposes `swipe(dir)` for button + kbd callers. | `DeckCardSwiper.commit` |
+| **Drag gesture** | Pointer events on the top card wrapper: `pointerdown` captures start X + pointer ID, `pointermove` updates `dragX`, `pointerup` commits if `abs(dragX) > 80px` else snaps back. `touch-action: pan-y` preserves vertical scroll inside the card body. | `DeckCardSwiper.onPointerDown/Move/Up` |
+| **Commit animation** | Top card transforms to `translateX(±600) rotate(±30°) opacity(0)` over 320ms ease-out. After animation, parent's `onSkip`/`onLike` fires → index advances → component unmounts. | `DeckCardSwiper.commit` |
+| **Swipe color tint** | Full-card colored gradient overlay during drag: red on left (`status-alert`), green on right (`status-success`). Opacity scales with `min(1, abs(dragX)/120)`. Locks to 1 on commit so the color decision visually finalizes before fly-off. Mirrors explore CharacterCard's purple-hover-tint convention, just with directional color semantics. | `DeckCardSwiper.redTint/greenTint` overlays |
+| **Bubble reveal sequence** | Top card only (peeks suppress bubble entirely). After card mount + 1000ms pause: bubble pops in showing 3 typing dots (1400ms animating). Then dots → message text revealed character-by-character at 25ms/char (typewriter). | `DeckCard.bubblePhase` + `charsShown` |
+| **End-of-deck state** | When `index >= deck.length`, render dedicated end-state component (NOT auto-close). Two CTAs: primary = "Show me more" (next batch in production), secondary = "See them again" (replay current). No third "exit" CTA — header's Skip pill already serves /explore. | `OnboardingDeckEmptyState` |
+| **Action labels** | Descriptive verb phrases, NOT slang. "Show me more" / "See them again" — clear to first-time users. "Run it back" reads as colloquial idiom; only safe for veteran users. | `OnboardingDeckEmptyState` CTAs |
+
+### Pre-flight grep checklist before building any swipe surface
+
+1. `grep "CharacterCard" src/components/shared/` — anatomy precedent
+2. `grep "AIBubble" src/components/chat/ChatMessages.tsx` — bubble chrome precedent
+3. `grep "aspect-\[9/16\]" src/` — aspect ratio precedent
+4. `grep "TypingIndicator\|animate-bounce" src/components/chat/` — typing dots pattern
+5. `grep "useImperativeHandle\|forwardRef" src/` — imperative-trigger-from-parent pattern
+
+If you wrote a swipe surface and didn't grep these — that's a Gate 2.2 sibling-surface-inheritance fail. Add a watch row to scratchpad.
 
 ---
 
@@ -371,12 +415,12 @@ These are hard requirements, not guidelines. Every WSUP edit must pass all gates
 2. **Reuse existing components** — check src/components/ui/ before building anything new.
 3. **Componentize at 2** — if the same markup+token pattern appears twice (even across files), extract to shared ui/ component immediately.
 4. **Patternize at 2** — if two or more components are used together in the same combination twice, extract as a pattern and document in style guide patterns section.
-5. **Style guide sync** — every visual change updates its style guide section **in the same edit**, not as a follow-up. Component + style guide + VDA = one atomic change.
-6. **VDA learns** — every visual change updates decisions.md **in the same edit**. Not batched at session end. Each change = immediate update.
+5. **Style guide sync** — runs on **audit pass** under the dual-cadence model. Inline: flag a scratchpad row noting which section needs updating. Audit pass: actually update the style guide section to match the new visual. Component + style guide alignment IS still required — its TIMING shifted from "same edit" to "next audit pass."
+6. **VDA learns** — split into scratchpad-inline (one-line WHY captured at the correction-resolution turn) + audit-pass promotion (full decisions.md row with reasoning + alternatives + Gate 6.5 generalization + rule-conflict cross-check). The "log → reply" discipline still applies, just to the scratchpad now, not directly to decisions.md.
 
-**"Same edit" rule:** Gates 5 and 6 are not a second pass. When you change a component, the component file, the style guide section, and the VDA decision are all ONE atomic change. If any of the three is missing, the change is incomplete. Learned from: credit icon change was made in ReviveConfirmSheet but style guide and VDA were not updated until the designer caught it.
+**Cadence rule (replaces the old "Same edit" rule):** Gates 5 and 6 heavy work is deferred to the designer-triggered audit pass. The discipline is preserved: scratchpad-write happens within the correction-resolution turn (not "next session"); audit pass owns the heavy sync. If the scratchpad isn't written at the moment of decision, the audit pass backfills from memory — that's the failure mode the new cadence is designed to prevent. Learned originally from: credit icon change was made in ReviveConfirmSheet but style guide and VDA were not updated until the designer caught it. The fix wasn't "do everything inline" — it was "capture the WHY in scratchpad, sync the heavy stuff on audit."
 
-**Same rule for tokens:** If a token is added or modified in tailwind.config.ts or globals.css, the style guide token section must be updated in the same edit. Token change + style guide + VDA = one atomic change.
+**Same rule for tokens:** If a token is added or modified in tailwind.config.ts or globals.css, the style guide token section must be updated **by the audit pass**, not as a follow-up session. Inline: scratchpad row noting the value + threshold + intended token name.
 
 **Gate 7 — UX Consistency:** Before implementing any interaction, visual pattern, or copy, check how the same thing already works elsewhere in WSUP and match it. Examples: all dev togglers use R key (not D, not T); all inline links use .link class; all empty states use EmptyState component. Don't invent variations of established patterns.
 

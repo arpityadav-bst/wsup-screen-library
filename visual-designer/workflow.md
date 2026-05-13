@@ -1,7 +1,100 @@
 # Visual Designer — Workflow
-Last updated: 2026-05-08 (S31 close — added pre-push typecheck rule, dev-server-vs-build cache rule, dev-panel-option-audit rule, removed-feature-breadcrumb rule)
+Last updated: 2026-05-13 (S32 follow-up #3 audit — dual-cadence model: inline scratchpad + designer-triggered audit pass; clarifying-Q protocol for ambiguous instructions)
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
+
+---
+
+## ⚡ DUAL-CADENCE OPERATING MODEL (added S32 follow-up #3 audit — supersedes per-edit Gate 5/6 sync)
+
+**The pain this fixes:** inline Gate 5 (style guide sync) + Gate 6 (decisions.md row + sometimes taste.md promotion) at every correction-resolution was making iteration ~3× slower than necessary. A 1-line copy tweak became a 3-file edit. Designer was waiting 20+ minutes per round.
+
+**The new model — two cadences, NOT one:**
+
+### Cadence A — INLINE (during a session, every correction-resolution)
+
+Run only the **light-weight** keepers from the codified gates:
+
+- **Gate 0 — Precedent grep** (mechanical, no slow-down): still mandatory before writing tokens/anatomy.
+- **Gate 1 — Tokens** (only if NEW value introduced this turn): if the value is at/past the 3-instance threshold, note it in scratchpad for the audit pass; don't tokenize inline.
+- **Gate 2 — Reuse + sibling-surface inheritance**: still mandatory; grep + inherit.
+- **Gate 7 — UX consistency** (free — just check siblings while doing Gate 2).
+- **Gate 8 — UX review** (always-on; read the result as a designer before declaring done).
+- **Scratchpad write** (replaces inline decisions.md + style-guide sync): in `visual-designer/scratchpad.md`, append one line per correction-resolution:
+  ```
+  YYYY-MM-DD HH:mm — <component or file changed> — <what changed in 1 line> — Why: <one phrase>
+  ```
+  This is **fast** — 5–10 seconds per entry, no friction. Captures freshness of WHY so the audit pass has the full context.
+
+### Cadence B — AUDIT PASS (designer-triggered: "audit", "consolidate", "health check", "sync the gates", or similar)
+
+Run the **heavy** keepers from the codified gates. This is the deliberate stop-and-tidy moment:
+
+1. **Gate 5 — Style guide sync** (full sweep): for every component/pattern touched this session per scratchpad, verify the style guide section reflects the new visual. Update section files, anatomy lists, NAV entries. If new primitive: create section file, add to ComponentsTab + NAV.Components. If new pattern: same for PatternsTab + NAV.Patterns.
+2. **Gate 6 — Decisions.md promotion**: read every scratchpad entry → write proper decisions.md row with full reasoning (what + why + alternatives considered + generalization probe outcome).
+3. **Gate 6.5 — Generalization + cross-rule check**: for each scratchpad entry, ask the three Gate 6.5 questions (transferable principle? rule-conflict? scope clause needed?). Promote to taste.md / knowledge-base.md / reasonings.md where the trigger words fire ("always", "never", "every", "any X", "whenever").
+4. **Gate 1 follow-up — Token creation**: for every scratchpad-flagged at-threshold raw value, add the token to `tailwind.config.ts` and migrate usages. Update style guide token section.
+5. **Knowledge-file freshness check**: scan "Last updated" timestamps. Any file 7+ days stale during active WSUP work → quick read-through and refresh.
+6. **Codebase sweep**: file-size violations (>300 lines), orphan components (defined but unused), style-guide drift (component code changed but section text didn't), token threshold violations across new files.
+7. **Build verify**: `npx next build` → must be 0 errors before declaring audit complete.
+8. **Wipe the scratchpad**: after promotion, scratchpad gets cleared. (Append-only during session, processed-and-emptied at audit.)
+9. **Session-logs.md entry**: write the session summary at the top, including `designer_caught_count` + the recurring-category note for next session.
+10. **Health-check artifact** (every 5 sessions per agent.md self-audit protocol): write `visual-designer/self-audit-session-{N}.md` with the gate verdicts + drift assessment + overall HEALTHY / DRIFTING / STALE.
+
+### Audit trigger — semantic match, not magic phrases
+
+In the dual-cadence model **audit / quality gates check / health check are the same operation** — names for the deliberate consolidation pass that runs the heavy gates, sweeps the scratchpad, syncs the style guide, promotes rules, and fixes anything broken. The designer can ask for it in any natural phrasing; VDA matches semantically, not by exact words.
+
+**The trigger is ANY phrase that semantically asks for one of:**
+
+- A consolidation / sync pass — *"audit"*, *"consolidate"*, *"sync everything"*, *"sync the gates"*, *"update VDA"*, *"update the style guide"*
+- A quality gates run — *"run the quality gates"*, *"quality gates check"*, *"run the gates"*, *"check the gates"*
+- A health check — *"health check"*, *"VDA health check"*, *"check VDA health"*
+- A fix-what's-broken pass — *"fix anything broken"*, *"clean up"*, *"tidy the codebase"*
+- A session wrap-up — *"we're done for now"*, *"wrap up"*, *"close out"*
+
+All of these fire the same audit pass. The designer should never feel they're hunting for the right magic word — any of these readings is enough. If the request is ambiguous between "small inline fix" vs "full audit pass," apply the clarifying-Q protocol (one binary question).
+
+**Negative signal — phrases that do NOT trigger the audit:**
+- *"is the style guide synced?"* — that's an inline question; answer it with a quick grep, don't kick off the heavy sweep
+- *"can you log that decision?"* — that's a scratchpad-write request, not an audit
+- *"any token violations?"* — answer with a grep + scratchpad-flag, don't migrate inline
+
+Audit fires on **affirmative imperatives** that ask for the consolidation work, not on questions about the current state.
+
+### Why this doesn't violate the codified "log → reply" Gate 6 rule
+
+The original rule existed to prevent **context decay** — if the WHY behind a decision is captured 3 hours after the decision, memory has fuzzed it. The scratchpad solves this *cheaper* — a 1-line entry captures the WHY in the moment without the friction of writing a full decisions.md row. The audit pass then has rich context to expand into proper rows.
+
+The new failure mode to watch for: **skipping the scratchpad entry** because "it's small" or "I'll remember." If the scratchpad isn't written, the audit pass backfills from memory — same Gate 6 failure mode as before. **Forcing function:** scratchpad write is part of the correction-resolution turn, before the reply. Same discipline, lighter weight.
+
+### Hard-fail trigger update
+
+The codified Gate 6 hard-fail trigger ("if the designer ever asks 'is VDA learning?' or 'did you log this?' — Gate 6 already failed") still applies, but pointed at the **scratchpad** during a session and at **decisions.md** post-audit. The trigger means *the moment the designer has to wonder* — whether about scratchpad or decisions.md — that's the fail signal.
+
+---
+
+## Clarifying-Q protocol — when designer language has 2+ valid interpretations, ASK before edit-shipping (added S32 follow-up #3 audit)
+
+**The pain this fixes:** S32 follow-up #3 had at least one round wasted on a misread of "tags after age" — designer's wireframe-language could parse either as (a) the role text in `gender · age · role` meta line, OR (b) the chip row of tags rendered below the bubble. First-pass picked (b); designer clarified (a). One full round of edit-revert-edit could have been avoided with a single binary clarifying question.
+
+**The protocol:**
+
+When you receive a designer instruction that contains ANY of the following ambiguity signals, ask a clarifying binary question BEFORE editing:
+
+| Ambiguity signal | Example | Clarifying Q form |
+|---|---|---|
+| **A pronoun without unambiguous antecedent** | "make *it* smaller" — what's *it*? | "Smaller — do you mean the image, the card, or the popup?" |
+| **A noun that maps to two things on the surface** | "the tags after age" — could be role text OR chip row | "When you say 'tags', do you mean the [A] in [position] or the [B] in [position]?" |
+| **A relational instruction without a fixed anchor** | "move it down" — relative to what? | "Down — below the description, or below the bubble?" |
+| **A copy-change instruction with no explicit replacement** | "this copy is wrong" — what should it say? | Reflect back what you understood + ask: "I read this as 'X' — is the intent 'Y'? Or something else?" |
+| **A visual instruction with two valid taste-rule readings** | "make it more prominent" — bigger, bolder, brighter, more colored? | Propose 2 named options: "More prominent — A: bump weight to semibold, B: switch from text-text-small to text-text-title?" |
+
+**The cost-benefit:** one clarifying Q costs ~30 seconds (designer reads, picks one). One wrong edit-then-revert costs ~5 minutes (edit, screenshot, designer points out, revert, re-edit). 10× speed-up on ambiguous instructions.
+
+**Anti-pattern:** asking clarifying Qs on UNambiguous instructions (which would feel like outsourcing taste). The rule only applies when both interpretations are *equally plausible* given the words. If one reading is clearly likelier (90%+), pick it and ship — be wrong cheaply on one out of ten.
+
+**Sibling to the codified "Surface open UX calls BEFORE building" rule** — that rule covers PLANNING-level ambiguity (architectural-path open calls). This rule covers INSTRUCTION-level ambiguity (one-shot edits where words could parse two ways). Both are about pausing before acting on incomplete information.
 
 ---
 
@@ -240,17 +333,19 @@ Append a new entry at the TOP of session-logs.md:
 - Present the result and accept corrections without defensiveness
 - Every correction feeds back into knowledge files
 
-### When observing
+### When observing (under dual-cadence model)
 - Don't interrupt the designer's flow to announce learnings
 - Silently categorize observations into the mental buckets
-- **WRITE IMMEDIATELY** — do NOT batch updates until session end. Every correction, screenshot feedback, design decision, or preference must be written to the relevant knowledge file within the same turn it happens. The designer should NEVER have to ask "is VDA learning?" — the answer must always be yes, because updates happen in real time
-- If the designer explains reasoning, capture it verbatim — their words are more valuable than your interpretation
-- This is a hard rule: if the designer corrects a font weight, that goes into taste.md RIGHT NOW, not 30 minutes later when asked. If a new decision is made, it goes into decisions.md in the same response that implements it
+- **WRITE SCRATCHPAD IMMEDIATELY** — every correction, screenshot feedback, design decision, or preference must be captured in `scratchpad.md` within the same turn it happens. One line per correction-resolution. The designer should NEVER have to ask "is VDA learning?" or "did you log this?" — the answer must always be yes, because the scratchpad is live during the session
+- If the designer explains reasoning, capture it verbatim in the scratchpad — their words are more valuable than your interpretation; the audit pass will expand them into proper `decisions.md` reasoning
+- This is a hard rule: if the designer corrects a font weight, that goes into the scratchpad RIGHT NOW. If a new decision is made, it goes into the scratchpad in the same response that implements it. The full `decisions.md` row + taste.md promotion happens on the audit pass, NOT mid-session
+- **What used to be "log to decisions.md immediately" is now "log to scratchpad immediately."** Same discipline, lighter weight, no audit drift
 
-### When the designer says "update VDA"
-- Run the self-update protocol immediately, mid-session
-- Show what you're adding to which files
-- Ask if there's anything else from this session they want captured
+### When the designer says "update VDA" (or any audit trigger phrase)
+- This IS the audit trigger — see "Audit trigger — semantic match, not magic phrases" in the dual-cadence section
+- Run the full audit pass: scratchpad promotion → decisions.md, style-guide sweep, Gate 1 token migrations, Gate 6.5 generalization, freshness check, build verify
+- Show what you promoted to which files
+- Ask if there's anything else from this session they want captured before the scratchpad is wiped
 
 ---
 

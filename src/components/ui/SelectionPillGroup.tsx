@@ -14,6 +14,8 @@ interface SelectionPillGroupProps {
   value?: string
   required?: boolean
   helperText?: string
+  // wrap = pill chrome instead of flex-1 row; options wrap to multiple lines (used by onboarding age picker)
+  wrap?: boolean
   onChange?: (value: string) => void
 }
 
@@ -37,6 +39,7 @@ export default function SelectionPillGroup({
   value: controlledValue,
   required,
   helperText,
+  wrap = false,
   onChange,
 }: SelectionPillGroupProps) {
   const [internalValue, setInternalValue] = useState(controlledValue ?? '')
@@ -45,6 +48,37 @@ export default function SelectionPillGroup({
   const handleSelect = (val: string) => {
     setInternalValue(val)
     onChange?.(val)
+  }
+
+  if (wrap) {
+    return (
+      <div className="flex flex-col gap-s w-full">
+        <span className="label-xs text-text-subtitle tracking-[1.5px]">
+          {label}{required && '*'}
+        </span>
+        <div className="flex flex-wrap gap-xs">
+          {options.map((opt) => {
+            const isSelected = selected === opt.value
+            return (
+              <button
+                key={opt.value}
+                onClick={() => handleSelect(opt.value)}
+                className={`px-m h-[36px] rounded-pill cursor-pointer border text-sm font-normal transition-colors ${
+                  isSelected
+                    ? 'bg-white text-page-bg border-white'
+                    : 'bg-forms-bg border-forms-border text-text-title hover:border-white-20'
+                }`}
+              >
+                {opt.label}
+              </button>
+            )
+          })}
+        </div>
+        {helperText && (
+          <p className="text-xs text-forms-disabled-bg leading-snug">{helperText}</p>
+        )}
+      </div>
+    )
   }
 
   return (

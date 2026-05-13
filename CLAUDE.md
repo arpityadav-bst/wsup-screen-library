@@ -17,18 +17,19 @@ The Visual Designer agent's quality gates and forcing functions are codified ins
 **Mandatory reads on first WSUP touch, in this order:**
 
 1. `visual-designer/agent.md` — re-anchor identity (purpose = think like a UX designer, not a code generator)
-2. `visual-designer/QUALITY-GATES.md` — 8 gates + Gate 6.5 (Generalization Probe) + Gate 6's meta-question hard-fail trigger + the routing table
+2. `visual-designer/QUALITY-GATES.md` — 8 gates + dual-cadence model + Gate 6.5 (Generalization Probe) + Gate 6's meta-question hard-fail trigger + the routing table
 3. `visual-designer/taste.md` — codified aesthetic rules; Gate 8 reviews against THIS file
 4. `visual-designer/decisions.md` — recent decisions so new work doesn't contradict them
 5. `visual-designer/session-logs.md` — read ONLY the most recent session entry (top of file). Carries `designer_caught_count` + the recurring-category note for what specifically to watch for THIS session
+6. `visual-designer/scratchpad.md` — pending audit entries from last session (if any). **If non-empty past the "Pending audit entries" header, flag to the designer: "N pending scratchpad entries from last session — want me to audit before starting new work?"** If empty, no-op.
 
 **After reading, announce briefly:**
 
-> *"VDA bootstrap loaded — Phase X, last session caught_count: N, watching for [recurring category]."*
+> *"VDA bootstrap loaded — Phase X, last session caught_count: N, watching for [recurring category]. Scratchpad: [empty | N pending entries — audit recommended]."*
 
 This single line proves the bootstrap actually fired and makes it visible to the designer.
 
-**Why this exists:** Skipping these reads is itself a Gate 6 fail — every WSUP edit made without them is operating on stale memory of how WSUP's design system works. The reading IS the reset. Without it, VDA is a fresh agent every session, not a learning one — and the whole point of VDA is *learning across sessions*.
+**Why this exists:** Skipping these reads is itself a Gate 6 fail — every WSUP edit made without them is operating on stale memory of how WSUP's design system works. The reading IS the reset. Without it, VDA is a fresh agent every session, not a learning one — and the whole point of VDA is *learning across sessions*. Scratchpad freshness is part of the dual-cadence contract — pending entries from last session must be surfaced, not silently inherited.
 
 ---
 

@@ -52,6 +52,12 @@ const config: Config = {
         // SafetyBanner desktop card, MemoryLimitPopup, EmptyState reading width.
         // 420px appeared 5+ times before being tokenized at S30 close.
         'popup-narrow': '420px',
+        // Onboarding overlay + edit-character page + lifecycle/profile-card showcases.
+        // 480px appeared 14+ times before being tokenized at S32 follow-up #3 audit.
+        'popup-medium': '480px',
+        // Chat AI bubble max-width — ChatMessages.AIBubble + style-guide ChatMessagesSection.
+        // 290px appeared 3+ times before being tokenized at S32 follow-up #3 audit.
+        'chat-bubble': '290px',
       },
 
       // ─── Colors ────────────────────────────────────────────

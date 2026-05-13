@@ -39,7 +39,7 @@ export default function ContentGrid({ activeTab, characters, stories, onCharMenu
         </div>
         {/* Desktop */}
         <div className="hidden md:block py-l center-content-pad">
-          <div className="max-w-[480px] mx-auto">
+          <div className="max-w-popup-medium mx-auto">
             {stories.map(s => <StoryCard key={s.id} {...s} />)}
           </div>
         </div>

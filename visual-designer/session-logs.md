@@ -1,7 +1,263 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-08 (S31 close)
+Last updated: 2026-05-13 (S32 follow-up #3 — onboarding deep polish: deck-stack, typewriter, end-state, identity picker)
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 32 follow-up #3 — 2026-05-13 — Onboarding deep polish (designer_caught_count: ~12 across the round; Gate 6 audit drift caught at close — backfilled here)
+
+**Designer:** Arpit. **Scope:** Multi-round interactive polish on the deck stage + Stage 1 (identity picker added). Heavy iteration on card anatomy, swipe affordances, end-state, and bubble reveal.
+
+### What shipped
+
+**New components:**
+- `components/onboarding/OnboardingDeckEmptyState.tsx` — end-of-deck state (sparkle illustration first, then designer asked for stacked-cards illustration; two CTAs)
+
+**Major rewrites:**
+- `DeckCard.tsx` — explore-style anatomy (image fills card, content overlays bottom with gradient scrim, per-category gradient + glyph badges); added `animate` prop driving bubble typing-then-typewriter reveal; tags moved above bubble; meta line dropped role; opening lines stripped of wrapping quotes
+- `DeckCardSwiper.tsx` — added `interactive` prop (peek cards render DeckCard without drag/animation/tint) + `onCommitStart` callback (lets parent animate peek-rise in parallel with top fly-off); swipe affordance switched from corner-badge icons to full-card colored gradient overlay (red left / green right)
+- `OnboardingDeckStep.tsx` — renders deck stack of up to 3 cards (top + 2 peeks) absolute-positioned in aspect-locked container; coordinated commit + handoff motion; end-of-deck branch renders `OnboardingDeckEmptyState`
+- `DeckActionButtons.tsx` — round 56×56 outline buttons → wider flex-1 pills with icon + label (`× Pass` / `♥ Like`); keycap hints stayed removed
+- `OnboardingOverlay.tsx` — stage-aware popup height (preferences = auto content-driven, deck = min(880,94vh))
+- `OnboardingPreferencesStep.tsx` — added "I am" identity picker (Female / Male / Non-binary) placed FIRST in the form (identity → demographic → preference order)
+- `useOnboardingFlow.ts` — `skipCard` no longer auto-closes at end of deck (lets empty-state branch render); new `restartDeck()` action wired to both empty-state CTAs
+
+**Style guide:**
+- `OnboardingOverlaySection.tsx` — major refresh: stage-aware preview shells, new end-state preview, anatomy block fully rewritten (deck-stack semantics, typewriter reveal, swipe-tint, per-category badges, exit-affordance uniqueness)
+
+### Heavy iteration zones
+
+**DeckCard anatomy — 6+ rounds:**
+1. Wireframe-style 2-zone (image-top + body-below, aspect-[4/5])
+2. → image-fills + overlay content (CharacterCard parity)
+3. → role removed from meta line (designer clarified "boss/teacher tags after age" meant the role, not the tag row)
+4. → tags row removed (misread of wireframe instruction)
+5. → tags row restored (designer asked back)
+6. → ALL CAPS tags → title case (matches explore CharacterCard convention)
+7. → desktop aspect 3/2 landscape → 5/4 portrait → final 9/16 with height-driven sizing
+8. → italic description removed (matches explore CharacterCard convention)
+
+**Opening bubble — 5+ rounds:**
+1. Wireframe-style with "WHAT THEY OPEN WITH" label
+2. → label dropped, mirror /chat AIBubble chrome
+3. → avatar removed (designer wanted no avatar)
+4. → avatar restored (designer changed mind)
+5. → avatar top-align → bottom-align (matches bubble tail at bottom-left corner)
+6. → wrapping quotes stripped from all 9 opening lines
+7. → typing-dots → typewriter reveal sequence added (1s pause → dots → 1.4s typing → typewriter at 25ms/char)
+
+**CTA copy — 3 rounds:**
+1. Initial: `Run it back` + `Open Explore`
+2. → `Open Explore` removed (duplicated Skip pill — codified into "exit-affordance uniqueness" taste rule)
+3. → `Run it back` → `Show me more` (primary) + `See them again` (secondary); slang too casual for new-user comprehension
+
+### Quality Gates verdict (S32 follow-up #3 close)
+
+| Gate | Verdict |
+|---|---|
+| 1 — Tokens | ✅ All values use tokens; opacity modifiers on status tokens explicitly allowed |
+| 2 — Reuse | ✅ Mirrored CharacterCard anatomy on DeckCard; reused /chat AIBubble chrome on opening bubble; reused TypingIndicator dots pattern |
+| 3 — Componentize@2 | ✅ TypingDots inlined as small helper (single-use, not promoted to primitive yet — watch for 2nd consumer) |
+| 5 — Style guide sync | ✅ Synced at close — OnboardingOverlaySection fully refreshed with new preview shells + anatomy + state-persistence callout |
+| 6 — VDA learns | ⚠️ **Audit-drift PARTIAL FAIL** — most of this round's decisions were not logged in real-time; backfilled at close (10+ row backfill). Same failure mode as S31 ("the close audit caught what should have been logged turn-by-turn"). **Reinforced lesson:** when a session has heavy back-and-forth iteration, the temptation is to roll multiple corrections into one decisions row at the end. That IS the Gate 6 failure mode. Forcing function for S33: write the row BEFORE replying to a correction, every correction, no compounding |
+| 6.5 — Generalization + cross-check | ✅ 4 taste rules promoted: deck-stack persistence + bubble-as-typewriter + exit-affordance uniqueness + form-field mental-sequence ordering |
+| 7 — UX consistency | ✅ DeckCard mirrors explore CharacterCard; bubble mirrors /chat AIBubble; swipe tint mirrors explore hover-tint convention; identity-first form ordering matches dating-app convention |
+| 8 — UX review | ⚠️ **High designer_caught_count this round (~12)** — most catches were minor iteration on a complex new surface (acceptable for "new pattern" sessions) but some were Gate 8 preventable: tags row case (ALL CAPS → title case should have matched explore), role-in-meta-line (designer's wireframe-language was ambiguous on first parse — should have asked clarifying Q), bubble avatar top vs bottom alignment (the bubble's tail corner WAS at bottom-left, I should have caught this when rebuilding the bubble) |
+
+### Active gaps for S33
+
+1. **Gate 6 logging discipline (still the #1 gap)** — backfilled this round same as S31 close. Need a stricter forcing function: every correction-resolution reply MUST be paired with a same-turn decisions.md row. If skipping for "small" catches, the small catches compound into a sweep at the end.
+2. **Pre-flight diff against established WSUP precedents** — when iterating on a surface that has a sibling precedent (DeckCard vs CharacterCard; OpeningBubble vs ChatMessages.AIBubble), explicitly diff the new against the precedent BEFORE shipping the round. Catches ALL CAPS-vs-title-case, italic-vs-non-italic, etc. before designer has to flag.
+3. **Clarifying Qs on ambiguous designer language** — "tags after age" was wireframe-language that could mean either "the role word in meta" or "the tag chip row below." First-pass I picked the wrong reading. Better: when language could parse two ways, ask one binary Q before edit-shipping.
+4. Carryovers: UserListRow (S28); CharacterMenuSheet / DormantMenuPopoverItems MenuPopover migration (S27).
+
+---
+
+## Session 32 follow-up #2 — 2026-05-13 — OnboardingDeckBanner removed entirely (designer call after browser walk-through; matchmaking → chat-character override preserved)
+
+**Designer:** Arpit. **Scope:** Strip the chat-side deck banner + all its support code. Designer paused the feature ("maybe we will use it later") — full clean removal per the *no-dead-code* memory rule, not feature-flagging.
+
+### What was removed
+
+**Files deleted (4):**
+- `components/chat/OnboardingDeckBanner.tsx`
+- `components/chat/ChatBannerStack.tsx` (3-banner abstraction reverted to inline 2-banner chain in chat/page.tsx)
+- `app/chat/useChatOnboardingBanner.ts`
+- `app/style-guide/sections/patterns/OnboardingDeckBannerSection.tsx`
+
+**Code trimmed:**
+- `lib/onboardingDeck.ts` — dropped `ONBOARDING_ACTIVE_KEY`, `ONBOARDING_INDEX_KEY`, `ONBOARDING_BANNER_DISMISSED_KEY`, `readOnboardingActive`, `readDeckIndex`, `readBannerDismissed`, `dismissBanner`, `remainingCount`, `recordSkip`
+- `app/explore/useOnboardingFlow.ts` — dropped `?onboarding=resume` URL handler + index persistence; `skipCard` is React-state-only
+- `app/chat/page.tsx` — restored inline `{activeSafetyVariant ? <SafetyBanner> : bannerVariant ? <DormancyBanner> : null}` chain; dropped `useChatOnboardingBanner` import + state
+- `app/style-guide/sections/PatternsTab.tsx` — removed OnboardingDeckBannerSection import + render
+- `app/style-guide/page.tsx` — removed "Onboarding Deck Banner" from NAV.Patterns
+- `app/style-guide/sections/patterns/OnboardingOverlaySection.tsx` — state-persistence callout simplified to liked-id + deck-position-is-React-state
+
+### What was kept
+
+- **Matchmaking → chat character override.** `ONBOARDING_LIKED_ID_KEY` + `readLikedCharacter()` + `useChatCharacter()` all stay — right-swipe still records the liked character and `/chat` renders them instead of default Billie.
+- **Onboarding overlay + deck swiper (Stages 1 + 2).** Untouched — overlay still launches from `/explore` dev panel, all 9 cards swipeable.
+- **Banner-priority taste rule.** Stays codified in taste.md (intervention severity, then intent recency) — principle is general; will apply if a third banner ever re-enters the chat slot.
+
+### Why full delete, not flag-gate
+
+Memory rule: *"Avoid backwards-compatibility hacks like renaming unused _vars, re-exporting types, adding // removed comments for removed code, etc. If you are certain that something is unused, you can delete it completely."* Plus the workflow rule from S31's monthly-subscription removal: *"when removing a feature that may return, delete the dead code completely AND leave a clear breadcrumb (a one-liner comment + the path to reintroduce)."* Breadcrumb left in the trimmed `onboardingDeck.ts` header comment: *"The deck-resume + chat-banner functionality was shipped in S32 and removed S32-follow-up — the design need for 'resume your deck' hadn't landed yet; revisit when product re-introduces a resume affordance."*
+
+### Bundle impact
+
+- `/chat` route: 14.8 kB → 14.6 kB
+- `/style-guide` route: 65 kB → 64.5 kB
+
+Small but real shrinkage.
+
+### Quality gates verdict
+
+| Gate | Verdict |
+|---|---|
+| 2 — Reuse | ✅ ChatBannerStack abstraction reverted — only 2 banners now; the abstraction was carrying its weight thin |
+| 5 — Style guide sync | ✅ Section file deleted, PatternsTab import dropped, NAV.Patterns entry removed, OnboardingOverlaySection callout updated — all same edit |
+| 6 — VDA learns | ✅ Removal decision logged before the reply; no audit drift |
+| 8 — UX review | ✅ N/A (removal-only; no new visuals to review). Verified `npx next build` green before declaring done |
+
+### Active gaps unchanged from S32 follow-up #1
+
+1. Gate 8 pre-emptive catching against established WSUP precedents
+2. Don't over-correct on Gate 8 fixes
+3. Carryovers: UserListRow (S28); CharacterMenuSheet / DormantMenuPopoverItems MenuPopover migration (S27)
+
+---
+
+## Session 32 follow-up — 2026-05-13 — Onboarding 7-correction round (designer_caught_count: 7 — all from one batched message after browser walk-through)
+
+**Designer:** Arpit. **Scope:** 7 targeted corrections to the just-shipped onboarding flow, all in one message after live browser review. All resolved in same session, all logged real-time per Gate 6.
+
+### What the designer asked for (7 corrections)
+
+1. **Deck: 4 → 9 characters.** Initial cut was too thin for matchmaking demo. Added 5 distinct archetypes (Aiden Cross / Vera Sloane / Mira Yagami / Cole Ramirez / Elysia Vance — mentor / bold / anime / friend / sci-fi).
+2. **OnboardingDeckBanner: View link inline with title.** Pre-fix: View pushed to row's right edge via `flex-1` spacer. Designer wanted the action adjacent to the count it describes. Refactored title block to flex-wrap `count + View → ` cluster; close button anchors right alone.
+3. **OnboardingHeader: use `/logo.png` (104×24 composite) instead of recomposing mark+wordmark.** Designer's image #5 showed the wordmark visually smaller than the mark; my composed `<Image>+<span>` over-weighted the wordmark. Swapped to the codified Header asset.
+4. **DeckCard: taller image on desktop.** My Gate 8 self-catch from earlier same session had over-corrected to `aspect-[3/2]` landscape — character heads got cropped. Designer's image #6 showed desired state. Reverted to slight-portrait `aspect-[5/4]` on desktop + bumped popup `min(800px,92vh)` → `min(880px,94vh)`.
+5. **Tinder-style tilt + fade + badge animation on card commit.** Pre-fix: action buttons fired callbacks directly with no animation (clinical). New behavior: all paths converge on `commit(dir)` which sets `committing` state → animates translateX(±600) + rotate(±30°) + opacity → 0 over 320ms → fires onSkipCard/onLikeCard. In-flight × / ♥ intent badges (status-alert / status-success, 64×64 rotated stamps) fade in during drag scaled to drag distance.
+6. **Mobile drag-to-swipe gesture.** Reversed my Q3 recommendation (buttons + keys only). Implemented via pointer events (down/move/up + capture); `touch-action: pan-y` preserves vertical scroll inside the card body. Drag past 80px threshold triggers the same `commit()` as buttons/kbd.
+7. **Remove keycap hints below action buttons.** `[←] skip · [→] chat` row removed (kbd handlers stay). The animation + drag gesture telegraph intent; explicit hints became clutter on an already-dense card.
+
+### Code changes (compact)
+
+- `lib/onboardingDeck.ts` — deck array `+5` entries
+- `components/onboarding/OnboardingHeader.tsx` — single `/logo.png` import (was composed)
+- `components/chat/OnboardingDeckBanner.tsx` — View moved into title-flex-wrap cluster (both viewports)
+- `components/onboarding/DeckCard.tsx` — image aspect `md:aspect-[3/2]` → `md:aspect-[5/4]`; body gap-m → gap-s (kept from earlier same-session Gate 8 fix)
+- `components/onboarding/OnboardingOverlay.tsx` — desktop popup height `min(800,92vh)` → `min(880,94vh)`
+- `components/onboarding/DeckCardSwiper.tsx` — **new**, owns pointer-drag gesture + animation + intent badges; exposes imperative `swipe(dir)` via forwardRef for action-button + kbd entry paths
+- `components/onboarding/DeckActionButtons.tsx` — rewritten, dropped keycap hints row; props simplified to two onClick handlers
+- `components/onboarding/OnboardingDeckStep.tsx` — uses DeckCardSwiper via ref; ←/→ keyboard handler now calls `swiperRef.current?.swipe(dir)` (not the parent callbacks directly)
+- `style-guide/sections/patterns/OnboardingOverlaySection.tsx` — preview shell `h-[800px]` → `h-[880px]`
+
+### Taste rules promoted (Gate 6.5)
+
+4 new sibling rules:
+1. *Progressive intent feedback during swipe-to-act gestures is non-negotiable* (sibling to "Trigger and result share spatial position")
+2. *Swipe-to-act surfaces converge all trigger paths (gesture / button / keyboard) on one animation pipeline*
+3. *Brand assets live as single files — don't recompose from parts* (sibling to viewBox-tightening + icon-fill-ratio rules)
+4. *Keyboard hints in user-facing UI earn their slot only when keyboard is the primary interaction model* (sibling to "Don't keep dev shortcuts that don't earn their slot")
+
+### Quality gates verdict (follow-up close)
+
+| Gate | Verdict |
+|---|---|
+| 1 — Tokens | ✅ No raw values introduced (opacity modifiers + aspect-ratio one-offs only; status-alert/[0.08], status-success/[0.15] explicitly allowed per Gate 1 exceptions) |
+| 2 — Reuse | ✅ Used codified `/logo.png` instead of recomposing; same animation pipeline shared across 3 trigger paths |
+| 3 — Componentize@2 | ✅ DeckCardSwiper extracted from inline (was nascent in OnboardingDeckStep); clean separation of card visual vs swipe behavior |
+| 5 — Style guide sync | ✅ Preview shell height synced in same edit as overlay height bump |
+| 6 — VDA learns | ✅ **Strong** — 7 corrections, 7 decisions.md rows, all logged BEFORE the reply that announced "the corrections are done." No backfill. Continues the S31 → S32 trajectory: zero Gate 6 audit drift this session |
+| 6.5 — Generalization + cross-check | ✅ 4 taste rules promoted (one per correction that had a transferable principle; 3 corrections were case-specific and didn't promote) |
+| 8 — UX review | ✅ Each correction was itself a Gate 8 catch by the designer — VDA's first take had Gate 8 misses. Pattern: I should have caught at least the over-weighted wordmark and the keycap-clutter myself before shipping. (See Active gaps below.) |
+
+### Dev-cache hiccup mid-session
+
+After running `npx next build` to verify, restarted `npx next dev` and ran into the S31-codified `.next/` cache corruption — Playwright started returning 404s on chunks. Recovery: `npx kill-port 3000` + `rm -rf .next` + `npx next dev`. Took ~3 minutes round-trip. **The codified rule worked** — recognized the symptom immediately, applied the recovery, moved on. (This is why we codify trap-and-recovery pairs in knowledge-base.)
+
+### Active gaps for S33
+
+1. **Gate 8 pre-emptive catching** — designer caught 7 issues that VDA's first take missed, especially: over-weighted wordmark vs production Header, keycap row reading as clutter on dense cards, image aspect over-corrected during my Gate 8 fix. **Forcing function:** when iterating on a surface that has an established WSUP precedent (Header, DormancyBanner, ChatStyleSheet), DIFF the new surface against the precedent before shipping — *"does this match the precedent's proportions / chrome / interaction model?"*
+2. **Don't over-correct on Gate 8 fixes** — my aspect-[3/2] landscape fix solved "body hidden" but introduced "face cropped." A Gate 8 fix that traded one visual issue for another is half a fix. Pre-flight check: *"does my fix preserve everything the surface was getting right, or does it sacrifice one thing to fix another?"*
+3. Same carryovers from S31: `<UserListRow>` extraction (S28); CharacterMenuSheet / DormantMenuPopoverItems MenuPopover migration (S27).
+
+---
+
+## Session 32 — 2026-05-13 — Onboarding flow (Preferences → Deck → Chat banner) + ExploreDevPanel two-axis + Gate 8 self-catch on card overflow (designer_caught_count: 0; **VDA caught 1**)
+
+**Designer:** Arpit. **Scope:** New end-to-end flow — `/explore` R-key dev panel gains an "Onboarding" demo flow that opens a responsive overlay (mobile takeover / desktop ~480px popup). Stage 1 (preferences) → Stage 2 (deck swiper with 4 cards) → Stage 3 (`/chat` with persistent "N more characters waiting" banner; deck character overrides default Billie). State persists across navigation via localStorage; "View →" link on the banner resumes the deck at the saved index.
+
+Freshness check: knowledge-base ✓ | taste ✓ (1 new rule: banner priority — intervention severity, then intent recency) | decisions ✓ (8 entries logged in real-time per S32 Gate 6 forcing function — Gate 8 self-catch row logged AFTER fix but BEFORE declaring done; no backfill needed this session) | reasonings ✓ (no class-of-decisions rules emerged) | workflow ✓ | evolution (next session) | project-insights (deferred — explore screen surface inventory update can land at S33 close-audit; no urgent drift) | QUALITY-GATES ✓
+
+### What shipped (code)
+
+**New library:**
+- `lib/onboardingDeck.ts` — `OnboardingCharacter` type + 4-card deck (Donovan / Hailey / Kathy / Rinne; top-pick flag on card 1) + 4 localStorage helpers (active flag, liked id, deck index, banner-dismissed flag) + `recordLike` / `recordSkip` / `clearOnboarding` / `dismissBanner` actions
+
+**New components:**
+- `components/onboarding/OnboardingOverlay.tsx` — responsive wrapper (mobile full-viewport takeover / desktop ~480×800 centered popup over scrim). Custom scrim, NOT CenterPopup (matches S31 self-chromed-popup taste rule).
+- `components/onboarding/OnboardingHeader.tsx` — shared wsup logo + Skip pill
+- `components/onboarding/OnboardingPreferencesStep.tsx` — Stage 1: age (wrap pills, 5 options) + interest (wrap pills, 3 options) + Continue (disabled until both)
+- `components/onboarding/OnboardingDeckStep.tsx` — Stage 2: header + title + DeckProgressBars + DeckCard + DeckActionButtons; ← / → keyboard handler
+- `components/onboarding/DeckCard.tsx` — image (responsive aspect: `aspect-[4/5] md:aspect-[3/2]`) with category badge + top-pick chip + name/meta overlay; body: italic description + opening bubble + tags
+- `components/onboarding/DeckProgressBars.tsx` — segmented progress (one segment per card)
+- `components/onboarding/DeckActionButtons.tsx` — round × / ♥ buttons + keycap hints
+- `components/chat/OnboardingDeckBanner.tsx` — chat banner (sparkle gradient circle + count + body + View → + close); responsive mobile pill / desktop full row
+- `components/chat/ChatBannerStack.tsx` — single-mount banner-priority component for chat-header band
+- `components/shared/ExploreDevPanel.tsx` — two-axis dev panel (Auth + Demo flow)
+- `app/explore/useOnboardingFlow.ts` — overlay state machine (stages, deck index, like/skip actions, resume from URL param)
+- `app/chat/useChatCharacter.ts` — overrides default Billie with liked deck character (name/image/avatar from localStorage)
+- `app/chat/useChatOnboardingBanner.ts` — chat-page banner state hydration (remaining count + show flag + dismiss action)
+
+**Major changes:**
+- `components/ui/SelectionPillGroup.tsx` — extended with `wrap?: boolean` prop (rounded-pill chrome, multi-line wrap, single-color toggle); default behavior unchanged
+- `app/explore/page.tsx` — replaces inline auth toggler with ExploreDevPanel; mounts OnboardingOverlay; orchestrates flow start/close
+- `app/chat/page.tsx` — replaces inline Safety/Dormancy chain with `<ChatBannerStack />`; reads character from `useChatCharacter()`; banner state from `useChatOnboardingBanner()`; narrowing chain compacted to const-array `.includes()` (saves 8 lines, file at 294/300)
+
+**Style guide:**
+- New: OnboardingOverlaySection (pattern — Stage 1 + Stage 2 inline mockups, anatomy, state-persistence table)
+- New: OnboardingDeckBannerSection (chat banner — multi/singular variants, anatomy, priority callout)
+- Extended: FormsSection's SelectionPillGroup with wrap-variant preview + explainer
+- NAV.Patterns gained both new entries
+
+### Gate 8 self-catch (the only catch this session)
+
+Playwright screenshots after first build showed desktop card image filling entire popup body — description + opening + tags hidden below the fold. Mobile was fine (full-viewport takeover absorbed the height). Three coordinated fixes in same review: (a) image aspect responsive `aspect-[4/5] md:aspect-[3/2]`, (b) popup height bumped `min(720px,88vh)` → `min(800px,92vh)`, (c) card body gap-m → gap-s. Style guide preview shell synced to match (`h-[720px]` → `h-[800px]`).
+
+**Why this is a win:** caught by the AFTER pass (Playwright screenshot review) before declaring done — designer never saw the broken state. This is the Gate 8 catch-rate behavior S32 was targeting (the recurring category from S31's active gaps was Gate 6 logging discipline; S30's was Gate 8 catch-rate). Both rebuilt as same-edit reflexes this session.
+
+### Quality Gates verdict (S32 close)
+
+| Gate | Verdict |
+|---|---|
+| 1 — Tokens | ✅ No raw hex / px / arbitrary values introduced (allowed opacity modifiers + aspect-ratio one-offs only) |
+| 2 — Reuse | ✅ SelectionPillGroup extended with prop (not forked); Button used for Skip + Continue; CloseButton + .link in banner |
+| 3 — Componentize@2 | ✅ Shared OnboardingHeader between both stages; ChatBannerStack centralizes the 3-banner priority |
+| 4 — Patternize@2 | ✅ ExploreDevPanel mirrors ChatDevPanel two-axis pattern; OnboardingOverlay mirrors MemoryLimitOverlay's custom-scrim-not-CenterPopup pattern |
+| 5 — Style guide sync | ✅ Strong (every new pattern registered same-edit; FormsSection updated with wrap variant; preview shell synced to popup height retune) |
+| 6 — VDA learns | ✅ **Strong** — 8 decisions logged in real-time before each correction-resolution reply. Gate 8 self-catch row logged before declaring done. No backfill needed (vs S31's 7-entry backfill). |
+| 6.5 — Generalization + cross-check | ✅ One taste rule promoted (banner priority — intervention severity, then intent recency); designer override on banner priority captured as the trigger |
+| 7 — UX consistency | ✅ Banner chrome family matches DormancyBanner (bg-white-05 + border-white-10); dev panel two-axis matches ChatDevPanel; selected pill chrome matches existing form patterns |
+| 8 — UX review (catch-before-designer) | ✅ Caught the desktop card overflow before declaring done — one round of retune, no designer correction needed |
+
+### Active gaps for S33
+
+1. **Project-insights.md update deferred** — explore-screen surface inventory should be refreshed at next close-audit (no urgent drift; the relevant addition is just the onboarding overlay + ExploreDevPanel registry)
+2. **evolution.md update deferred** — S32 represents real growth on Gate 6 + Gate 8 discipline (both targeted gaps from S31 closed cleanly); should refresh phase status at S33
+3. **Drag-to-swipe deferred (Q3 designer answer)** — buttons + keys are enough for demo; revisit if a real product need emerges
+4. **Tags row partial clip on mobile card** — minor; user-scrollable; flagged but accepted (full visibility on desktop after the aspect-fix; mobile has natural scroll)
+5. **Carry-overs unchanged from S31:** `<UserListRow>` extraction (S28); CharacterMenuSheet / DormantMenuPopoverItems MenuPopover migration (S27)
+
+### Push state
+
+Not pushed at session end (per memory: confirm-before-push). Working tree has the full onboarding flow + supporting hooks + style guide updates + decisions.md + taste.md + this session-logs entry. Build clean (`npx next build` green).
+
+### Dev server
+
+Stopped at session end. No cache pollution this session.
 
 ---
 

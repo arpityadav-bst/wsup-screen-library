@@ -1,26 +1,28 @@
 # WSUP Quality Gates — Mandatory Checklist
 
-Run this checklist after EVERY visual change, component edit, or token change in the WSUP project. Nothing is "done" until all gates pass. Component + Style Guide + VDA = one atomic edit. Never split them.
+Run this checklist on every visual change, component edit, or token change. **DUAL-CADENCE MODEL — see `workflow.md` for full protocol:** during a session, only the lightweight gates run inline (Gates 0, 1 flag-only, 2, 7, 8 + scratchpad write); the heavyweight gates (Gate 5 style-guide sync, Gate 6 decisions.md promotion, Gate 1 token-creation migrations) run on **designer-triggered audit pass** ("audit", "consolidate", "health check", etc.). This keeps iteration fast while the codified knowledge stays correct.
+
+**Why the cadence change (S32 follow-up #3 audit lesson):** running every gate inline at every correction-resolution turn was making iteration ~3× slower than necessary. The previous "Component + Style Guide + VDA = one atomic edit" rule was right in *spirit* (no audit drift) but wrong in *timing* (the heavy gates can be batched if a lightweight scratchpad captures the WHY in the moment). The scratchpad → audit-pass model preserves Gate 6 fidelity (decision freshness) while letting iteration breathe.
 
 ---
 
 ## CHANGE-SCOPE TRIAGE (run before anything else)
 
-Not every change needs all 8 gates. Classify the change first, then run the matching gate set. This prevents ceremony bloat on small tweaks.
+Not every change needs all 8 gates. Classify the change first, then run the matching gate set. **Under the dual-cadence model, mandatory gates inline are LIGHT only; the heavy ones (Gate 5 style-guide sync, Gate 6 decisions.md promotion, Gate 1 token migrations) defer to the audit pass.**
 
-| Scope | Examples | Mandatory gates | Skip by default |
+| Scope | Examples | Mandatory inline | Scratchpad flag (handled at audit) |
 |---|---|---|---|
-| **Tweak** | Fix a padding, reword a label, swap an icon, adjust spacing, fix a bug | 1 (tokens), 7 (consistency), 8 (UX review) | 2, 3, 4, 5, 6 |
-| **Component edit** | New prop/variant, changed visual of existing component, refactor inline → reusable | add 2 (reuse), **5 (style guide) — ALWAYS if a referencing section exists, no "if visual language changed" loophole** | 3, 4 unless duplication appears |
-| **New component or new pattern** | A brand new shared component, a new responsive overlay, a new screen | **ALL 8 gates** | — |
+| **Tweak** | Fix a padding, reword a label, swap an icon, adjust spacing, fix a bug | 0 (precedent grep), 1 (flag if new value at threshold), 7 (consistency), 8 (UX review) + scratchpad row | Style-guide entry if any referencing section exists |
+| **Component edit** | New prop/variant, changed visual of existing component, refactor inline → reusable | Add 2 (reuse + sibling-inheritance §2.2) | Style-guide section update + decisions.md row + taste-rule promotion if universal language |
+| **New component or new pattern** | A brand new shared component, a new responsive overlay, a new screen | **ALL 8 gates lightweight pass** (precedent grep, primitive reuse, sibling-inheritance, UX review) | Full Gate 5 sync (new section file + ComponentsTab/PatternsTab + NAV array) + Gate 6 promotion + token migrations |
 
 **Rules for the triage itself:**
 - When in doubt, go up one level, not down — a "tweak" that turns into a pattern is worse than an over-audited tweak
-- Gate 8 (UX review) is *always* on, regardless of scope — a designer's eye never hurts
+- Gate 8 (UX review) is *always* on inline, regardless of scope — a designer's eye never hurts
 - If your change touches 2+ files, it's almost certainly not a Tweak
-- If you find yourself extracting a component mid-edit, stop — you've crossed into "New component" territory, run all 8 gates
+- If you find yourself extracting a component mid-edit, stop — you've crossed into "New component" territory; flag every gate's audit-pass needs in scratchpad
 
-**Why this exists:** Most sessions are iterations on established patterns, not pattern-establishing work. Running the full 8 gates on every one-line padding fix is bureaucracy that burns time without catching real issues.
+**Why this exists:** Most sessions are iterations on established patterns, not pattern-establishing work. Running the full 8 gates inline on every one-line padding fix is bureaucracy that burns time without catching real issues. The dual-cadence model batches the heavy gates to the deliberate audit pass; the scratchpad captures WHY in the moment so the audit doesn't backfill from memory.
 
 ---
 
@@ -42,22 +44,46 @@ Before finishing any edit, scan all class values in the changed code:
 - CSS triangle hacks (border-based arrows in Coachmark etc.)
 - Near-match micro-adjustments where forcing to nearest token would break the design: `py-[3px]`, `gap-[6px]`, `pb-[14px]`
 
-**When creating a new token (threshold: 3+ usages):**
-1. Add to `tailwind.config.ts` (spacing, colors, radius, shadow, blur — wherever it belongs)
-2. Update the corresponding style guide token section (SpacingSection, ColorsSection, etc.) — SAME EDIT
-3. Log the decision in `visual-designer/decisions.md` — SAME EDIT
+**When a raw value crosses the 3-instance threshold during a session:**
+- **Inline:** add a scratchpad line flagging the violation. Do NOT migrate inline.
+- **Audit pass:** add the new token to `tailwind.config.ts`, migrate all usages, update the corresponding style guide token section, log the decision in `decisions.md`.
 
 ---
 
-## GATE 2 — REUSE EXISTING COMPONENTS
+## GATE 2 — REUSE EXISTING COMPONENTS AND SIBLING-SURFACE ANATOMY
 
-Before building any UI element:
+Two layers: primitives (don't re-write a button) AND sibling surfaces (don't re-invent a card's anatomy when a sibling card already nails it).
+
+### 2.1 Primitive reuse — before building any UI element:
 
 - [ ] Check `src/components/ui/` for existing components
 - [ ] Check `src/components/shared/` for shared components
 - [ ] Check `src/components/profile/` and `src/components/chat/` for domain components
 - [ ] If a component exists that does 80%+ of what you need, add a prop/variant — don't create a new component
 - [ ] If you're about to write a button, modal, sheet, form input, popover, tooltip, or pill — stop and check first. These all exist.
+
+### 2.2 Sibling-surface inheritance (added S32 follow-up #3 — see "VDA would have produced what I produced" honest assessment)
+
+Before building any **new surface in a domain** (a card, banner, popup, panel, list row, message bubble, badge), grep the codebase for sibling surfaces that play similar roles and **inherit their anatomy**:
+
+- [ ] Identify the surface's *role* — what category does it belong to? (character-preview-card, status-banner, intervention-popup, message-bubble, action-card, etc.)
+- [ ] Grep for existing surfaces in the same role:
+  - Character-preview card → `CharacterCard` (explore-page anatomy: aspect-[9/16], image fills, overlay content with gradient scrim)
+  - Status banner → `DormancyBanner` / `LowCreditsBanner` (bg-white-05 + border-white-10, glass-equivalent for chat-bound)
+  - Intervention popup → `MemoryLimitOverlay` (custom scrim, character-voice copy)
+  - Message bubble → `ChatMessages.AIBubble` (bg-chat-ai-bubble, asymmetric border radii, tail at bottom-left)
+  - Action card → `BuyCreditsPromoCard`, `CreditServicePopup` chrome
+  - List row → `UserListRow` (when extracted), `RewardRow`
+  - Dev panel → `ChatDevPanel`, `ExploreDevPanel` (two-axis layout)
+- [ ] **If a sibling exists, INHERIT its visible chrome**: same surface bg, same border, same gradient scrim placement, same typography density, same case conventions (ALL CAPS vs Title Case vs sentence case), same italic-or-not.
+- [ ] Justify any DIVIATION from the sibling's anatomy in the scratchpad/decisions row.
+- [ ] **The grep is part of the change** — if you finish the surface and didn't grep its siblings first, that's a Gate 2 fail. Treat it as a watch item even if the result looks clean.
+
+**Why this exists:** the recurring failure mode in S32 was *wireframe-faithful first-pass that diverges from the established WSUP precedent.* DeckCard's first build had a 2-zone (image + body) layout because the wireframe showed that — but the explore CharacterCard's *image-fills + content-overlays* anatomy was the established pattern, and once switched to it, the design clicked. Same shape with the opening bubble (should have mirrored `ChatMessages.AIBubble` from the start). Same shape with tag-row casing (should have mirrored CharacterCard's title case).
+
+**Pre-flight diff against precedent:** when iterating on a surface that has a sibling, mentally diff: *"does the new surface match the sibling on chrome, typography, casing, and density? If not, why is the deviation worth it?"* Three reasons for deviation are valid: (a) different content density needs (S31's amended audience-density rule); (b) different role at the same scale (active-card vs preview-card); (c) explicit designer call to deviate. Other deviations = drift; revert to sibling.
+
+**Difference from Gate 0 (precedent grep on TOKENS):** Gate 0 prevents pixel-level token drift (`bg-X` for a banner). Gate 2.2 prevents *anatomy-level* drift (the whole card's layout structure). Both run before writing; Gate 0 is "which tokens", Gate 2.2 is "which composition".
 
 ---
 
@@ -76,10 +102,8 @@ After making changes, check for duplication:
 - Only used within one page's ecosystem (profile-specific overlays) → `src/components/profile/` or `src/components/chat/`
 
 **When extracting a new component:**
-1. Create the component file
-2. Replace all duplicate usages
-3. Add a showcase in the relevant style guide section — SAME EDIT
-4. Log the decision in `visual-designer/decisions.md` — SAME EDIT
+- **Inline:** create the component file, replace all duplicate usages, add a scratchpad line.
+- **Audit pass:** add a showcase in the relevant style guide section, log the full decision in `decisions.md` with reasoning + alternatives considered.
 
 ---
 
@@ -102,33 +126,35 @@ Check for repeated component combinations:
 - A component with its standard props (that's just usage)
 
 **When creating a new pattern:**
-1. Create or update pattern section in style guide
-2. Add to PatternsTab if new section
-3. Add nav entry in `page.tsx` NAV.Patterns array
-4. Log the decision in `visual-designer/decisions.md` — SAME EDIT
+- **Inline:** add a scratchpad line capturing the pattern + which surfaces share it.
+- **Audit pass:** create or update the pattern section in style guide, add to PatternsTab if new, add nav entry in `page.tsx` NAV.Patterns array, log the decision in `decisions.md` with full reasoning.
 
 ---
 
-## GATE 5 — STYLE GUIDE SYNC
+## GATE 5 — STYLE GUIDE SYNC (DEFERRED TO AUDIT PASS)
 
-For every visual change, verify style guide is updated IN THE SAME EDIT.
+**Cadence:** runs on designer-triggered audit pass, NOT inline per-edit. During a session, note style-guide-relevant changes in `scratchpad.md`; the audit pass sweeps them.
 
-### Mechanical pre-edit check (no interpretation, no triage subjectivity)
+For every visual change captured in the scratchpad since the last audit, verify style guide is updated:
 
-**Before editing ANY component file, run this check:**
-1. Grep `style-guide/sections/**` for the component name. If a section exists that imports it OR demonstrates its visual anatomy → that section is part of THIS edit's scope.
-2. Grep `style-guide/sections/**` for inline mockups of the component (sections that re-implement the component's structure inline rather than importing it — common for `ChatBarSection`, `ChatHeaderSection`, `ChatMessagesSection`). If any inline mockup matches the visual you're changing → that section is part of THIS edit's scope too.
-3. After making changes to the component, re-grep to verify each section that referenced the OLD visual now matches the NEW visual. Anatomy notes, inline previews, when-to-use examples — all of it.
+### Mechanical pre-edit check (run inline as a SCRATCHPAD FLAG, sync at audit)
 
-**This converts Gate 5 from a "did the language change?" judgment call into a file-presence rule.** Either a referencing section exists or it doesn't. If it does, you edit both files in the same edit. No exceptions for "small changes" or "I'm just removing an element."
+**Before editing ANY component file, run this check and flag the result in scratchpad:**
+1. Grep `style-guide/sections/**` for the component name. If a section exists that imports it OR demonstrates its visual anatomy → that section is part of the AUDIT-PASS scope; note in scratchpad.
+2. Grep `style-guide/sections/**` for inline mockups of the component (sections that re-implement the component's structure inline rather than importing it — common for `ChatBarSection`, `ChatHeaderSection`, `ChatMessagesSection`). If any inline mockup matches the visual you're changing → audit-pass scope; note in scratchpad.
+
+**This converts Gate 5 from a "did the language change?" judgment call into a file-presence rule.** Either a referencing section exists or it doesn't. If it does, the audit pass syncs both. The pre-edit check still runs inline because the grep is cheap; the SYNC is the deferred part.
 
 ### For new primitives in `ui/`
-A new primitive isn't done until ALL THREE happen in the same edit:
+
+A new primitive's audit-pass exit criteria — ALL THREE must happen by the next audit:
 1. A standalone section file is created (e.g., `style-guide/sections/components/{Name}Section.tsx`)
 2. That section is imported and rendered in `ComponentsTab.tsx`
 3. The section's title is added to the `NAV.Components` array in `style-guide/page.tsx`
 
 "Mentioned in another section's anatomy notes" does NOT satisfy Gate 5 for a new primitive. The reader of the style guide must be able to find it as its own entry.
+
+**Inline:** scratchpad row noting the new primitive + its anticipated section name.
 
 ### Component changes:
 
@@ -149,17 +175,23 @@ A new primitive isn't done until ALL THREE happen in the same edit:
 
 ---
 
-## GATE 6 — VDA LEARNS
+## GATE 6 — VDA LEARNS (SPLIT: INLINE SCRATCHPAD + AUDIT-PASS PROMOTION)
 
-> **HARD FAIL TRIGGER:** if the designer ever asks "is VDA learning?", "did you log this?", or runs the health check unprompted mid-session — Gate 6 has *already* failed for this session, regardless of how complete the audit looks afterward. The asking IS the failure. Self-monitor against this signal: if you can imagine the designer being moved to ask the meta-question, log NOW before they have to.
+> **HARD FAIL TRIGGER (updated S32 follow-up #3 audit):** if the designer ever asks "is VDA learning?", "did you log this?", "is the scratchpad written?", or runs the health check unprompted mid-session — Gate 6 has *already* failed for this session, regardless of how complete the audit looks afterward. The asking IS the failure. **The trigger now points at the SCRATCHPAD during a session and at decisions.md post-audit.** Both must be current. Self-monitor: if you can imagine the designer being moved to ask the meta-question, log NOW before they have to.
 
-Update VDA knowledge files for every visual change.
+Gate 6 is now a two-stage gate:
+
+**6a — INLINE (during session, every correction-resolution):** write one scratchpad line in `visual-designer/scratchpad.md`. Format: `YYYY-MM-DD HH:mm — <file/component> — <what changed> — Why: <one phrase>`. Fast (5–10 sec). Captures freshness of WHY.
+
+**6b — AUDIT PASS (designer-triggered):** read scratchpad → write proper decisions.md rows with full reasoning. Promote universal-language rules to taste.md / knowledge-base.md / reasonings.md. Run the Gate 6.5 generalization + cross-rule check on each row. Wipe scratchpad after promotion.
+
+The original codified per-edit rule ("write decisions.md row BEFORE sending the reply that resolves a correction") evolves: now it's *"write SCRATCHPAD row BEFORE sending the reply."* Same discipline, lighter weight. The audit pass owns the heavy lift.
 
 ### The trigger is the correction loop closing, NOT the edit completing
 
-Every time the designer says *"no"*, *"actually"*, *"let's change"*, *"we don't need"*, *"why did you..."*, or asks a clarifying question that produces a new decision — that's a correction loop. **Before sending the reply that resolves it, write the decision + reasoning in `decisions.md`. Same turn. Not "after a few more edits."** If you respond to a correction and there's no new entry, you batched.
+Every time the designer says *"no"*, *"actually"*, *"let's change"*, *"we don't need"*, *"why did you..."*, or asks a clarifying question that produces a new decision — that's a correction loop. **Before sending the reply that resolves it, write a SCRATCHPAD line capturing the change + the why-in-one-phrase. Same turn. Not "after a few more edits."** If you respond to a correction and there's no new scratchpad row, you batched.
 
-Real-time means: log → reply. In that order. If the reply ships first, you're already late.
+Real-time means: scratchpad → reply. In that order. If the reply ships first, you're already late. The full decisions.md row is promoted at the audit pass — but the scratchpad freshness still has to be live during the session.
 
 ### Routing table — kills the "where does this go?" cognitive cost
 
@@ -173,15 +205,21 @@ Real-time means: log → reply. In that order. If the reply ships first, you're 
 | Process/cadence/operating rule | `workflow.md` | *"the way VDA operates"* |
 | Phase transition or gap status | `evolution.md` | *"VDA matured to" / "active gap"* |
 
-### Per-edit (same edit as the change)
-- [ ] Add a row to `decisions.md` — what was decided + why
-- [ ] Run the **Generalization Probe** (Gate 6.5 below) before considering Gate 6 complete
+### Per-correction (inline, while iterating)
+- [ ] Add a scratchpad line: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
+- [ ] No decisions.md write inline — that's the audit pass's job
 
-### Per-session (at session end)
+### Per-audit (designer-triggered)
+- [ ] Promote every scratchpad entry to a proper `decisions.md` row with full reasoning + alternatives considered
+- [ ] Run the **Generalization Probe** (Gate 6.5 below) on each promoted row
+- [ ] Run the **Rule-conflict cross-check** on each promoted row
+- [ ] Wipe the scratchpad after promotion (append-only during session → empty after audit)
+
+### Per-session (at session end OR final audit of the session)
 - [ ] Append session entry to `session-logs.md` — what was built, changed, learned, **+ structured field `designer_caught_count: N`** (count of UX issues the designer pointed out that you should have caught)
 - [ ] If a new design rule or pattern emerged → add to `knowledge-base.md`
 
-Note: `decisions.md` is per-correction-loop (atomic with the resolution). `session-logs.md` is per-session (summary at the end). Don't conflate them.
+Note: scratchpad is per-correction-loop (atomic with the resolution). `decisions.md` is the audit-pass artifact. `session-logs.md` is per-session (summary at the end). Don't conflate them.
 
 ---
 
@@ -350,13 +388,14 @@ Note: These greps catch classNames but NOT inline styles. For inline styles, man
 ## WHEN TO RUN
 
 - **BEFORE every WSUP task:** Read this file first. Prime your brain with the gates before writing any code.
-- **AFTER every WSUP change:** Run all 8 gates. Gate 8 (UX Review) is the final check — look at what you built as a designer, not a developer.
+- **DURING every correction-resolution:** run the INLINE light gates (0, 1 flag-only, 2, 7, 8) + write a scratchpad row. Defer the heavy gates (1 migrations, 3, 4, 5, 6) to the audit pass.
+- **AT designer-triggered audit:** run the heavy gates against the scratchpad. Promote, sync, migrate, verify.
 - **This applies to both Claude and VDA.** No exceptions, no shortcuts.
 
-## REMEMBER
+## REMEMBER (dual-cadence model — supersedes the pre-S32 "SAME EDIT" rule)
 
-- **"Same edit"** means the component file, style guide section, and VDA decision are updated together. Not "same session" — SAME EDIT.
-- A visual change is NOT complete until all 3 are updated.
-- If you say "done" before all gates pass, you are wrong.
-- VDA follows these same gates when building screens autonomously.
-- **The designer should never have to catch UX issues.** Spacing, readability, mobile behavior, empty state logic — you catch these yourself at Gate 8. If the designer points it out, you failed the gate.
+- **Inline contract:** correction-resolution → scratchpad row → reply. In that order. If reply ships without scratchpad, you batched and the audit pass will backfill from memory (failure mode).
+- **Audit contract:** designer triggers audit (any semantic phrase — see workflow.md) → scratchpad promotes to decisions.md / taste.md / knowledge-base.md / style-guide-sections / token-migrations → scratchpad wipes → build verifies.
+- **What "done" means now:** during a session, a change is "done" when the code edit lands AND the scratchpad row is written AND the inline light gates passed. The style-guide sync / decisions.md row land at the audit, not at the edit.
+- VDA follows the same dual-cadence when building screens autonomously.
+- **The designer should never have to catch UX issues.** Spacing, readability, mobile behavior, empty state logic — you catch these yourself at Gate 8 inline. If the designer points it out, you failed Gate 8 (which is always inline, no audit deferral for Gate 8).

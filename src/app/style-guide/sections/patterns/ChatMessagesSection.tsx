@@ -19,7 +19,7 @@ export default function ChatMessagesSection({ onSectionVisible }: { onSectionVis
             </div>
             {/* AI bubble */}
             <div className="flex items-start gap-xxs">
-              <div className="flex flex-col max-w-[290px] min-w-[64px]">
+              <div className="flex flex-col max-w-chat-bubble min-w-[64px]">
                 <div className="bg-chat-ai-bubble px-s pt-xs pb-[14px] rounded-tl-2xl rounded-tr-2xl rounded-br-2xl">
                   <p className="text-sm italic text-white-50 leading-snug mb-s">She blinks, smiles and says,</p>
                   <p className="text-sm text-white leading-normal">I am Sarah! You can call me Sara.</p>
@@ -76,7 +76,7 @@ export default function ChatMessagesSection({ onSectionVisible }: { onSectionVis
             ['bg-chat-user-bubble / rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl', 'User bubble — bottom-right corner open'],
             ['bg-chat-ai-bubble / rounded-tl-2xl rounded-tr-2xl rounded-br-2xl', 'AI bubble — bottom-left corner open'],
             ['text-sm italic text-white-50 leading-snug', 'Emotion/action text (both user and AI)'],
-            ['max-w-[290px] min-w-[64px] flex flex-col (bubble+actions wrapper)', 'Left column — constrains to bubble width'],
+            ['max-w-chat-bubble min-w-[64px] flex flex-col (bubble+actions wrapper)', 'Left column — constrains to bubble width (token = 290px)'],
             ['flex items-start gap-xxs (outer AI row)', 'Bubble left column + regenerate right column, top-aligned'],
             ['self-stretch flex flex-col items-center justify-center (regenerate)', 'Regenerate stretches full bubble height, icon vertically centered'],
             ['flex-1 spacer in action row', 'Splits left group (audio/like/dislike) from right group (generate/dots)'],
