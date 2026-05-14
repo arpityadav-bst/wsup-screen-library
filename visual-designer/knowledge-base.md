@@ -1,9 +1,71 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-05-13 (S32 follow-up #3 audit — swipe-surface conventions catalog added; dual-cadence model)
+Last updated: 2026-05-14 (S33 end-of-day — small-typography-utility extraction rule + entry-point-divergence rule for consolidation refactors)
 
 Patterns, rules, and technical knowledge learned from working with the designer. Updated every session.
 
 ---
+
+## Small single-element typography conventions extract as CSS utility classes, not React components
+
+When a small typography convention (uppercase eyebrow, sticker label, caption style, inline chip-text) gets reused across surfaces, the WSUP pattern is to extract as a CSS utility class via `@apply` in `globals.css` — NOT as a React component. The existing utility family (`.label-xs`, `.link`, `.glass`, `.eyebrow-label`, `.char-overlay`, `.placeholder-icon`) is the precedent. Single-element styling (one `<span>` or `<a>` with specific class composition) belongs in CSS. React component extraction is reserved for MULTI-element chrome — wrappers with children, conditional layout, prop-driven variants (CharacterTagChip, VariantSwitcherPills, MenuPopover).
+
+### Why CSS utility, not component
+- **Inline use:** typography labels almost always sit INSIDE another component's JSX. Wrapping in `<EyebrowLabel>` adds visual import noise + a className passthrough story for no real benefit.
+- **Composability:** the consumer can extend the utility with additional classes (`className="eyebrow-label mt-xs"`) without prop drilling.
+- **Convention familiarity:** the WSUP utility family is established. New devs find utilities by grep through globals.css; new components would need their own discovery path.
+- **No state needed:** these utilities are stateless visual treatments. No useState, no useEffect, no children logic — React component is overkill.
+
+### Pre-flight check before building any small chrome primitive
+Ask: *does this convention have STATE, CHILDREN, or PROP-DRIVEN VARIANTS?*
+- No → CSS utility via `@apply` in globals.css. Register in `style-guide/sections/tokens/UtilitiesSection.tsx` alongside `.label-xs` / `.link` / `.glass`.
+- Yes → React component primitive. Register in `style-guide/sections/components/` with its own section.
+
+### Codified utility family (as of S33)
+- `.label-xs` — 10px medium text-small tracked 0.8px uppercase. Form-field section headers.
+- `.eyebrow-label` — 10px medium text-dim tracked 0.4px uppercase. System-voice CATEGORY signals above titles.
+- `.link` — text-secondary underline with subtle decoration. Inline text links.
+- `.glass` — white-10 bg + backdrop-blur-bg. Glass-style surfaces.
+- `.char-overlay` — black/85→transparent gradient. Character-image content overlays.
+- `.placeholder-icon` — white 10% fill + stroke. Empty-state icon placeholders.
+
+When a new single-element typography convention emerges with 2+ consumers, add to this family.
+
+---
+
+## Entry-point divergence on consolidation refactors — audit each entry point individually
+
+When consolidating two surfaces with different commit semantics into ONE (e.g., ModelPickerSheet's auto-commit-on-tap + selectedId pre-fill merged with ChatStyleSheet's draft-then-Continue + no pre-fill), **each previous entry point had its OWN implicit state preferences that the consolidated surface must serve.** The consolidated component can't just inherit one of the two surfaces' init mode — it needs all the init modes the entry points expect.
+
+### S33 example: ChatStyleSheet selectedId
+Pre-consolidation:
+- ModelPickerSheet (in-chat pill click): opened with selectedId pre-filled → user saw their current model highlighted
+- ChatStyleSheet (chat-start): opened with draft=null → user picked deliberately
+
+Post-consolidation (initial):
+- ChatStyleSheet at all 3 entry points: opened with draft=null
+- Mid-chat pill click forced user to re-select their currently-active model just to confirm it
+- Caught by audit pass, not by design review (design review didn't test the pill-click path post-consolidation)
+
+Fix:
+- Added optional `selectedId` prop to ChatStyleSheet
+- Mid-chat trigger passes `selectedId={selectedModelId}` → pre-fill + CTA enabled immediately
+- New-chat trigger omits the prop → fresh start preserved
+- Auto-jumps to `step='other'` if selectedId is in other tier (so the row is visible)
+
+### Pre-flight check before consolidating two surfaces
+For each previous entry point, ask:
+1. What was the init state when that entry point fired? (fresh / pre-filled / mid-step)
+2. What was the commit semantic? (auto / draft+confirm / preview-only)
+3. What were the implicit user expectations? (recognize current state / start fresh / quick switch)
+
+If any entry point's expectations differ, the consolidated surface needs a prop to switch modes — not a hardcoded one-mode-fits-all default. Default should be the LEAST surprising mode (usually fresh-start); the entry points that need other modes pass the prop.
+
+### Same-edit rule
+When consolidating, update ALL entry points + the consolidated surface in the same edit. Walk through each entry point's trigger code; verify the surface call passes the right props for that entry point's expected init mode.
+
+---
+
+
 
 ## Swipe-surface conventions catalog (added S32 follow-up #3 audit)
 

@@ -12,7 +12,12 @@ export default function UtilitiesSection({ onSectionVisible }: { onSectionVisibl
           <div className="flex items-center gap-4 bg-white-05 border border-white-10 rounded-card px-5 py-4">
             <span className="label-xs">Section Header Label</span>
             <Tag>label-xs</Tag>
-            <span className="text-text-xsmall text-xs">10px · medium · text-small · tracked · uppercase</span>
+            <span className="text-text-xsmall text-xs">10px · medium · text-small (60%) · tracked 0.8px · uppercase — for form-field section headers</span>
+          </div>
+          <div className="flex items-center gap-4 bg-white-05 border border-white-10 rounded-card px-5 py-4">
+            <span className="eyebrow-label">Chat model update</span>
+            <Tag>.eyebrow-label</Tag>
+            <span className="text-text-xsmall text-xs">10px · medium · text-dim (40%) · tracked 0.4px · uppercase — for system-voice CATEGORY signals above titles (intervention popups, in-chat system bubbles). Sibling to <code className="text-accent-light">.label-xs</code>: dimmer + tighter tracking = eyebrow not form-label. Consumers: WatchAdBubble, ModelDeprecatedSheet.</span>
           </div>
           <div className="flex items-center gap-4 bg-white-05 border border-white-10 rounded-card px-5 py-4">
             <a href="#" className="link" onClick={(e) => e.preventDefault()}>Inline text link</a>

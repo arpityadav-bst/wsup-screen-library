@@ -23,7 +23,7 @@ const SPACING_SCALE: [string, string][] = [
 // Max-width tokens — cap container widths in a tokenized way. Each represents a discrete container "size class"
 // (popup-narrow = compact intervention popup; popup-medium = content card / wider popup; chat-bubble = AI message bubble).
 const MAX_WIDTH_TOKENS: [string, string, string][] = [
-  ['popup-narrow', '420px', 'ModelPickerSheet, ChatStyleSheet, SafetyBanner desktop card, MemoryLimitPopup, EmptyState read-line'],
+  ['popup-narrow', '420px', 'ChatStyleSheet, SafetyBanner desktop card, MemoryLimitPopup, EmptyState read-line'],
   ['popup-medium', '480px', 'Onboarding overlay desktop popup, edit-character form, lifecycle/profile-card showcases'],
   ['chat-bubble',  '290px', 'ChatMessages.AIBubble + DeckCard opening bubble — AI speech bubble max-width'],
 ]

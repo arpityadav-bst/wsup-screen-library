@@ -14,6 +14,10 @@ interface ChatStyleSheetProps {
   open: boolean
   onClose: () => void
   onCommit: (id: ModelId) => void
+  // When provided, the picker opens with this model pre-selected (Continue CTA enabled). Used
+  // when the picker is triggered mid-chat via the ChatBar LLM pill — user shouldn't have to
+  // re-select their current model. New-chat trigger leaves this undefined → fresh draft = null.
+  selectedId?: ModelId
 }
 
 function PickerHeader({ onClose, onBack }: { onClose: () => void; onBack?: () => void }) {
@@ -135,17 +139,21 @@ function PickerBody({ step, draft, onPick, onShowOther, onBack, onContinue, onCl
   )
 }
 
-export default function ChatStyleSheet({ open, onClose, onCommit }: ChatStyleSheetProps) {
+export default function ChatStyleSheet({ open, onClose, onCommit, selectedId }: ChatStyleSheetProps) {
   const [step, setStep] = useState<Step>('primary')
   const [draft, setDraft] = useState<ModelId | null>(null)
 
-  // Reset to a fresh new-chat picker on every open (no pre-selection — user must tap to enable CTA).
+  // On every open, initialize the draft from `selectedId` (mid-chat pill click — pre-selects the
+  // current model so user doesn't re-pick) or null (new-chat or ModelDeprecatedSheet path — fresh
+  // draft, CTA disabled until selection). Step always resets to 'primary' on open. If the
+  // pre-selected model lives in the 'other' tier, also jump to that step so the model is visible.
   useEffect(() => {
     if (open) {
-      setDraft(null)
-      setStep('primary')
+      setDraft(selectedId ?? null)
+      const startInOther = !!selectedId && MODELS.find((m) => m.id === selectedId)?.tier === 'other'
+      setStep(startInOther ? 'other' : 'primary')
     }
-  }, [open])
+  }, [open, selectedId])
 
   // Continue button: appOnly model → swap to QR app-handoff step (don't commit, don't close).
   // Web-tier model → commit and close.

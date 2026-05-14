@@ -14,7 +14,6 @@ import DormancyBanner from '@/components/chat/DormancyBanner'
 import SafetyBanner from '@/components/chat/SafetyBanner'
 import MemoryLimitOverlay from '@/components/chat/MemoryLimitOverlay'
 import SuggestedReplies from '@/components/chat/SuggestedReplies'
-import ModelPickerSheet from '@/components/chat/ModelPickerSheet'
 import ChatSendGates from '@/components/chat/ChatSendGates'
 import BuyCreditsSheet from '@/components/ui/BuyCreditsSheet'
 import ChatDevPanel from '@/components/chat/ChatDevPanel'
@@ -52,7 +51,6 @@ export default function ChatPage() {
   const [toast, setToast] = useState<string | null>(null)
   const [safetyBanner, setSafetyBanner] = useState<SafetyVariant | null>(null)
   const [selectedModelId, setSelectedModelId] = useState<ModelId>(DEFAULT_MODEL_ID)
-  const [modelPickerOpen, setModelPickerOpen] = useState(false)
   const [buyCreditsOpen, setBuyCreditsOpen] = useState(false)
   const [flowMode, setFlowMode] = useState<FlowMode>('new-user')
   const adGate = useWatchAdGate({ setChatState, gateActive: flowMode === 'ad-bubble' || flowMode === 'ad-sheet' })
@@ -140,7 +138,7 @@ export default function ChatPage() {
   // Flow toggle resets the journey so designer can re-walk a flow without reload. Ad flows reset like new-user/returning — designer must type+send to trigger the gate.
   const handleFlowChange = (newFlow: FlowMode) => {
     if (newFlow === flowMode) return
-    setFlowMode(newFlow); sendGate.reset(); adGate.reset(); setModelPickerOpen(false); setBuyCreditsOpen(false); setChatState('active')
+    setFlowMode(newFlow); sendGate.reset(); adGate.reset(); setBuyCreditsOpen(false); setChatState('active')
   }
 
   const handleToggleSuggestions = () => {
@@ -210,7 +208,7 @@ export default function ChatPage() {
               characterState={headerCharacterState}
               suggestionsEnabled={suggestionsEnabled}
               onToggleSuggestions={handleToggleSuggestions}
-              onSwitchLLMs={() => setModelPickerOpen(true)}
+              onSwitchLLMs={() => setChatState('chat-style-popup')}
             />
             {/* Safety wins over Dormancy. Safety renders mobile = full-bleed top overlay (covers header), desktop = centered floating card per PM directive — single mount avoids gradient-ID collisions across viewports. */}
             {activeSafetyVariant && (
@@ -246,9 +244,9 @@ export default function ChatPage() {
                   onChange={handleDraftChange}
                   onSend={handleSend}
                   onOpenSuggestions={handleOpenSuggestions}
-                  onOpenModels={() => setModelPickerOpen(true)}
+                  onOpenModels={() => setChatState('chat-style-popup')}
                   selectedModelName={getModel(selectedModelId).name}
-                  forceExpanded={modelPickerOpen}
+                  forceExpanded={chatState === 'chat-style-popup'}
                   containerRef={inputAreaRef}
                 />
               </div>
@@ -270,25 +268,14 @@ export default function ChatPage() {
 
       <Toast open={!!toast} message={toast ?? ''} onClose={() => setToast(null)} />
 
-      <ModelPickerSheet
-        open={modelPickerOpen}
-        onClose={() => setModelPickerOpen(false)}
-        selectedId={selectedModelId}
-        onSelect={(id) => {
-          if (id !== selectedModelId) setToast(`Switched to ${getModel(id).name}`)
-          setSelectedModelId(id)
-        }}
-        creditsBalance={498}
-      />
-
       <ChatSendGates {...sendGate.gateState} onSignIn={sendGate.handleSignIn} />
 
       <ChatStateOverlays
         chatState={chatState}
         setChatState={setChatState}
+        selectedModelId={selectedModelId}
         setSelectedModelId={setSelectedModelId}
         setToast={setToast}
-        setModelPickerOpen={setModelPickerOpen}
         setBuyCreditsOpen={setBuyCreditsOpen}
       />
 

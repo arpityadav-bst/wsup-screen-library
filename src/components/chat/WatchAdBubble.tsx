@@ -25,9 +25,7 @@ export default function WatchAdBubble({ open, onWatchAd }: WatchAdBubbleProps) {
     <div className="md:hidden px-m pt-s pb-s" style={{ animation: 'fade-in 0.25s ease-out' }}>
       <div className="max-w-[300px]">
         <div className="bg-chat-ai-bubble px-m py-s rounded-tl-2xl rounded-tr-2xl rounded-br-2xl flex flex-col gap-xs">
-          <span className="text-xxs uppercase tracking-[0.4px] text-text-dim font-medium">
-            Quick ad break
-          </span>
+          <span className="eyebrow-label">Quick ad break</span>
           <p className="text-sm text-text-title leading-snug">
             Watch a short ad to keep chatting — your message will send right after.
           </p>

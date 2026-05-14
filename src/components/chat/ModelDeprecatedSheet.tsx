@@ -8,7 +8,7 @@ import { getModel, type ModelId } from '@/lib/models'
 interface ModelDeprecatedSheetProps {
   open: boolean
   onClose: () => void
-  // Closes this sheet AND opens the ModelPickerSheet so the user can pick a different model.
+  // Closes this sheet AND opens ChatStyleSheet so the user can pick a different model.
   onPickModel: () => void
   // Defaults wire the demo for the Llama 3 → Qwen migration; props expose the API for future
   // free-model deprecations (e.g. Mistral Nemo) without forking the component.
@@ -46,7 +46,7 @@ function AnnouncementIcon() {
 // secondary link if the user wants to compare or switch.
 //
 // Real-world context: the deprecated model is being RETIRED (removed from catalog), not just
-// repriced. Llama 3 won't be selectable anymore; Qwen Plus Character becomes the default and
+// repriced. Llama 3 won't be selectable anymore; Qwen Plus becomes the default and
 // the most basic option going forward. Body copy reflects this precisely — "has retired"
 // communicates the catalog removal, not a tier change.
 //
@@ -73,6 +73,7 @@ export default function ModelDeprecatedSheet({
         <AnnouncementIcon />
 
         <div className="flex flex-col items-center gap-xs">
+          <span className="eyebrow-label">Chat model update</span>
           <h2 className="text-xl font-semibold text-text-title text-center text-balance">
             Keep chatting with credits
           </h2>

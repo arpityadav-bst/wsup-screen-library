@@ -9,7 +9,7 @@ interface MemoryLimitOverlayProps {
 
 // Full-viewport overlay — backdrop covers Header + Sidebar + chat area, popup centers on screen
 // (S31 — was previously chat-column-anchored at bottom-[88px]; designer asked to match the
-// convention used by ModelPickerSheet / ChatStyleSheet / StreakClaimPopup). MemoryLimitPopup
+// convention used by ChatStyleSheet / StreakClaimPopup). MemoryLimitPopup
 // keeps its own popup chrome + DP overhang, so we DON'T wrap it in CenterPopup — that would
 // clip the 48px DP overhang via CenterPopup's overflow-hidden.
 export default function MemoryLimitOverlay({ open, characterName, characterImage, onDismiss }: MemoryLimitOverlayProps) {

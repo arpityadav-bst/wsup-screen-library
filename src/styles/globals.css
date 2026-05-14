@@ -64,6 +64,14 @@
     @apply font-medium text-text-small tracking-[0.8px] uppercase;
   }
 
+  /* Eyebrow label — 10px / medium / white-40 / lightly tracked uppercase. Sits above a title
+     in an intervention popup or system message to set CATEGORY context ("CHAT MODEL UPDATE",
+     "QUICK AD BREAK"). Distinct from .label-xs: dimmer (40% vs 60%) + tighter tracking (0.4px
+     vs 0.8px) so it reads as system-voice eyebrow, NOT a form-field label. */
+  .eyebrow-label {
+    @apply text-xxs uppercase tracking-[0.4px] text-text-dim font-medium;
+  }
+
   /* Inline text link — secondary blue, always underlined, subtle decoration */
   .link {
     @apply text-secondary underline underline-offset-2 decoration-white-20 hover:decoration-white-40 transition-colors;

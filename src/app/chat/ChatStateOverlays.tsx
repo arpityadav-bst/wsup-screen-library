@@ -10,9 +10,9 @@ import type { ChatDemoState } from './chat-config'
 interface ChatStateOverlaysProps {
   chatState: ChatDemoState
   setChatState: (state: ChatDemoState) => void
+  selectedModelId: ModelId
   setSelectedModelId: (id: ModelId) => void
   setToast: (text: string | null) => void
-  setModelPickerOpen: (open: boolean) => void
   setBuyCreditsOpen: (open: boolean) => void
 }
 
@@ -26,9 +26,9 @@ interface ChatStateOverlaysProps {
 export default function ChatStateOverlays({
   chatState,
   setChatState,
+  selectedModelId,
   setSelectedModelId,
   setToast,
-  setModelPickerOpen,
   setBuyCreditsOpen,
 }: ChatStateOverlaysProps) {
   return (
@@ -40,6 +40,7 @@ export default function ChatStateOverlays({
           setSelectedModelId(id)
           setToast(`Switched to ${getModel(id).name}`)
         }}
+        selectedId={selectedModelId}
       />
 
       <StreakClaimPopup
@@ -60,7 +61,7 @@ export default function ChatStateOverlays({
       <ModelDeprecatedSheet
         open={chatState === 'model-deprecated-popup'}
         onClose={() => setChatState('active')}
-        onPickModel={() => { setChatState('active'); setModelPickerOpen(true) }}
+        onPickModel={() => setChatState('chat-style-popup')}
       />
     </>
   )

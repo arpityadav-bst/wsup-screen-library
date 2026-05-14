@@ -9,12 +9,12 @@ type ChatBarProps = {
   onOpenSuggestions?: () => void
   onOpenModels?: () => void
   selectedModelName?: string
-  // When true, ChatBar stays expanded and ignores click-outside (used while ModelPickerSheet is open).
+  // When true, ChatBar stays expanded and ignores click-outside (used while ChatStyleSheet is open).
   forceExpanded?: boolean
   containerRef?: React.RefObject<HTMLElement | null>
 }
 
-export default function ChatBar({ value: valueProp, onChange, onSend, onOpenSuggestions, onOpenModels, selectedModelName = 'Qwen Plus Character', forceExpanded = false, containerRef }: ChatBarProps = {}) {
+export default function ChatBar({ value: valueProp, onChange, onSend, onOpenSuggestions, onOpenModels, selectedModelName = 'Qwen Plus', forceExpanded = false, containerRef }: ChatBarProps = {}) {
   const [isActive, setIsActive] = useState(false)
   const [internal, setInternal] = useState('')
   const wrapperRef = useRef<HTMLDivElement>(null)

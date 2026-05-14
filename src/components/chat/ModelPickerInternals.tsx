@@ -1,5 +1,5 @@
-// Shared visual primitives for model-picker rows — consumed by both ModelPickerSheet (in-chat
-// switch) and ChatStyleSheet (start-of-chat picker). Same row anatomy across both surfaces.
+// Shared visual primitives for model-picker rows — consumed by ChatStyleSheet (the unified
+// model picker, triggered from both chat-start and the ChatBar LLM pill click).
 
 import CoinIcon from '@/components/ui/CoinIcon'
 import { formatCost, type Model } from '@/lib/models'
@@ -66,9 +66,9 @@ export function GradientChip({ children }: { children: React.ReactNode }) {
 }
 
 // Shared row anatomy: title + signal/personality/cost chips + description + optional CheckBadge.
-// Caller decides commit semantics — ModelPickerSheet auto-commits on tap; ChatStyleSheet drafts.
-// `showSignal` / `showPersonality` default to true; ChatStyleSheet passes false to hide them
-// (start-of-chat picker shows only cost — latency + personality are over-detail at choice-time).
+// Used by ChatStyleSheet's multi-step picker (drafts selection, commits on Continue). `showSignal`
+// / `showPersonality` default to true; ChatStyleSheet passes false to hide them on its lighter
+// step — latency + personality are over-detail at choice-time for general users.
 export function ModelRow({
   model,
   selected,

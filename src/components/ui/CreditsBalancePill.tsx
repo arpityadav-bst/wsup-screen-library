@@ -6,7 +6,7 @@ interface CreditsBalancePillProps {
 }
 
 // Compact "label + coin + value" chip used wherever a credits balance is displayed
-// inside a popup/sheet header (StreakClaimPopup, ModelPickerSheet, …).
+// inside a popup/sheet header (StreakClaimPopup, …).
 // Distinct from CreditsSummaryPill (which pairs credits + price for purchase flows).
 export default function CreditsBalancePill({ label, value }: CreditsBalancePillProps) {
   return (

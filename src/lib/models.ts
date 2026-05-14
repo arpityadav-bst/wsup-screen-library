@@ -1,4 +1,4 @@
-// Chat LLM model catalog — drives ModelPickerSheet + ChatStyleSheet + the model pill in ChatBar.
+// Chat LLM model catalog — drives ChatStyleSheet (the unified picker) + the model pill in ChatBar.
 
 export type ModelId =
   | 'llama-3'
@@ -28,7 +28,7 @@ export interface Model {
 
 export const MODELS: Model[] = [
   { id: 'llama-3',             name: 'Llama 3',             personality: 'Classic',     cost: null, complexity: 1, tier: 'primary', appOnly: true, description: 'Fast, unlimited casual conversations.' },
-  { id: 'qwen-plus-character', name: 'Qwen Plus Character', personality: 'Strategist',  cost: 1,    complexity: 2, tier: 'primary', description: 'Advanced reasoning for smart villains and mysteries.' },
+  { id: 'qwen-plus-character', name: 'Qwen Plus', personality: 'Strategist',  cost: 1,    complexity: 2, tier: 'primary', description: 'Advanced reasoning for smart villains and mysteries.' },
   { id: 'deepseek-v3',         name: 'DeepSeek V3',         personality: 'Storyteller', cost: 2,    complexity: 3, tier: 'primary', description: 'The gold standard for immersive, soulful storytelling.' },
   { id: 'claude-opus-4-6',     name: 'Claude Opus 4.6',     personality: 'Visionary',   cost: 20,   complexity: 4, tier: 'primary', description: 'Unmatched for subtext and human-like emotional depth.' },
   { id: 'mistral-nemo',        name: 'Mistral Nemo',        personality: 'Weaver',      cost: null, complexity: 2, tier: 'other',   appOnly: true, description: 'Uninhibited creativity for dark fantasy and chaos.' },

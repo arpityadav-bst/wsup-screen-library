@@ -14,7 +14,7 @@ export default function CreditsBalancePillSection({ onSectionVisible }: { onSect
         </PreviewBox>
 
         <div className="mt-l">
-          <SubLabel>&quot;Credits&quot; label variant (ModelPickerSheet usage)</SubLabel>
+          <SubLabel>&quot;Credits&quot; label variant</SubLabel>
         </div>
         <PreviewBox>
           <CreditsBalancePill label="Credits" value={498} />
@@ -38,8 +38,8 @@ export default function CreditsBalancePillSection({ onSectionVisible }: { onSect
             ['Label: text-xs text-text-small', '12px font, dimmed text color — subordinate to the value'],
             ['Coin: <CoinIcon size={12} />', 'Reuses CoinIcon primitive. Small (12px) so the pill stays tight'],
             ['Value: text-xs text-text-title tabular-nums', '12px, full text-title color (100% white). tabular-nums prevents value-width jitter as the number changes'],
-            ['Distinct from CreditsSummaryPill', 'CreditsSummaryPill pairs credits + price for purchase-flow surfaces (BuyCreditsSheet PaymentStep). CreditsBalancePill is display-only "X credits" for header pills (StreakClaimPopup, ModelPickerSheet header). Two primitives because two roles'],
-            ['Codified S30: extracted from StreakClaimPopup\'s private BalancePill function once a second consumer (ModelPickerSheet header) appeared', 'Was inline composition + private function in StreakClaimPopup; promoted to ui/ primitive when the second use landed. Per Gate 3 *componentize at 2*'],
+            ['Distinct from CreditsSummaryPill', 'CreditsSummaryPill pairs credits + price for purchase-flow surfaces (BuyCreditsSheet PaymentStep). CreditsBalancePill is display-only "X credits" for header pills (StreakClaimPopup). Two primitives because two roles'],
+            ['Codified S30 — extracted from StreakClaimPopup\'s private BalancePill function once a second consumer appeared', 'Was inline composition + private function in StreakClaimPopup; promoted to ui/ primitive when the second use landed. Per Gate 3 *componentize at 2*. The original second consumer (ModelPickerSheet header) was retired at S33 close; primitive is still available for future header-pill needs.'],
           ].map(([cls, label]) => (
             <div key={label} className="flex items-start justify-between gap-4 py-[6px] border-b border-white-05 last:border-0">
               <TokenCell value={cls} />
