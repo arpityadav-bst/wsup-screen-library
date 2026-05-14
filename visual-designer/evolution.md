@@ -1,5 +1,31 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-13 (S32 + 3 follow-up rounds — onboarding flow shipped, dual-cadence model adopted, system-level refactor of how VDA operates)
+Last updated: 2026-05-14 (S33 — onboarding text-hierarchy audit; audit pass caught + reverted a Gate 2.2 sibling-inheritance regression on VDA's own edit; 2 new taste rules; workflow amended)
+
+---
+
+## Phase 5 → 6 trigger streak status (2026-05-14, S33 close)
+
+**Streak: still BROKEN.** S33 had 2 designer-flagged catches inline (subtitle verb mismatch, title size mismatch) — the count stays nonzero, counter resets.
+
+**Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27=~7, **S28=0**, S29=14, **S30=~10–12**, **S31≈15–20**, **S32 main=0** (VDA caught 1), **S32 f1=7**, **S32 f2=0**, **S32 f3≈12**, **S33=2**.
+
+**The notable event of S33 — audit-pass self-catch working as designed.**
+
+I changed DeckCard tags `text-white-80` → `text-text-xsmall` during the inline audit (framing: "restore hierarchy descent"). Designer accepted. **The audit-pass cross-check against `knowledge-base.md` then surfaced the regression** — codified KB explicitly states DeckCard tags = `text-white-80` matching the CharacterCard sibling. The inline Gate 2.2 grep had found the sibling file but missed the codified KB rule. Reverted. **This is the dual-cadence model paying off** — without the audit, the regression would have shipped silently and DeckCard would have drifted from CharacterCard convention.
+
+**Workflow amended** — new audit-pass step 3.5: cross-check every visual edit against `knowledge-base.md` codified anatomy, not just against sibling component files. KB IS the canonical record of convention; file content can drift, KB is the anchor.
+
+**2 new taste rules promoted (Gate 6.5):**
+1. *Fix the wrap constraint, not the copy* — designer-push corrective. When a bad break appears, loosen `max-width` or add `text-balance`/`text-pretty` BEFORE rewriting copy. Pairs with the existing "Avoid `<br />` in headlines" rule.
+2. *Subtitle-button verb parity* — when a subtitle teaches an action, its verb must match the action button's verb. Sibling to "action labels inherit context from the parent surface."
+
+**Active gap surfaced (S33):** **Gate 2.2 inline phase grep is incomplete.** Today's tag regression happened because the inline grep checked sibling component files but didn't grep `knowledge-base.md` for codified rules ABOUT those components. The KB IS part of the precedent. Watch item for S34: every Gate 2.2 inline grep must include `knowledge-base.md` for the component name, not just `src/components/`.
+
+**Designer's instinct correction (S33):** the wrap-constraint-vs-copy pushback. VDA's first instinct on a bad break was to rewrite copy; designer flipped that to CSS-first. Codified as a taste rule. The instinct itself (preserve voice, calibrate container) is the kind of thing VDA should have reached for first — watch item for S34.
+
+---
+
+## Phase 5 → 6 trigger streak status (2026-05-13, S32 + follow-ups close)
 
 ---
 

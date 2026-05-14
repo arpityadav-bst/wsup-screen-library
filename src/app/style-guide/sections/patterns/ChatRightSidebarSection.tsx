@@ -1,6 +1,7 @@
 'use client'
 
 import { Section, SubLabel, PreviewBox, TokenCell } from '../../helpers'
+import CharacterTagChip from '@/components/shared/CharacterTagChip'
 
 export default function ChatRightSidebarSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -28,10 +29,10 @@ export default function ChatRightSidebarSection({ onSectionVisible }: { onSectio
                   <span className="text-xxs text-white-70 tracking-[0.8px]">#219 Rank</span>
                 </div>
               </div>
-              {/* Tags */}
+              {/* Tags — uses the shared CharacterTagChip primitive */}
               <div className="flex flex-wrap items-center justify-center gap-xs">
                 {['Neon', 'Music', 'Girl'].map(tag => (
-                  <span key={tag} className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10">{tag}</span>
+                  <CharacterTagChip key={tag}>{tag}</CharacterTagChip>
                 ))}
               </div>
               {/* Description */}

@@ -2,6 +2,7 @@
 
 import { Section, SubLabel, Tag } from '../../helpers'
 import Badge from '@/components/ui/Badge'
+import CharacterTagChip from '@/components/shared/CharacterTagChip'
 
 export default function TagsCardsSection({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -9,12 +10,11 @@ export default function TagsCardsSection({ onSectionVisible }: { onSectionVisibl
 
       <div>
         <SubLabel>Tags / Pills</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">The default character-tag chip is now a shared primitive: <code className="text-accent-light">{'<CharacterTagChip>'}</code> in <code className="text-accent-light">src/components/shared/CharacterTagChip.tsx</code>. Used on every character-preview surface (CharacterCard, DeckCard, ChatRightSidebar). Single source of chrome — never re-create inline.</p>
         <div className="flex flex-wrap gap-3 items-center">
           <div className="flex flex-col items-start gap-2">
-            <span className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10">
-              Default
-            </span>
-            <Tag>Default</Tag>
+            <CharacterTagChip>Default</CharacterTagChip>
+            <Tag>{'<CharacterTagChip>'}</Tag>
           </div>
           <div className="flex flex-col items-start gap-2">
             <span className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-status-alert text-white">

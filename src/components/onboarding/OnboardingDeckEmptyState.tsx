@@ -35,9 +35,9 @@ export default function OnboardingDeckEmptyState({ onShowMore, onSeeAgain }: Onb
     <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-l px-l">
       <DeckIllustration />
 
-      <div className="flex flex-col gap-xs items-center text-center max-w-[300px]">
+      <div className="flex flex-col gap-xs items-center text-center">
         <h2 className="text-2xl font-semibold text-text-title leading-tight">That&apos;s the deck.</h2>
-        <p className="text-sm text-text-body leading-snug">Want another look, or should we show you more?</p>
+        <p className="text-sm text-text-body leading-snug text-balance">Want another look, or should we show you more?</p>
       </div>
 
       <div className="flex flex-col gap-s w-full max-w-[280px]">

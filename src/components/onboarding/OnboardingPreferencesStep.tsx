@@ -46,8 +46,8 @@ export default function OnboardingPreferencesStep({ onContinue, onSkip }: Onboar
       <OnboardingHeader onSkip={onSkip} />
 
       <div className="flex flex-col gap-xs mt-l">
-        <h2 className="text-3xl font-semibold text-text-title leading-tight">Let&apos;s find your match.</h2>
-        <p className="text-sm text-text-body leading-snug">A few quick questions and we&apos;ll show you characters worth meeting.</p>
+        <h2 className="text-2xl font-semibold text-text-title leading-tight">Let&apos;s find your match.</h2>
+        <p className="text-sm text-text-body leading-snug">Quick questions before we show you matches.</p>
       </div>
 
       <div className="flex flex-col gap-l mt-xl">

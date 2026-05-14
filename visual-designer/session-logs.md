@@ -1,7 +1,96 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-13 (S32 follow-up #3 — onboarding deep polish: deck-stack, typewriter, end-state, identity picker)
+Last updated: 2026-05-14 (S33 — onboarding text-hierarchy audit + Gate 2.2 self-catch via audit pass)
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
+
+---
+
+## Session 33 — 2026-05-14 — Onboarding text-hierarchy + line-break audit (designer_caught_count: 2 inline; 1 audit-pass self-catch; 1 Gate 6 meta-question catch — net 3)
+
+### Post-audit Gate 6 meta-question (added after the audit pass)
+
+Designer asked: *"is every little thing tokenised, componentised, in style guide?"* — codified Gate 6 hard-fail trigger phrasing. Honest sweep surfaced two real gaps:
+
+1. **Gate 3 debt — tag chip duplicated 3× in code (DeckCard, CharacterCard, ChatRightSidebar) + 2× in style guide.** Pre-existing but my DeckCard tag touch today should have triggered Gate 3 inline. It didn't because my attention was on opacity, not chrome duplication. **Resolution:** extracted `<CharacterTagChip>` to `components/shared/`; refactored all 3 code consumers + both style-guide showcases; KB entry updated to point at the primitive.
+2. **Gate 5 debt — `text-balance` cited as a taste-rule technique but not registered anywhere as a usable utility.** Dev would discover it only on the consumer component. **Resolution:** added "Line-break hygiene" subsection to TypographySection with `text-balance` + `text-pretty` entries and a pre-flight check.
+
+Also updated OnboardingOverlaySection anatomy notes to reference both (text-balance wrap behavior + CharacterTagChip primitive). Build green after refactor (no bundle regression: /explore 14.8 kB unchanged; /style-guide 64.5 → 66.4 kB from the new docs).
+
+**Total catch count for S33 raised from 2 to 3** — the meta-question is itself a catch per codified Gate 6 trigger. Phase 5 → 6 counter stays at 0. Watch item carried forward for S34: **Gate 3 inline grep is part of every visual touch, not just every new-component build.** A class-string edit is still a touch that needs the duplication check.
+
+
+
+**Designer:** Arpit. **Scope:** Text hierarchy + validity check on Stages 1 + 2 of the onboarding flow built S32. Five inline edits, one designer pushback on copy-vs-CSS approach, full audit pass triggered at close.
+
+### Freshness check
+knowledge-base ✓ (2026-05-13) | taste ✓ (2026-05-13 → 2026-05-14) | decisions ✓ (2026-05-13 → 2026-05-14) | evolution ✓ (2026-05-13) | workflow ✓ (2026-05-13 → 2026-05-14) | session-logs ✓ | project-insights (last touched at S30 close — flag for refresh) | reasonings (untouched today)
+
+### What changed (final state after audit revert)
+
+| File | Change | Outcome |
+|---|---|---|
+| OnboardingPreferencesStep.tsx | Title `text-3xl` → `text-2xl` | ✓ kept — sibling-surface inheritance with LoginSheet popup-headline convention |
+| OnboardingPreferencesStep.tsx | Subtitle copy rewrite ("Quick questions before we show you matches.") | ✓ kept — clean wrap at both viewports |
+| OnboardingDeckStep.tsx | Subtitle copy rewrite ("Swipe right to chat · left to pass") | ✓ kept — button-label verb parity + single-line wrap |
+| DeckCard.tsx | Meta line `text-xs text-text-body` → `text-xxs text-text-small` | ✓ kept — restored hierarchy descent vs description |
+| DeckCard.tsx | Tags `text-white-80` → `text-text-xsmall` | ✗ **REVERTED at audit** — see catch below |
+| OnboardingDeckEmptyState.tsx | Dropped `max-w-[300px]` + added `text-balance` | ✓ kept — wrap-constraint fix, designer's push instead of copy rewrite |
+
+### The audit-pass self-catch (THE notable event of S33)
+
+During the inline audit phase I changed DeckCard tags `text-white-80` → `text-text-xsmall` framing it as "restore name → desc → tags volume descent." Change shipped, looked OK in browser, designer accepted ("everything looks good"). When designer triggered the full audit pass, the cross-check against `knowledge-base.md` line 22 surfaced the regression: **codified KB explicitly states DeckCard tags = `text-white-80`, matching the explore CharacterCard sibling.** My change diverged from both the codified rule AND the sibling. Reverted to `text-white-80`. **The dual-cadence audit pass earned its keep** — without the cross-check against KB codified anatomy, this regression would have shipped silently. New workflow.md step added: *"audit pass must Gate-2.2-cross-check every visual edit against `knowledge-base.md` codified anatomy entries, not just against sibling component files."*
+
+### Designer's correction-with-better-instinct moment
+
+When I encountered a bad line break on OnboardingDeckEmptyState's subtitle, my first instinct was to rewrite the copy ("More matches, or another look?"). Designer pushed back: *"why not just fix the line break instead of changing copy?"* — exactly right. Fixed via `max-w` removal + `text-balance` (CSS `text-wrap: balance`). **Promoted as new taste rule:** *"Fix the wrap constraint, not the copy — preserve voice, calibrate container."* This is one of the strongest taste-rule additions of recent sessions; pairs with the existing "Avoid `<br />` in headlines" rule by correcting toward container-first thinking.
+
+### Knowledge captured (Gate 6.5 promotions)
+
+**2 new taste rules** added at top of `taste.md`:
+1. *Fix the wrap constraint, not the copy* — when a bad break appears, loosen the container or add `text-balance`/`text-pretty` before touching copy. Pairs with the existing `<br />` rule.
+2. *Subtitle-button verb parity* — when a subtitle teaches an action, its verb must match the action button's verb. Sibling to "action labels inherit context from the parent surface."
+
+**1 workflow.md amendment** — audit pass step 3.5: cross-check inline edits against `knowledge-base.md` codified anatomy entries.
+
+**6 decisions.md rows** promoted from scratchpad (4 audit-driven design edits, 1 designer-instinct corrective edit, 1 meta-decision about the audit-pass cross-check itself).
+
+### Gate verdicts
+
+| Gate | Inline phase | Audit phase |
+|---|---|---|
+| 0 — Precedent grep | ✓ | ✓ extended to KB |
+| 1 — Tokens | ✓ (no new values; text-balance is utility, not value) | ✓ |
+| 2 — Reuse + 2.2 sibling-inheritance | **partial inline; audit caught DeckCard tags violation** | ✓ reverted |
+| 3 — Componentize at 2 | n/a (no new components) | ✓ |
+| 4 — Patternize at 2 | n/a | ✓ |
+| 5 — Style guide sync | deferred to audit | ✓ OnboardingOverlaySection auto-syncs visuals via component import; anatomy text unchanged (no new specs referenced) |
+| 6 — VDA learns | scratchpad rows written | ✓ promoted to decisions.md + taste.md + workflow.md; scratchpad wiped |
+| 6.5 — Generalization | n/a inline | ✓ 2 taste rules promoted |
+| 7 — UX consistency | ✓ | ✓ |
+| 8 — UX review | ✓ via browser screenshots (Playwright at 414 + 1440) | ✓ |
+
+Build: `npx next build` green (exit 0). No type errors, no warnings.
+
+### Recurring failure modes for S34 to watch
+
+1. **Knowledge-base cross-check inline, not just at audit.** Today's tag regression would have been caught at inline Gate 2.2 if I'd grepped KB for the component name during the change, not just the sibling component file. Watch item for S34: **Gate 2.2 inline phase MUST grep BOTH the sibling component file AND `knowledge-base.md` for the component name.** The KB grep is part of the precedent grep, not extra.
+2. **Audit-pass cross-check works.** Confirmed by today's catch. Continue running it at every audit.
+3. **Designer's instinct on copy-vs-CSS:** noted. Codified as a taste rule today — apply on next line-break flag.
+
+### Carry-overs (still open)
+
+- `<UserListRow>` extraction (S28)
+- CharacterMenuSheet / DormantMenuPopoverItems MenuPopover migration (S27)
+- project-insights.md onboarding-screen inventory update (flagged S32 f3 close)
+- evolution.md phase-status full refresh (last touched S32 f3; today's catch noted in this log + decisions.md, full phase-status review deferred)
+
+### Phase 5 → 6 trigger status
+
+S33 designer_caught_count: 2 inline (Step 2 subtitle verb mismatch / Step 1 title size — both flagged by designer not VDA) + 1 self-catch during audit pass (which is a WIN, not a fail — audit working as designed) = 2 designer catches.
+
+Trend: S32 f3 ~12 → **S33 = 2.** Significant drop, partial credit because S33 was an audit-scope session (smaller surface area). NOT a 0-catch session — Phase 5→6 counter stays at 0.
+
+Watch item carried to S34: **Phase 6 entry requires 3 consecutive 0-catch sessions.** S33's 2 catches reset the counter. The wrap-constraint instinct (designer's push on copy-vs-CSS) is the kind of thing VDA should have reached first.
 
 ---
 

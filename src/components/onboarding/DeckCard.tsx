@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import CharacterTagChip from '@/components/shared/CharacterTagChip'
 import type { OnboardingCharacter } from '@/lib/onboardingDeck'
 
 interface DeckCardProps {
@@ -111,7 +112,7 @@ export default function DeckCard({ character, animate = false }: DeckCardProps) 
       <div className="absolute bottom-0 left-0 right-0 p-s flex flex-col gap-xs">
         <div>
           <h3 className="text-base font-semibold text-text-title leading-tight">{character.name}</h3>
-          <div className="flex items-center gap-xs mt-xxxs text-xs text-text-body">
+          <div className="flex items-center gap-xs mt-xxxs text-xxs text-text-small">
             <span>{character.gender}</span>
             <span className="text-text-dim">·</span>
             <span>age {character.age}</span>
@@ -119,12 +120,10 @@ export default function DeckCard({ character, animate = false }: DeckCardProps) 
           <p className="text-xs text-text-body leading-snug mt-xxs line-clamp-2">{character.description}</p>
         </div>
 
-        {/* Tags — matches the explore CharacterCard tag chip style */}
+        {/* Tags — uses the shared CharacterTagChip primitive for cross-surface consistency */}
         <div className="flex flex-wrap gap-xxs">
           {character.tags.map(tag => (
-            <span key={tag} className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10">
-              {tag}
-            </span>
+            <CharacterTagChip key={tag}>{tag}</CharacterTagChip>
           ))}
         </div>
 

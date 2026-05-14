@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { formatRank, formatCount } from '@/lib/cn'
 import Button from '@/components/ui/Button'
+import CharacterTagChip from '@/components/shared/CharacterTagChip'
 
 interface Tag {
   label: string
@@ -55,15 +56,12 @@ export default function CharacterCard({
         {/* Description */}
         <p className="text-text-body text-xs leading-snug mb-[6px] line-clamp-2">{description}</p>
 
-        {/* Tags — max 3 on mobile, all on desktop */}
+        {/* Tags — max 3 on mobile, all on desktop. Uses shared CharacterTagChip primitive. */}
         <div className="flex flex-wrap gap-xxs mb-xs">
           {tags.map((tag, i) => (
-            <span
-              key={tag.label}
-              className={`text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10${i >= 3 ? ' hidden md:inline-block' : ''}`}
-            >
+            <CharacterTagChip key={tag.label} className={i >= 3 ? 'hidden md:inline-block' : ''}>
               {tag.label}
-            </span>
+            </CharacterTagChip>
           ))}
         </div>
 

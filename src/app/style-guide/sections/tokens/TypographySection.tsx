@@ -95,6 +95,24 @@ export default function TypographySection({ onSectionVisible }: { onSectionVisib
         </div>
       </div>
 
+      <div>
+        <SubLabel>Line-break hygiene — fix the wrap, not the copy</SubLabel>
+        <p className="text-text-xsmall text-xs mb-3">When a headline or subtitle breaks at a bad spot (orphan word, modifier split from noun, mid-collocation), first try fixing the wrap CONSTRAINT before rewriting the copy. The two Tailwind utilities below set the CSS <code className="text-accent-light">text-wrap</code> property — use them on the text element, not the container.</p>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-start gap-4 bg-white-05 border border-white-10 rounded-card px-5 py-4">
+            <Tag>text-balance</Tag>
+            <span className="text-text-xsmall text-xs flex-1">CSS <code className="text-accent-light">text-wrap: balance</code> — distributes words evenly across lines. Best for headings and 2-3 line subtitles. Breaks land at clause boundaries (commas, conjunctions) instead of orphans. Used by <code className="text-accent-light">OnboardingDeckEmptyState</code> subtitle.</span>
+          </div>
+          <div className="flex items-start gap-4 bg-white-05 border border-white-10 rounded-card px-5 py-4">
+            <Tag>text-pretty</Tag>
+            <span className="text-text-xsmall text-xs flex-1">CSS <code className="text-accent-light">text-wrap: pretty</code> — prevents single-word orphans on the last line of a paragraph. Best for body copy and longer descriptions where <code className="text-accent-light">text-balance</code> would over-distribute.</span>
+          </div>
+          <div className="flex items-start gap-4 bg-white-05 border border-white-10 rounded-card px-5 py-4">
+            <span className="text-text-xsmall text-xs flex-1"><strong className="text-text-title">Pre-flight check:</strong> when a bad break appears, ask <em>&ldquo;is the container forcing this?&rdquo;</em> first. Try loosening <code className="text-accent-light">max-width</code> + adding <code className="text-accent-light">text-balance</code>. Only rewrite copy if CSS can&apos;t reach a clean break. <strong>Never</strong> use <code className="text-accent-light">{'<br />'}</code> to force a break — it&apos;s calibrated to exactly one container width and breaks at every other width.</span>
+          </div>
+        </div>
+      </div>
+
     </Section>
   )
 }

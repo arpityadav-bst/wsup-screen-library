@@ -66,7 +66,7 @@ export default function OnboardingDeckStep({ index, onSkipCard, onLikeCard, onSk
 
       <div className="flex flex-col gap-xxs shrink-0">
         <h2 className="text-2xl font-semibold text-text-title leading-tight">Pick your first chat</h2>
-        <p className="text-xs text-text-body">Swipe right to start chatting · left to skip</p>
+        <p className="text-xs text-text-body">Swipe right to chat · left to pass</p>
       </div>
 
       <DeckProgressBars total={ONBOARDING_DECK.length} currentIndex={index} />

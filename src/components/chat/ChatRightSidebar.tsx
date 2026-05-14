@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
+import CharacterTagChip from '@/components/shared/CharacterTagChip'
 
 // ── Stat icons ────────────────────────────────────────────────────────────────
 
@@ -125,15 +126,10 @@ export default function ChatRightSidebar() {
             <StatPill icon={<RankStatIcon />} value={character.rank} label="Rank" />
           </div>
 
-          {/* Tags */}
+          {/* Tags — uses the shared CharacterTagChip primitive */}
           <div className="flex flex-wrap items-center justify-center gap-xs">
             {character.tags.map(tag => (
-              <span
-                key={tag}
-                className="text-xxs font-normal px-xs py-[3px] rounded-pill bg-white-10 backdrop-blur-bg text-white-80 border border-white-10"
-              >
-                {tag}
-              </span>
+              <CharacterTagChip key={tag}>{tag}</CharacterTagChip>
             ))}
           </div>
 

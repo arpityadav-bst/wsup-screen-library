@@ -29,4 +29,4 @@ YYYY-MM-DD HH:mm — <component or file changed> — <what changed in 1 line> �
 
 ## Pending audit entries
 
-_None — scratchpad empty as of last audit (S32 follow-up #3 close)._
+_None — scratchpad empty as of S33 audit (2026-05-14). 6 entries promoted to decisions.md, 2 new taste rules added to taste.md, 1 workflow.md amendment, 1 sibling-inheritance regression caught + reverted (DeckCard tags)._
