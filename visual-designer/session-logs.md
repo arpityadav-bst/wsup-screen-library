@@ -1,5 +1,102 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-14 (S33 — onboarding text-hierarchy audit + Gate 2.2 self-catch via audit pass)
+Last updated: 2026-05-14 (S33 close — ModelDeprecatedSheet + WatchAdGate two-flow + DummyAd; second audit pass; 6 new taste rules promoted)
+
+## Session 33 — close audit (2026-05-14, second audit pass — chat-popup phase)
+
+After the morning's onboarding text-hierarchy audit closed, the session opened a major second phase: chat-screen popup work for the Flutter app handoff. Three major components shipped, both flows of the ad-gate wired end-to-end, and a second full audit pass at close.
+
+### What shipped (second-phase summary)
+
+**ModelDeprecatedSheet** — Llama 3 → Qwen migration interception on /chat. Mobile-only BottomSheet. Minimal anatomy after designer simplified (icon → title → body → primary CTA → link). Subtle bell-ring animation on the announcement icon. Copy iterated 3 times until it matched the real product state ("has retired" not "is paid"). Dev panel state preview + the real send-flow trigger.
+
+**WatchAdGate family** — hard send-gate that fires every Nth message. Two distinct Flow options (`ad-bubble` and `ad-sheet`) instead of one flow with a variant toggle (designer's call after the variant-pill version shipped briefly). Each flow resets the demo on selection; gate fires on the user's send. Surfaces:
+- `WatchAdSheet` — BottomSheet modal with play-pulse animation on the play icon
+- `WatchAdBubble` — inline AI-chat-bubble-style above ChatBar (no avatar, "QUICK AD BREAK" eyebrow label for system voice)
+- `WatchAdGate` — wrapper that dispatches based on `mode` derived from flowMode
+- `useWatchAdGate` — hook holding the full gate lifecycle (sentSinceLastAd, heldDraft, dummyAdOpen + handlers)
+
+**DummyAd** — fullscreen mobile ad placeholder. Designer suggested using a real Homescapes "How to Loot?" mobile-ad screenshot instead of my CSS-gradient placeholder. Image-based component (~30 lines): `<Image fill object-contain>` inside a single giant `<button>` — tap anywhere closes. Image lives at `public/dummy-ad.png`.
+
+**Architecture refactors**:
+- `ChatStateOverlays.tsx` — extracted 5 chatState-driven popups out of page.tsx (file-size discipline + semantic clustering)
+- `BottomSheet.tsx` — briefly extended with `aboveSheet` slot for the variant pill, REVERTED at close audit as dead code (slot had 0 consumers after variant pill was dropped)
+- `VariantSwitcherPills.tsx` — extracted, reverted, re-extracted, currently single-consumer (LoginSheet). Flagged for next-session disposition decision.
+- `chat-config.ts` — major state-machine + flow expansion ('model-deprecated-popup' + 'watch-ad-popup' states; 'ad-bubble' + 'ad-sheet' flows; MAX_SENDS_BEFORE_AD_DEMO constant)
+
+### Designer-caught issues (this phase)
+
+High count. ~13 designer-flagged corrections in this phase alone (plus ~3 from the morning's onboarding audit = ~16 total today):
+
+1. ModelDeprecatedSheet too much info → minimalize
+2. ModelDeprecatedSheet wrong product semantic ("is paid" vs "has retired")
+3. Variant 2 + pill on ModelDeprecatedSheet not needed → revert
+4. Watch ad should be a Flow, not a State entry
+5. WatchAdBubble shouldn't have an avatar (Gate 2.2 — AI bubbles have no avatars in WSUP)
+6. WatchAdBubble shouldn't overlay previous chat bubble → inline positioning
+7. WatchAdSheet variant pill clipping at corner → BottomSheet.aboveSheet slot
+8. Two separate Flow options instead of one Flow + variant pill
+9. Demo N tightening: 2 → 1 (gate fires after 1st "hi")
+10. No confirmation toast (the message landing IS the confirmation)
+11. Real ad screenshot instead of CSS placeholder
+12. Image filename `.png` not `.jpg` (path mismatch caught at integration)
+13. Audit-pass self-catch: `aboveSheet` slot became dead code after variant-pill revert
+
+### Knowledge captured (Gate 6.5 promotions)
+
+**6 new taste rules** added to taste.md at the top:
+1. *Intervention popups that INFORM ship with minimal anatomy* — choice surfaces need full anatomy, acknowledgment surfaces don't
+2. *Copy must match product state precisely, not approximately* — verb choice carries product semantics ("retired" vs "paid" vs "deprecated")
+3. *Icon animation should encode the icon's INVITATION* — bells ring (alarm), play buttons pulse (invitation), hearts beat (affirmation), refresh spins (working)
+4. *Prefer separate Flow options over variant toggle inside one flow* — when multiple UI treatments need demo, flow-level separation > inline variant pill
+5. *Prefer real screenshots over CSS approximations for placeholders* — real screenshot conveys "this is X" instantly
+6. *No confirmation toast for actions with visible outcomes* — toast earns its slot only when no in-context visible result
+
+**13 decisions.md rows** promoted from scratchpad at the top of decisions.md (each with full reasoning + alternatives considered).
+
+**Dead-code revert** at audit: BottomSheet.aboveSheet slot — 0 consumers after WatchAdSheet variant pill was dropped. Reverted to pre-aboveSheet structure. Demonstrates the audit pass's "delete unused code completely" responsibility (codified earlier).
+
+### Gate verdicts (close audit)
+
+| Gate | Verdict |
+|---|---|
+| 0 — Precedent grep | ✓ (sibling files greped before new builds — though missed AIBubble's no-avatar convention on first WatchAdBubble pass — caught by designer) |
+| 1 — Tokens | ✓ (no raw values introduced — text-balance, animations, all use existing tokens or utilities) |
+| 2 — Reuse + 2.2 sibling-inheritance | **partial** — 3 inline failures (WatchAdBubble avatar, WatchAdSheet pill clipping, WatchAdBubble positioning) caught by designer not VDA. Audit pass cross-check against KB was incomplete inline. |
+| 3 — Componentize at 2 | ✓ (VariantSwitcherPills, ChatStateOverlays, CharacterTagChip earlier — extractions where genuine 2+ consumers existed) |
+| 4 — Patternize at 2 | n/a |
+| 5 — Style guide sync | ✓ (ModelDeprecatedSheetSection, WatchAdGateSection registered + maintained through revisions) |
+| 6 — VDA learns | ✓ scratchpad → decisions.md promotion, taste rules added |
+| 6.5 — Generalization | ✓ 6 promotable rules surfaced |
+| 7 — UX consistency | ✓ |
+| 8 — UX review | **partial** — several issues caught by designer's visual review (bubble overlap, pill trim, avatar mismatch) that VDA's Gate 8 should have caught first |
+
+Build: `npx next build` green (`/style-guide` 71.1 kB).
+
+### designer_caught_count: ~16 (highest of recent sessions)
+
+Phase 5 → 6 trigger counter resets to 0. Recent history: S22=3, S23=18, S24=0, S25=1, S26=8, S27~7, S28=0, S29=14, S30~10-12, S31~15-20, S32 main=0, S32 f1=7, S32 f2=0, S32 f3~12, S33 morning=3, **S33 close=~13.**
+
+Today's catch count: **~16 across both audit phases combined.** Not a Phase-6-eligible session.
+
+### Active recurring failure modes for S34/S35
+
+1. **Inline Gate 2.2 grep is incomplete** — the same failure mode keeps recurring across the day. WatchAdBubble's avatar, WatchAdSheet's pill positioning vs LoginSheet's pattern, ModelDeprecatedSheet's copy product-state alignment — all caught by designer after shipping. The watch item from earlier in the session (Gate 2.2 inline must grep KB) was added to workflow.md but isn't being applied consistently. **S34 forcing function:** before declaring any new surface "done", explicitly grep (a) the named-sibling component file, (b) `knowledge-base.md` for codified anatomy of related surfaces, (c) any naming-similar precedent (LoginSheet for variant pills, AIBubble for chat-style surfaces). If any of those returns a divergence from what was just built, fix BEFORE shipping.
+
+2. **Variant infrastructure speculation** — added twice today, reverted twice. The clarifying-Q protocol applies here: when designer asks for "another variant," ASK whether both ship in production or one is exploratory. Default: separate Flow options, not variant toggle.
+
+3. **Gate 8 visual review needs to catch positional issues** — WatchAdBubble overlapping previous message was visible in any browser test. The Playwright loop or manual visual scan would have caught it. **S34 forcing function:** before declaring a new mounted surface "done", manually visualize its position relative to surrounding content (does it overlap, push, or align?). For positioned elements: check that the positioning approach (absolute vs inline vs fixed) doesn't conflict with siblings.
+
+4. **DummyAd CSS-vs-image lesson** — first instinct was CSS construction; better instinct was real screenshot. For future placeholder/stand-in components, ask "is there a real asset I can use?" before constructing in CSS.
+
+### Watch items for next session start
+
+- VariantSwitcherPills single-consumer state — dispose at next audit if still 1 consumer + no near-term plan for 2nd
+- page.tsx at 300 lines exactly — any future addition needs a real extraction (useChatSuggestions hook is the obvious next extraction target)
+- The promoted taste rules from today should be load-bearing in next session's first work item (per the earlier "rule-application gap — codification ≠ internalization" gap from S26)
+
+---
+
+## Session 33 — 2026-05-14 — Onboarding text-hierarchy + line-break audit (designer_caught_count: 2 inline; 1 audit-pass self-catch; 1 Gate 6 meta-question catch — net 3)
 
 Chronological log of every VDA session. Each entry captures what was built, what was corrected, and what was learned. Append new sessions at the top.
 

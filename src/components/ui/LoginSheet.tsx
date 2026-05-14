@@ -7,14 +7,11 @@ import GoogleSignIn from './GoogleSignIn'
 import AppleSignIn from './AppleSignIn'
 import CloseButton from './CloseButton'
 import Button from './Button'
+import VariantSwitcherPills, { type VariantSwitcherProps } from './VariantSwitcherPills'
 
 export type LoginSheetMode = 'form' | 'cta'
 
-export interface VariantSwitcherProps {
-  current: string
-  variants: { id: string; label: string }[]
-  onChange: (id: string) => void
-}
+export type { VariantSwitcherProps }
 
 interface LoginSheetProps {
   open: boolean
@@ -94,31 +91,6 @@ function CtaBlock({ align, ctaLabel, footer, onSignIn }: { align: Align; ctaLabe
       {footer && (
         <p className={`text-xs text-text-small leading-[1.4] w-full ${text}`}>{footer}</p>
       )}
-    </div>
-  )
-}
-
-function VariantSwitcherPills({ current, variants, onChange, className = '', style }: VariantSwitcherProps & { className?: string; style?: React.CSSProperties }) {
-  return (
-    <div
-      className={`flex items-center gap-xxs px-xxs py-xxxs rounded-pill bg-black-55 backdrop-blur-bg border border-white-10 ${className}`}
-      style={style}
-    >
-      <span className="text-xxs uppercase tracking-[0.4px] text-white-40 px-xxs">Variant</span>
-      {variants.map(v => (
-        <button
-          key={v.id}
-          type="button"
-          onClick={() => onChange(v.id)}
-          className={`text-xs leading-none px-xs py-xxs rounded-pill border-none cursor-pointer transition-colors ${
-            current === v.id
-              ? 'bg-white text-black font-medium'
-              : 'bg-transparent text-white-60 hover:text-white-90 hover:bg-white-10'
-          }`}
-        >
-          {v.label}
-        </button>
-      ))}
     </div>
   )
 }

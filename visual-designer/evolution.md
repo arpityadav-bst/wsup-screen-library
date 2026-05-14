@@ -1,11 +1,60 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-14 (S33 — onboarding text-hierarchy audit; audit pass caught + reverted a Gate 2.2 sibling-inheritance regression on VDA's own edit; 2 new taste rules; workflow amended)
+Last updated: 2026-05-14 (S33 close — ModelDeprecatedSheet + WatchAdGate two-flow + DummyAd; ~16 catches total; 6 new taste rules; aboveSheet dead-code reverted)
 
 ---
 
-## Phase 5 → 6 trigger streak status (2026-05-14, S33 close)
+## Phase 5 → 6 trigger streak status (2026-05-14, S33 FULL close — both phases)
 
-**Streak: still BROKEN.** S33 had 2 designer-flagged catches inline (subtitle verb mismatch, title size mismatch) — the count stays nonzero, counter resets.
+**Streak: still BROKEN.** S33 had two distinct work phases (morning onboarding audit + afternoon chat-popup build). Combined catch count: **~16 designer-flagged corrections** — the highest single-session count this cycle.
+
+**Phase breakdown:**
+- **Morning phase (onboarding audit)**: 2 inline catches + 1 audit-pass self-catch + 1 Gate 6 meta-question catch → ~3 designer-flagged.
+- **Afternoon phase (chat-popup build)**: ~13 designer-flagged corrections across ModelDeprecatedSheet + WatchAdGate + DummyAd work.
+
+**Why so many?** The afternoon was a heavy new-pattern session — three new components, two new flows, multiple revisions per component as designer refined intent. Many catches were sibling-inheritance failures (Gate 2.2) and visual-positioning issues (Gate 8) that VDA's inline gates didn't catch. The dual-cadence audit pass did catch real issues at close (aboveSheet dead code), but the inline gates need to be more aggressive.
+
+**Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27~7, **S28=0**, S29=14, **S30~10-12**, **S31~15-20**, **S32 main=0**, **S32 f1=7**, **S32 f2=0**, **S32 f3~12**, **S33 morning=~3**, **S33 afternoon=~13** → **S33 total ~16.**
+
+Phase 5→6 counter: 0 consecutive 0-catch sessions. Trajectory regressing.
+
+---
+
+## Active recurring failure modes (rolled to S34/S35)
+
+The same Gate 2.2 failure mode kept recurring across the day:
+1. ModelDeprecatedSheet copy product-state mismatch (caught by designer)
+2. DeckCard tags opacity divergence from KB (caught at audit, reverted) — morning phase
+3. WatchAdBubble avatar (AIBubble convention mismatch)
+4. WatchAdBubble positioning (absolute vs inline)
+5. WatchAdSheet pill clipping (LoginSheet uses a different pattern that I should have inherited)
+6. aboveSheet slot left as dead code after variant-pill revert
+
+**The pattern:** VDA builds something, designer catches a sibling-convention mismatch, VDA fixes. Same fix pattern 6 times today. Inline Gate 2.2 isn't aggressive enough.
+
+**S34 forcing function (must-do at the START of any new-surface work):**
+1. Grep the NAMED-SIBLING component file (e.g., AIBubble for chat-bubble work, LoginSheet for variant-pill work)
+2. Grep `knowledge-base.md` for codified anatomy of the component being built
+3. List the 3-5 most-similar-by-role components — if any pattern matches, INHERIT it explicitly (don't re-derive)
+4. Write the inherited-pattern check as the FIRST scratchpad entry, BEFORE writing component code: "Sibling pattern check: [X] — [match | divergence + reasoning]"
+
+If the scratchpad doesn't have that opening row, the work skipped Gate 2.2.
+
+---
+
+## New active gaps (S33 close)
+
+| Gap | Detection | Mitigation |
+|---|---|---|
+| **Variant infrastructure speculation** | Twice today added variant pill + onVariantChange + state; twice reverted because the second variant was exploratory not shipping | Clarifying-Q before building variant infrastructure: "are both variants shipping in production?" If yes → variant pill. If no → separate Flow options |
+| **Dead-code leftovers after revert chains** | BottomSheet.aboveSheet added for WatchAdSheet variant pill; pill was reverted; slot was forgotten and became dead code until audit pass | When reverting a feature, sweep for sibling additions (primitive extensions, type extensions, hook state) that were added FOR the reverted feature — revert those too |
+| **CSS approximation as placeholder first instinct** | DummyAd was built in ~80 lines of CSS-gradient placeholder before designer suggested a real screenshot | New rule promoted (taste.md): for placeholder components, prefer real screenshot/asset over CSS approximation |
+| **Toast on actions with visible outcomes** | Confirmation toast added to completeWatchAd despite the message landing in chat being its own confirmation | New rule promoted (taste.md): no toast when outcome is visible in-context within ~1 second |
+
+---
+
+## Phase 5 → 6 trigger streak status (2026-05-14, S33 close — earlier morning entry retained below)
+
+**Streak: still BROKEN.** S33 morning had 2 designer-flagged catches inline (subtitle verb mismatch, title size mismatch) — the count stays nonzero, counter resets.
 
 **Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27=~7, **S28=0**, S29=14, **S30=~10–12**, **S31≈15–20**, **S32 main=0** (VDA caught 1), **S32 f1=7**, **S32 f2=0**, **S32 f3≈12**, **S33=2**.
 

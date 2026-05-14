@@ -122,6 +122,27 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Bell-ring — subtle "announcement" wiggle. ~1.4s of damped oscillation followed by ~2.6s of
+   stillness, looped. Used on the ModelDeprecatedSheet announcement icon. Transform-origin sits
+   at the top of the bell so the swing pivots from the bell-cap, not the body. */
+@keyframes bell-ring {
+  0%, 35%, 100% { transform: rotate(0deg); }
+  4%  { transform: rotate(-14deg); }
+  8%  { transform: rotate(12deg); }
+  12% { transform: rotate(-10deg); }
+  16% { transform: rotate(8deg); }
+  20% { transform: rotate(-5deg); }
+  24% { transform: rotate(3deg); }
+  28% { transform: rotate(-1deg); }
+}
+
+/* Play-pulse — subtle "tap me" affordance for the WatchAdSheet play icon. Gentle scale + opacity
+   pulse, 2s cycle, infinite. Communicates "alive, ready to tap" without the urgency of bell-ring. */
+@keyframes play-pulse {
+  0%, 100% { transform: scale(1);    opacity: 0.9; }
+  50%      { transform: scale(1.08); opacity: 1;   }
+}
+
 /* ── Style guide token highlight ──────────────────────────────────── */
 @keyframes token-highlight-pulse {
   0%   { box-shadow: 0 0 0 0   rgba(130,161,255,0);    background-color: rgba(130,161,255,0); }

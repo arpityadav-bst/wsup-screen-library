@@ -15,12 +15,13 @@ import SafetyBanner from '@/components/chat/SafetyBanner'
 import MemoryLimitOverlay from '@/components/chat/MemoryLimitOverlay'
 import SuggestedReplies from '@/components/chat/SuggestedReplies'
 import ModelPickerSheet from '@/components/chat/ModelPickerSheet'
-import ChatStyleSheet from '@/components/chat/ChatStyleSheet'
 import ChatSendGates from '@/components/chat/ChatSendGates'
-import StreakClaimPopup from '@/components/ui/StreakClaimPopup'
-import CreditServicePopup from '@/components/chat/CreditServicePopup'
 import BuyCreditsSheet from '@/components/ui/BuyCreditsSheet'
 import ChatDevPanel from '@/components/chat/ChatDevPanel'
+import ChatStateOverlays from './ChatStateOverlays'
+import WatchAdGate from '@/components/chat/WatchAdGate'
+import DummyAd from '@/components/chat/DummyAd'
+import { useWatchAdGate } from './useWatchAdGate'
 import { DEFAULT_MODEL_ID, getModel, type ModelId } from '@/lib/models'
 import { useSendGate } from './useSendGate'
 import { useDevStateCycle } from './useDevStateCycle'
@@ -54,6 +55,7 @@ export default function ChatPage() {
   const [modelPickerOpen, setModelPickerOpen] = useState(false)
   const [buyCreditsOpen, setBuyCreditsOpen] = useState(false)
   const [flowMode, setFlowMode] = useState<FlowMode>('new-user')
+  const adGate = useWatchAdGate({ setChatState, gateActive: flowMode === 'ad-bubble' || flowMode === 'ad-sheet' })
   const character = useChatCharacter()
   const sendGate = useSendGate(flowMode, setChatState, setToast)
   const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -65,7 +67,7 @@ export default function ChatPage() {
   // Safety banner overrides character-state banners and other surfaces — it's the highest-priority intervention.
   const devSafetyVariant = SAFETY_STATE_TO_VARIANT[chatState] ?? null
   const activeSafetyVariant = safetyBanner ?? devSafetyVariant
-  const POPUP_STATES = ['context-exhausted-popup', 'chat-style-popup', 'claim-credits-popup', 'credit-service-popup', 'safety-self-harm', 'safety-medical', 'safety-financial'] as const
+  const POPUP_STATES = ['context-exhausted-popup', 'chat-style-popup', 'claim-credits-popup', 'credit-service-popup', 'model-deprecated-popup', 'watch-ad-popup', 'safety-self-harm', 'safety-medical', 'safety-financial'] as const
   const headerCharacterState: CharacterState = (POPUP_STATES as readonly string[]).includes(chatState) ? 'active' : chatState as CharacterState
 
   // Hydrate suggestions preference from localStorage on mount
@@ -84,16 +86,16 @@ export default function ChatPage() {
     idleTimerRef.current = setTimeout(() => setShowSuggestions(true), SUGGESTION_IDLE_MS)
   }
 
-  const handleSend = (text: string) => {
-    if (sendGate.checkBeforeSend()) return
+  // Actual send work — called directly on a free send, or deferred until after the ad-gate
+  // completes and the held draft is released (see useWatchAdGate).
+  const doActualSend = (text: string) => {
     sendGate.recordSent()
-    const userMsg: ChatMessage = { id: `u-${Date.now()}`, role: 'user', text }
-    setMessages((prev) => [...prev, userMsg])
+    setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: 'user', text }])
     setIsTyping(true)
     setShowSuggestions(false)
     setSuggestionsExpanded(false)
     cancelIdleTimer()
-    // Detect safety category in the user's message — first match wins; existing banner upgrades only on more-severe match (severity order is in detectSafetyCategory).
+    // Detect safety category in the user's message — first match wins; existing banner upgrades only on more-severe match.
     const detected = detectSafetyCategory(text)
     if (detected) setSafetyBanner(detected)
     if (replyTimerRef.current) clearTimeout(replyTimerRef.current)
@@ -103,6 +105,13 @@ export default function ChatPage() {
       setIsTyping(false)
       if (suggestionsEnabled) startIdleTimer()
     }, REPLY_DELAY_MS)
+    adGate.recordSend()
+  }
+
+  const handleSend = (text: string) => {
+    if (sendGate.checkBeforeSend()) return
+    if (adGate.gateOnSend(text)) return
+    doActualSend(text)
   }
 
   const handleDraftChange = (text: string) => {
@@ -128,8 +137,11 @@ export default function ChatPage() {
     if (devSafetyVariant) setChatState('active')
   }
 
-  // Flow toggle resets the journey so designer can re-walk a flow without reload.
-  const handleFlowChange = (newFlow: FlowMode) => { if (newFlow !== flowMode) { setFlowMode(newFlow); sendGate.reset(); setChatState('active'); setModelPickerOpen(false); setBuyCreditsOpen(false) } }
+  // Flow toggle resets the journey so designer can re-walk a flow without reload. Ad flows reset like new-user/returning — designer must type+send to trigger the gate.
+  const handleFlowChange = (newFlow: FlowMode) => {
+    if (newFlow === flowMode) return
+    setFlowMode(newFlow); sendGate.reset(); adGate.reset(); setModelPickerOpen(false); setBuyCreditsOpen(false); setChatState('active')
+  }
 
   const handleToggleSuggestions = () => {
     setSuggestionsEnabled((prev) => {
@@ -214,6 +226,12 @@ export default function ChatPage() {
               </div>
             ) : (
               <div ref={inputAreaRef} className="relative shrink-0">
+                <WatchAdGate
+                  open={chatState === 'watch-ad-popup'}
+                  onClose={() => setChatState('active')}
+                  onWatchAd={adGate.startWatchAd}
+                  mode={flowMode === 'ad-bubble' ? 'bubble' : 'sheet'}
+                />
                 {showSuggestions && suggestions.length > 0 && (
                   <SuggestedReplies
                     suggestions={suggestions}
@@ -263,29 +281,19 @@ export default function ChatPage() {
         creditsBalance={498}
       />
 
-      <ChatStyleSheet
-        open={chatState === 'chat-style-popup'}
-        onClose={() => setChatState('active')}
-        onCommit={(id) => {
-          setSelectedModelId(id)
-          setToast(`Switched to ${getModel(id).name}`)
-        }}
-      />
-
       <ChatSendGates {...sendGate.gateState} onSignIn={sendGate.handleSignIn} />
 
-      <StreakClaimPopup
-        open={chatState === 'claim-credits-popup'}
-        onClose={() => setChatState('active')}
-        balance={10}
-        streakDay={3}
-        tomorrowReward={15}
-        dailyCheckInEarn={15}
+      <ChatStateOverlays
+        chatState={chatState}
+        setChatState={setChatState}
+        setSelectedModelId={setSelectedModelId}
+        setToast={setToast}
+        setModelPickerOpen={setModelPickerOpen}
+        setBuyCreditsOpen={setBuyCreditsOpen}
       />
 
-      <CreditServicePopup open={chatState === 'credit-service-popup'} onClose={() => setChatState('active')} onBuyCredits={() => { setChatState('active'); setBuyCreditsOpen(true) }} />
       <BuyCreditsSheet open={buyCreditsOpen} onClose={() => setBuyCreditsOpen(false)} />
-
+      <DummyAd open={adGate.dummyAdOpen} onComplete={() => adGate.completeWatchAd(doActualSend)} />
       <ChatDevPanel open={showToggle} flowMode={flowMode} setFlowMode={handleFlowChange} chatState={chatState} setChatState={setChatState} />
     </div>
   )

@@ -15,6 +15,8 @@ import SuggestedRepliesSection from './patterns/SuggestedRepliesSection'
 import ModelPickerSheetSection from './patterns/ModelPickerSheetSection'
 import ChatStyleSheetSection from './patterns/ChatStyleSheetSection'
 import CreditServicePopupSection from './patterns/CreditServicePopupSection'
+import ModelDeprecatedSheetSection from './patterns/ModelDeprecatedSheetSection'
+import WatchAdGateSection from './patterns/WatchAdGateSection'
 import ChatRightSidebarSection from './patterns/ChatRightSidebarSection'
 import DormancyBannerSection from './patterns/DormancyBannerSection'
 import OnboardingOverlaySection from './patterns/OnboardingOverlaySection'
@@ -43,6 +45,8 @@ export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (i
       <ModelPickerSheetSection onSectionVisible={onSectionVisible} />
       <ChatStyleSheetSection onSectionVisible={onSectionVisible} />
       <CreditServicePopupSection onSectionVisible={onSectionVisible} />
+      <ModelDeprecatedSheetSection onSectionVisible={onSectionVisible} />
+      <WatchAdGateSection onSectionVisible={onSectionVisible} />
       <ChatRightSidebarSection onSectionVisible={onSectionVisible} />
       <DormancyBannerSection onSectionVisible={onSectionVisible} />
       <OnboardingOverlaySection onSectionVisible={onSectionVisible} />
