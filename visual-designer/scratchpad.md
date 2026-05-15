@@ -21,4 +21,4 @@ YYYY-MM-DD HH:mm — <component or file changed> — <what changed in 1 line> �
 
 ## Pending audit entries
 
-_Empty — fully promoted at S33 end-of-day cleanup (2026-05-14). All 5 pending rows → decisions.md; 2 generalizations → taste.md (eyebrow-label-for-unfamiliar-terms, one-picker-per-consequence-tier); 2 generalizations → knowledge-base.md (small-typography-utility-extraction, entry-point-divergence-on-consolidation)._
+2026-05-15 — WatchAdBubble + WatchAdGateSection (mockup + anatomy row) — body copy "Watch a short ad to keep chatting — your message will send right after." → "Watch a short ad and your message sends right after." — Why: designer tightened — drops the redundant "to keep chatting" framing (the eyebrow "Quick ad break" already sets that context); active voice ("sends" vs "will send") feels more immediate; "and" conjunction reads more conversationally than the em-dash split.
