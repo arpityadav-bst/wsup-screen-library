@@ -40,13 +40,17 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
             <span className="text-text-title font-semibold shrink-0 w-[140px]">BadgeTooltip</span>
             <span>Both viewports. Anchored to badge, dismiss on outside click. For contextual state explanations. Optional accent color bar ties tooltip to badge severity.</span>
           </div>
+          <div className="flex gap-xs">
+            <span className="text-text-title font-semibold shrink-0 w-[140px]">Custom scrim wrapper</span>
+            <span>Mobile + desktop. Use when the popup needs decorations that extend OUTSIDE the card chrome — variant pills, overhanging character DPs, exclamation badges. BottomSheet/CenterPopup&apos;s <code className="text-accent-light">overflow-hidden</code> would clip these. Consumers: LoginSheet (variant pill above), MemoryLimitOverlay (DP overhanging top), OnboardingOverlay (tall stage-aware height), DownloadDataSheet (variant pill top-right). 4 consumers — codified pattern.</span>
+          </div>
           <div className="mt-xs p-s bg-white-05 rounded-card border border-white-10 text-xs text-text-small leading-relaxed">
             <p className="font-semibold text-text-title mb-xxs">Rules</p>
-            <p>Backdrop overlay = demands attention, blocks page (BottomSheet, CenterPopup, Confirmation).</p>
+            <p>Backdrop overlay = demands attention, blocks page (BottomSheet, CenterPopup, Confirmation). All scrim backdrops use <code className="text-accent-light">bg-black-70</code> (codified S34 — was bg-black-55).</p>
             <p>No backdrop = contextual, doesn&apos;t block (Popover).</p>
             <p>Default surface is solid <code className="text-accent-light">bg-profile-sheet-bg</code> (#1a1a1a). Premium/transactional flows may layer <code className="text-accent-light">bg-surface-premium</code> on top — see Surface styles below.</p>
             <p>No backdrop-blur on surfaces — frosted glass was abandoned due to click-through bugs.</p>
-            <p>Mobile and desktop overlays are always separate components. Never dual-render in one tree.</p>
+            <p><strong>Responsive popups parallel-mount:</strong> for popups that ship on both viewports, mount BOTH <code className="text-accent-light">&lt;BottomSheet&gt;</code> and <code className="text-accent-light">&lt;CenterPopup&gt;</code> as siblings in one component. Each primitive owns its own viewport-hide via <code className="text-accent-light">md:hidden</code>/<code className="text-accent-light">hidden md:flex</code>. Extract a shared body component so both wrappers render structurally identical content. Codified by BuyCreditsSheet + WatchAdSheet + DownloadDataSheet (the last uses a custom wrapper but follows the same dual-mount pattern). (Earlier rule "never dual-render in one tree" was outdated and is now retired.)</p>
           </div>
         </div>
       </div>

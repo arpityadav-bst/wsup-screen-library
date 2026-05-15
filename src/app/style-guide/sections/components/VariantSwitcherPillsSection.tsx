@@ -10,7 +10,7 @@ export default function VariantSwitcherPillsSection({ onSectionVisible }: { onSe
   return (
     <Section id="Variant Switcher Pills" title="Variant Switcher Pills" onVisible={onSectionVisible}>
       <div className="w-full">
-        <SubLabel>Designer-facing toggle for surfaces that ship multiple variants (LoginSheet&apos;s standard vs promo, future WatchAdGate-style variant flips, etc.). Glass-style pill (bg-black-55 + backdrop-blur) reads cleanly over any background. Positioned by the consumer — typically <code className="text-accent-light">absolute</code> above the popup chrome via <code className="text-accent-light">{'bottom: calc(100% + 10px)'}</code>. NOT a designer-facing production surface — should only render when an <code className="text-accent-light">onVariantChange</code> handler is passed (i.e., when active variant comparison is happening).</SubLabel>
+        <SubLabel>Designer-facing toggle for surfaces that ship multiple variants (LoginSheet&apos;s standard vs promo, DownloadDataSheet&apos;s result success/failure, etc.). Glass-style pill (bg-black-55 + backdrop-blur) reads cleanly over any background. Positioned by the consumer — typically <code className="text-accent-light">absolute</code> above the popup chrome via <code className="text-accent-light">{'bottom: calc(100% + 10px)'}</code>. NOT a production user-facing surface — should only render when an <code className="text-accent-light">onVariantChange</code> handler is passed (i.e., when active variant comparison is happening).</SubLabel>
 
         <div className="bg-page-bg rounded-card border border-white-10 p-l flex items-center justify-center" style={{ minHeight: '100px' }}>
           <VariantSwitcherPills

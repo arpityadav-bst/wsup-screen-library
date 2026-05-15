@@ -25,6 +25,7 @@ import MemoryLimitPopupSection from './patterns/MemoryLimitPopupSection'
 import LoginSheetSection from './patterns/LoginSheetSection'
 import StreakClaimSection from './patterns/StreakClaimSection'
 import BlockedListSection from './patterns/BlockedListSection'
+import DownloadDataSheetSection from './patterns/DownloadDataSheetSection'
 
 export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -54,6 +55,7 @@ export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (i
       <LoginSheetSection onSectionVisible={onSectionVisible} />
       <StreakClaimSection onSectionVisible={onSectionVisible} />
       <BlockedListSection onSectionVisible={onSectionVisible} />
+      <DownloadDataSheetSection onSectionVisible={onSectionVisible} />
     </>
   )
 }

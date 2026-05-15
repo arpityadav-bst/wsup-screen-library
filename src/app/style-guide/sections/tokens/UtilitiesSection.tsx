@@ -90,6 +90,10 @@ export default function UtilitiesSection({ onSectionVisible }: { onSectionVisibl
             <Tag>slide-up</Tag>
             <span className="text-text-xsmall text-xs flex-1">Bottom-anchored slide entry. Used by <code className="text-accent-light">BottomSheet</code> primitive on open. 0.28s cubic-bezier(0.32,0.72,0,1).</span>
           </div>
+          <div className="flex items-start gap-4 bg-white-05 border border-white-10 rounded-card px-5 py-4">
+            <Tag>deck-rewind-in</Tag>
+            <span className="text-text-xsmall text-xs flex-1"><strong className="text-text-title">Inverse-action signal</strong> — symmetric mirror of the deck pass fly-off. <code className="text-accent-light">translateX -600px → 0</code>, <code className="text-accent-light">rotate -30° → 0</code>, <code className="text-accent-light">opacity 0 → 1</code>, 320ms ease-out forwards. One-shot. Used by <code className="text-accent-light">OnboardingDeckStep</code> when the rewinding card flies in from off-screen-left. Per the codified taste rule <em>&ldquo;symmetric animations for symmetric actions&rdquo;</em>, the parameters mirror the forward swipe-pass animation exactly so the user reads the two as one motion run backwards.</span>
+          </div>
         </div>
       </div>
 

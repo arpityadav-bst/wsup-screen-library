@@ -7,13 +7,12 @@ export interface VariantSwitcherProps {
 }
 
 // "VARIANT 1 / 2 / …" pill — designer-facing toggle for surfaces that ship multiple variants
-// (LoginSheet's standard vs promo, WatchAdGate's sheet vs bubble, etc.). Positioned by the
-// consumer (typically `absolute` above the popup chrome — see LoginSheet's `bottom: calc(100% +
-// 10px)` placement). Glass-style pill (bg-black-55 + backdrop-blur-bg) reads cleanly over any
-// background.
+// (LoginSheet's standard vs promo, DownloadDataSheet's result success vs failure, etc.).
+// Positioned by the consumer (typically `absolute` above the popup chrome — see LoginSheet's
+// `bottom: calc(100% + 10px)` placement, also used by DownloadDataSheet for top-right anchor).
+// Glass-style pill (bg-black-55 + backdrop-blur-bg) reads cleanly over any background.
 //
-// Shared primitive (Gate 3 — 2+ consumers: LoginSheet + WatchAdGate). Was extracted, briefly
-// reverted, and restored once WatchAdGate confirmed the second-consumer need.
+// Shared primitive (Gate 3 — 2+ consumers: LoginSheet + DownloadDataSheet at S34).
 export default function VariantSwitcherPills({
   current,
   variants,

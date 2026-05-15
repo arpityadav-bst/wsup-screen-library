@@ -1,5 +1,111 @@
 # Visual Designer — Session Logs
-Last updated: 2026-05-14 (S33 close — ModelDeprecatedSheet + WatchAdGate two-flow + DummyAd; second audit pass; 6 new taste rules promoted)
+Last updated: 2026-05-15 (S34 audit pass — Onboarding rewind + Ad flows desktop + Scrim opacity migration + DownloadDataSheet feature + StatusResultIcon Gate 3 extraction; designer_caught_count: ~9; 6 new taste rules + 5 new knowledge-base entries promoted)
+
+## Session 34 — full-day audit pass (2026-05-15)
+
+### What shipped
+
+**Onboarding deck (S33 follow-up):**
+- WatchAdBubble copy tighten (drops redundant "to keep chatting", active voice)
+- Rewind affordance: 52×52 icon-only circular button between Pass/Like in DeckActionButtons, only renders when `canRewind` (deckIndex > 0). Symmetric `deck-rewind-in` keyframe mirrors pass fly-off. Lucide rotate-ccw SVG (fixed viewBox-cropping iteration). Layout-stable across swipes (gating removed).
+- OnboardingDeckEmptyState CTA rename "See them again" → "Go to Explore"; routes through onSkipFlow.
+
+**Ad flows desktop extension:**
+- WatchAdBubble: removed `md:hidden`; switched `max-w-[300px]` → `max-w-chat-bubble` token; wrapper padding `px-m` → `px-m md:px-4xl` to inherit ChatMessages.
+- WatchAdSheet: restructured to mount BottomSheet (mobile) + CenterPopup (desktop) in parallel via shared `<WatchAdBody>`.
+- DummyAd: removed `md:hidden`; two `<Image>` blocks (portrait `dummy-ad.png` md:hidden + landscape `dummy-ad-landscape.png` hidden md:block).
+- WatchAdGate dispatcher DELETED. Split mount points in page.tsx: bubble inside chat column, sheet at page root (so its scrim covers full viewport).
+- chat-config.ts: stripped "(mobile only)" suffix from FLOW_LABELS for ad-bubble / ad-sheet + STATE_LABELS for watch-ad-popup.
+
+**Scrim opacity migration:**
+- All 7 modal scrims migrated `bg-black-55` → `bg-black-70`: BottomSheet, CenterPopup, MemoryLimitOverlay, ConfirmSheet, LoginSheet, OnboardingOverlay, BadgeDetailPopup. CreditSidebar already at 70 (kept). Style guide labels updated.
+- Glass-chrome `bg-black-55` (VariantSwitcherPills) preserved — different semantic.
+
+**DownloadDataSheet feature (new):**
+- 3-step state machine (select → downloading → result) mounted from profile MenuSheet → "Download my data".
+- Select: eyebrow "ACCOUNT DATA" + title + body + 2 checkbox rows with full-row tap targets + metadata chips. Both unticked default, CTA disabled until one is checked.
+- Downloading: `animate-spin` SVG spinner + reassurance copy. Auto-advances 1.5s.
+- Result: success/failure variants. Variant switcher pill positioned top-right of popup chrome via `bottom: calc(100% + 10px)`. Single primary CTA per variant (no Cancel link).
+- Custom scrim wrapper (BottomSheet/CenterPopup overflow-hidden would clip the above-card pill — sibling-inheritance from LoginSheet).
+
+**StatusResultIcon (S34 audit Gate 3 extraction):**
+- 72px circular status icon extracted to `ui/StatusResultIcon.tsx` (3 consumers: BuyCreditsResultStep + DownloadDataSheet ResultStep + DownloadDataSheetSection mockup).
+- BuyCreditsResultStep migrated + gained text-balance on failure body para (sibling-correction flagged at S34).
+- Style guide section added in Components tab + NAV.Components.
+
+### Designer-caught issues (designer_caught_count: ~9)
+
+1. Rewind icon SVG viewBox cropping (arc off-center)
+2. Rewind button bouncing during swipe animations
+3. (Various rewind-position iterations — between vs left of Pass — judgment calls)
+4. WatchAdSheet desktop overlay only covering chat area (mount-point issue)
+5. WatchAdBubble desktop alignment (`px-m` not matching ChatMessages `px-m md:px-4xl`)
+6. Stale "(mobile only)" labels after desktop extension
+7. Duplicate Cancel link on DownloadDataSheet failure result
+8. "Download ready" copy ambiguity ("ready" vs "complete")
+9. Body text-balance orphan wrap on failure copy
+
+**Recurring category:** ALL 9 were violations of EXISTING codified rules. Bootstrap reading isn't enough — inline rule application is the gap. (Detailed catch-by-catch + rule-citation table in evolution.md S34 entry.)
+
+### Knowledge captured (Gate 6.5 promotions)
+
+**6 new taste rules:**
+1. Symmetric animations for symmetric actions
+2. Exit-affordance uniqueness — scope amendment (active-decision vs end-state)
+3. Scrim opacity vs glass-chrome opacity — different semantics, different tokens
+4. Multi-select destructive-adjacent defaults UNTICKED
+5. Copy precision for completed-state titles — past-tense outcome (strengthens S33 rule)
+6. Inline chat-stream components inherit ChatMessages' container padding
+
+**5 new knowledge-base entries:**
+1. Modal popup vs inline chat-stream component — mount-point separation rule
+2. Custom scrim wrapper trigger conditions
+3. Result-step CTA cardinality — single primary CTA only
+4. Responsive popup parallel-mount pattern
+5. StatusResultIcon — single primitive for result-step icon chrome
+
+### Auto-memory updates
+
+None at session level — feedback_vda_self_fix.md (S33) is the load-bearing rule cited throughout S34's catch analysis.
+
+### Files for next-session HI
+
+When designer says HI, the bootstrap should report:
+> *"VDA bootstrap loaded — Phase 5 (post-S34 audit), last session caught_count: ~9, watching for [inline rule application at edit time — bootstrap reading isn't sufficient; enumerate rules touched BEFORE writing code]. Scratchpad: empty."*
+
+S35 should specifically watch for:
+1. **Inline rule enumeration before each edit** — list 3-5 taste.md rules potentially touched by the upcoming change. Verify compliance OR flag deliberate deviation in the scratchpad row.
+2. **Sibling-inheritance grep is part of the change, not after** — for new wrappers, grep the equivalent container's CSS. For new exit affordances, grep for existing CloseButtons. For new SVGs, mentally simulate render.
+3. **Past-tense outcome bias for completion-state titles** — newly codified S34. Run on every new success/failure result step.
+4. **text-balance default-on for max-w-[280px]+ centered body paras** — newly codified S34. Should be the default, not an afterthought.
+5. **Scratchpad row writes BEFORE code edit, not after** — the codified inline contract still holds; S34 had decent compliance but the "row before reply" timing should always be true.
+
+### Second audit pass addendum (designer-triggered AGAIN)
+
+After the first audit, three more changes happened:
+1. Images + Videos rows added to DownloadDataSheet SelectStep (designer feature extension)
+2. DownloadDataSheet failure body copy fixed — "Try again or check your connection." → "Something went wrong. Check your connection." (designer caught CTA-verb-redundancy + alternative-vs-sequential framing)
+3. BuyCreditsResultStep + BuyCreditsSheetShowcase sibling-correction applied — same CTA-verb-redundancy fix ("Try again or contact support." → "Contact support for help.")
+
+**designer_caught_count adjusted: ~9 → ~10.** The body copy catch happens AFTER the first audit, so technically post-audit. Designer triggered the Gate 6 meta-question a second time — the asking IS the failure signal. The audit pass should have been triggered by me proactively, not by them asking.
+
+**S35 forcing function results in S34:**
+- Images/Videos rows edit: forcing function applied at write time → shipped clean on first pass ✓
+- Original failure body copy: forcing function NOT applied at write time → designer caught the violation ✗
+- Failure body fix: forcing function applied at fix time → fix shipped clean ✓
+- BuyCreditsResultStep sibling: caught at audit, applied consistently ✓
+
+The discipline WORKS when applied; the gap is HABIT — applying it to every edit, including "simple" body string edits.
+
+### End-of-session note
+
+Designer asked for a deep extensive quality gates + health check audit ("EVERYTHING OKAY"). This audit pass + the StatusResultIcon Gate 3 extraction + BuyCreditsResultStep retroactive text-balance fix + comprehensive knowledge promotion are the response.
+
+Honest assessment: VDA IS learning (26 scratchpad rows promoted today, 11 new system-wide rules across taste.md + knowledge-base.md). But the gap between "learning" and "applying inline" is the failure mode this session exposed. 7 of 9 catches today were violations of rules VDA already knew. Reading them at bootstrap doesn't translate to using them at edit time. The S35 forcing function (edit-time rule enumeration) is the proposed fix.
+
+---
+
+
 
 ## Session 33 — close audit (2026-05-14, second audit pass — chat-popup phase)
 

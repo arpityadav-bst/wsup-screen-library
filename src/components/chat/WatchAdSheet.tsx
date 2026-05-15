@@ -60,11 +60,12 @@ function WatchAdBody({ onClose, onWatchAd }: { onClose: () => void; onWatchAd: (
   )
 }
 
-// BottomSheet variant (mobile) + CenterPopup variant (desktop) of the WatchAdGate. Hard send-gate
+// BottomSheet variant (mobile) + CenterPopup variant (desktop) of the ad-sheet flow. Hard send-gate
 // that fires on Nth send when the 'ad-sheet' flow is active. Sibling-surface inheritance with
 // BuyCreditsSheet's mobile+desktop pattern (BottomSheet + CenterPopup mounted in parallel; each
 // hides itself on the wrong viewport via its primitive's CSS). Action-first headline per codified
-// taste rule. Same z-index (70) on both variants.
+// taste rule. Same z-index (70) on both variants. Mounted at PAGE ROOT in page.tsx so the scrim
+// covers the full viewport (Header + Sidebar included).
 export default function WatchAdSheet({ open, onClose, onWatchAd }: WatchAdSheetProps) {
   return (
     <>

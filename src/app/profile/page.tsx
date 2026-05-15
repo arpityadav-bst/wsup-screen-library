@@ -17,6 +17,7 @@ import CharacterStatesSheet from '@/components/profile/CharacterStatesSheet'
 import BioSheet from '@/components/profile/BioSheet'
 import BadgesSheet from '@/components/profile/BadgesSheet'
 import MenuSheet from '@/components/profile/MenuSheet'
+import DownloadDataSheet from '@/components/profile/DownloadDataSheet'
 import CharacterMenuSheet, { DormantCharacterMenuSheet } from '@/components/profile/CharacterMenuSheet'
 import LogoutConfirmSheet from '@/components/profile/LogoutConfirmSheet'
 import RemoveAccountConfirmSheet from '@/components/profile/RemoveAccountConfirmSheet'
@@ -45,6 +46,7 @@ export default function ProfilePage() {
   const [socialTab, setSocialTab] = useState('Followers')
   const [myCardsOpen, setMyCardsOpen] = useState(false)
   const [blockedOpen, setBlockedOpen] = useState(false)
+  const [downloadDataOpen, setDownloadDataOpen] = useState(false)
   const [charMenuOpen, setCharMenuOpen] = useState(false)
   const [charMenuChar, setCharMenuChar] = useState<string | null>(null)
   const [statesSheetOpen, setStatesSheetOpen] = useState(false)
@@ -248,9 +250,11 @@ export default function ProfilePage() {
         anchorRef={dotsBtnRef}
         onMyCards={() => setMyCardsOpen(true)}
         onBlockedCreators={() => setBlockedOpen(true)}
+        onDownloadData={() => { setMenuOpen(false); setDownloadDataOpen(true) }}
         onLogout={() => { setMenuOpen(false); setLogoutOpen(true) }}
         onRemoveAccount={() => { setMenuOpen(false); setRemoveAccountOpen(true) }}
       />
+      <DownloadDataSheet open={downloadDataOpen} onClose={() => setDownloadDataOpen(false)} />
       <LogoutConfirmSheet open={logoutOpen} onClose={() => setLogoutOpen(false)} onConfirm={() => setLogoutOpen(false)} />
       <RemoveAccountConfirmSheet open={removeAccountOpen} onClose={() => setRemoveAccountOpen(false)} onConfirm={() => setRemoveAccountOpen(false)} />
       <BioSheet open={bioOpen} onClose={() => setBioOpen(false)} name={PROFILE.name} bio={PROFILE.bio} />

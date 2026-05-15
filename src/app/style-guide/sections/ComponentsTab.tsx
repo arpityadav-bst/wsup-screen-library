@@ -21,6 +21,7 @@ import ProfileCardsSection from './components/ProfileCardsSection'
 import ProfileOverlaysSection from './components/ProfileOverlaysSection'
 import UIUtilitiesSection from './components/UIUtilitiesSection'
 import RewardCardsSection from './components/RewardCardsSection'
+import StatusResultIconSection from './components/StatusResultIconSection'
 
 export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -40,6 +41,7 @@ export default function ComponentsTab({ onSectionVisible }: { onSectionVisible: 
       <ToastSection onSectionVisible={onSectionVisible} />
       <CreditsBalancePillSection onSectionVisible={onSectionVisible} />
       <VariantSwitcherPillsSection onSectionVisible={onSectionVisible} />
+      <StatusResultIconSection onSectionVisible={onSectionVisible} />
       <LifecycleSection onSectionVisible={onSectionVisible} />
       <BottomNavSection onSectionVisible={onSectionVisible} />
       <ProfileCardsSection onSectionVisible={onSectionVisible} />

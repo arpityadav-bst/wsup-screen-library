@@ -7,7 +7,7 @@ interface WatchAdBubbleProps {
   onWatchAd: () => void
 }
 
-// AI-chat-bubble variant of the WatchAdGate. Mounts INLINE in the input-area slot (where
+// AI-chat-bubble variant of the ad-bubble flow. Mounts INLINE in the input-area slot (where
 // SuggestedReplies sits), pushing the chat stream up. Renders on BOTH mobile and desktop — the
 // surface inherits the chat column's responsive width from its parent. Wrapper padding mirrors
 // ChatMessages' container (`px-m md:px-4xl`) so the bubble's left edge aligns with the regular

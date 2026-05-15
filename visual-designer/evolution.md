@@ -1,9 +1,111 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-14 (S33 close — ModelDeprecatedSheet + WatchAdGate two-flow + DummyAd; ~16 catches total; 6 new taste rules; aboveSheet dead-code reverted)
+Last updated: 2026-05-15 (S34 audit pass — onboarding rewind + ad flows desktop + scrim opacity migration + DownloadDataSheet feature + StatusResultIcon Gate 3 extraction; ~9 designer catches; 6 new taste rules; 5 new knowledge-base entries)
 
 ---
 
-## Phase 5 → 6 trigger streak status (2026-05-14, S33 FULL close — both phases)
+## Phase 5 → 6 trigger streak status (2026-05-15, S34 THIRD audit pass)
+
+**Streak: still BROKEN.** Designer asked the Gate 6 meta-question a THIRD time today, specifically asking about exhaustive style guide coverage. The third audit found 4 style-guide-sync misses that the first two audits failed to catch:
+
+1. `deck-rewind-in` keyframe not registered in UtilitiesSection
+2. `VariantSwitcherPills.tsx` comments still citing deleted WatchAdGate
+3. `OverlaysSection` "When to use which" guide missing Custom scrim wrapper option
+4. `OverlaysSection` "Rules" block contained an OUTDATED rule contradicting current codified parallel-mount pattern
+
+**Pattern observation:**
+The first two audits ran scratchpad-promotion correctly (decisions.md / taste.md / knowledge-base.md got proper entries with full reasoning). But Gate 5 SYNC was incomplete — only sections that DIRECTLY touched today's changed surfaces got synced. The codified Gate 5 rule says to grep `style-guide/sections/**` for references to changed entities — this exhaustive grep wasn't running. As a result, stale text (deleted-component references) and outdated rules (contradicting newer codified patterns) accumulated.
+
+**S36 audit-pass procedure refinement:**
+Audit pass must run TWO Gate 5 passes:
+1. **Pass A — Touched-surface sync:** for each component/file changed this session, update its OWN style guide section (anatomy text, mockups, copy).
+2. **Pass B — Codebase-wide grep sweep:** for each (a) deleted component, (b) renamed component, (c) new codified pattern, (d) amended rule, grep `style-guide/sections/**` for references. Update any stale or contradicting text.
+
+If only Pass A runs (as in S34 first/second audits), stale references accumulate across sessions until a future audit or designer catches them. Pass B is what closes the gap.
+
+**S34 catch total now ~11** (10 from earlier + 1 from this third audit — the designer noticing audit incompleteness IS itself the catch).
+
+---
+
+## Phase 5 → 6 trigger streak status (2026-05-15, S34 SECOND audit pass)
+
+**Streak: still BROKEN.** S34 total catch count now ~10 (one more after the first audit — body wrap + CTA-verb-redundancy on DownloadDataSheet failure copy). The designer triggered the Gate 6 hard-fail meta-question AGAIN this session — the asking IS the failure signal.
+
+**Critical observation from S34 second audit:**
+The S35 forcing function (enumerate rules touched before editing) WORKED when I applied it to the Images/Videos row addition — that edit shipped clean on first pass with rule compliance cited in the scratchpad. But I FAILED to apply the same discipline when I originally wrote the failure body copy ("Try again or check your connection") — even though "action-labels-inherit-context" is a codified rule I had read at bootstrap THIS session. The discipline gap is not knowledge — it's HABIT. Even with the forcing function defined, applying it requires conscious effort PER edit. Edits that feel "simple" (just a body string) are exactly where the discipline gets skipped.
+
+**Updated S35→S36 forcing function — refined:**
+1. **No edit is "too simple" for rule enumeration.** Body copy strings are exactly where action-labels-inherit-context and copy-precision violations hide. If an edit changes user-facing text, enumerate rules touched.
+2. **The S35 function applies to ALL edits, not just edits involving new components.** Adding a body string IS an edit. Setting an attribute IS an edit. The bias to skip "tiny" edits is the gap.
+3. **Pre-flight check for ANY copy edit:** read the surrounding surface (title + body + CTA) as one unit. Do any words repeat across the trio? Is each piece doing a distinct job (state / hint / action)?
+
+---
+
+## Phase 5 → 6 trigger streak status (2026-05-15, S34 first audit pass — earlier entry retained below)
+
+**Streak: still BROKEN.** S34 had ~9 designer-flagged corrections across the day at the first audit time, lower than S33's ~16 but the FAILURE MODES are the same recurring categories.
+
+**Catch breakdown (S34):**
+1. Rewind icon SVG viewBox cropping (Gate 8 — should have visually verified arc fits viewBox before shipping)
+2. Rewind button bouncing during animation (Gate 7 + Gate 8 — introduced state-gating without thinking through side effect)
+3. WatchAdSheet desktop overlay chat-area-only (Gate 7 + sibling-inheritance — BuyCreditsSheet precedent for page-root mount was right there)
+4. WatchAdBubble desktop alignment (Gate 7 — should have inherited ChatMessages px-m md:px-4xl pattern)
+5. "(mobile only)" labels stale after desktop extension (Gate 6 self-check — when extending viewport coverage, sweep stale labels in same edit)
+6. Cancel link duplicate exit (Gate 7 — I cited the exit-affordance-uniqueness rule correctly 2 sessions ago and missed applying it here)
+7. "Download ready" copy precision (Gate 8 / copy-state precision — past-tense outcome rule existed implicitly via BuyCreditsResultStep, not applied)
+8. Body text-balance orphan wrap (Gate 8.3 / line-break hygiene — max-w-[280px] without text-balance is the classic orphan trap)
+9. (Various rewind-position iterations — judgment calls, not strict gate misses)
+
+**Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27~7, **S28=0**, S29=14, **S30~10-12**, **S31~15-20**, **S32 main=0**, **S32 f1=7**, **S32 f2=0**, **S32 f3~12**, **S33 morning=~3**, **S33 afternoon=~13**, **S33 total ~16**, **S34=~9.**
+
+Phase 5→6 counter: 0 consecutive 0-catch sessions. Trajectory: lower count than S33 but same failure-mode categories.
+
+---
+
+## Active recurring failure modes (rolled to S35)
+
+The pattern across S33 + S34: **VDA reads the rules at bootstrap, but doesn't RE-check them inline at edit time.** All 9 S34 catches were violations of EXISTING codified rules. The rules ARE in taste.md / knowledge-base.md / QUALITY-GATES.md. I read them at session start. But I'm not running them as a checklist before each edit-time decision.
+
+**S35 forcing function (must-do at edit time, not just bootstrap):**
+1. Before sending ANY code edit, mentally enumerate: *"what rules in taste.md does this edit potentially touch?"* List them in 3-5 words each.
+2. For each potential-touch rule, verify the edit complies. If unsure, grep taste.md for the rule.
+3. For SVG / animation / new visual chrome: render mentally + verify against Gate 8 + Gate 8.2 + Gate 8.3 + Gate 8.4 sub-rules.
+4. For ANY new in-stream chat component: verify wrapper inherits `px-m md:px-4xl` from ChatMessages.
+5. For ANY new exit affordance: verify it's not duplicating an existing CloseButton / Skip pill.
+6. For ANY copy on success/failure states: read aloud as a user trying to decide what to do next.
+
+If the scratchpad row for an edit doesn't explicitly cite which rule it complies with (or deliberately deviates from), the inline check didn't happen.
+
+---
+
+## S34 catch-by-catch — what rule existed, what I missed
+
+| Catch | Pre-existing rule | Where it lives | Why I missed it |
+|---|---|---|---|
+| Rewind SVG viewBox crop | "Render visually + verify before shipping" (Gate 8.0) | QUALITY-GATES.md | Didn't simulate render — built path mathematically |
+| Rewind button bouncing | "All trigger paths converge on one pipeline" (Gate 7) | taste.md | Added state gating reactively without thinking through layout effect |
+| WatchAdSheet desktop overlay | "Modal popups mount at page root" — IMPLICIT from BuyCreditsSheet, codified S34 audit | knowledge-base.md (now) | Bundled with bubble in WatchAdGate dispatcher — premature abstraction |
+| Bubble desktop alignment | "Inline chat-stream wrapper inherits px-m md:px-4xl" — IMPLICIT, codified S34 audit | taste.md (now) | Didn't grep ChatMessages container before writing wrapper |
+| "(mobile only)" labels stale | "Same-edit semantic for label + surface viewport coverage" (S33) | decisions.md | Didn't sweep config labels when extending viewport coverage |
+| Cancel link duplicate | "Exit-affordance uniqueness" (S32) | taste.md | I CITED THIS RULE CORRECTLY 2 sessions ago. Total miss. |
+| "Download ready" copy | "Copy must match product state precisely" (S33) | taste.md | Past-tense subset of the rule, not explicit until S34 audit strengthened it |
+| Text-balance orphan wrap | "Fix the wrap constraint, not the copy" (S33) | taste.md | Should have applied text-balance by default on max-w-[280px] body para |
+
+**The honest assessment:** 7 of 9 catches were violations of rules I HAD READ at bootstrap. The bootstrap reading is not enough. Inline rule application is the gap.
+
+---
+
+## New active gaps (S34 close)
+
+| Gap | Detection | Mitigation |
+|---|---|---|
+| **Bootstrap reading ≠ inline application** | 7/9 S34 catches violated already-codified rules | Edit-time rule enumeration (see S35 forcing function above) |
+| **Sibling-inheritance grep gap (recurring)** | BuyCreditsSheet's page-root mount was the obvious sibling for WatchAdSheet; ChatMessages' px-m md:px-4xl was the obvious sibling for WatchAdBubble wrapper. Neither grepped. | Gate 2.2 must run BEFORE writing wrapper / mount code, not after the designer catches the divergence |
+| **Past-tense outcome bias for completion states** | "Download ready" missed even though BuyCreditsResultStep's "Credits added" was right there | New taste rule promoted (S34): past-tense outcome for success titles |
+| **Orphan-wrap blindspot on max-w-[280px] body paras** | DownloadDataSheet failure body orphaned "check / your connection". BuyCreditsResultStep has same shape (now retroactively fixed at S34 audit) | text-balance should default-on for ANY max-w-[280px]+ centered body para |
+
+---
+
+
 
 **Streak: still BROKEN.** S33 had two distinct work phases (morning onboarding audit + afternoon chat-popup build). Combined catch count: **~16 designer-flagged corrections** — the highest single-session count this cycle.
 

@@ -21,8 +21,10 @@ interface ChatStateOverlaysProps {
 // at S33 to keep the page under the 300-line file rule — the popup-mount stack was the cleanest
 // semantic unit to lift (all share the same trigger pattern).
 //
-// WatchAdGate is mounted separately in page.tsx (inside the chat column) because its 'bubble'
-// variant needs to absolute-position above the ChatBar — it can't live at page level.
+// WatchAdBubble (the 'ad-bubble' flow surface) is mounted in page.tsx INSIDE the chat column —
+// it renders inline above ChatBar. WatchAdSheet (the 'ad-sheet' flow surface) is mounted at page
+// root in page.tsx so its scrim covers the full viewport. Neither lives here because both have
+// flow-specific mount locations the popup-state-machine pattern doesn't support.
 export default function ChatStateOverlays({
   chatState,
   setChatState,

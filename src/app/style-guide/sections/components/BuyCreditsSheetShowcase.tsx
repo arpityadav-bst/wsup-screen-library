@@ -66,7 +66,7 @@ function ResultPreview({ variant }: { variant: 'success' | 'failure' }) {
               <span className="text-sm font-semibold text-status-success">+1000 credits · 1010 total</span>
             </div>
           ) : (
-            <p className="text-sm text-text-body max-w-[280px]">Your card wasn’t charged. Try again or contact support.</p>
+            <p className="text-sm text-text-body max-w-[280px] text-balance">Your card wasn’t charged. Contact support for help.</p>
           )}
         </div>
         <div className="flex flex-col gap-s items-center w-full">
