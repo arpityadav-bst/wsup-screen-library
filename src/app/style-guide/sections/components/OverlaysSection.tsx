@@ -146,7 +146,7 @@ export default function OverlaysSection({ onSectionVisible }: { onSectionVisible
             <div className="p-l text-sm text-text-body">Popup content area</div>
           </div>
         </PreviewBox>
-        <StateLabel>Centered modal with bg-black-55 backdrop</StateLabel>
+        <StateLabel>Centered modal with bg-black-70 backdrop</StateLabel>
 
         <div className="mt-m flex flex-col gap-xxs">
           <TokenRow token="bg-profile-sheet-bg" desc="#1a1a1a solid" />

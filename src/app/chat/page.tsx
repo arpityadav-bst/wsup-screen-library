@@ -18,7 +18,8 @@ import ChatSendGates from '@/components/chat/ChatSendGates'
 import BuyCreditsSheet from '@/components/ui/BuyCreditsSheet'
 import ChatDevPanel from '@/components/chat/ChatDevPanel'
 import ChatStateOverlays from './ChatStateOverlays'
-import WatchAdGate from '@/components/chat/WatchAdGate'
+import WatchAdBubble from '@/components/chat/WatchAdBubble'
+import WatchAdSheet from '@/components/chat/WatchAdSheet'
 import DummyAd from '@/components/chat/DummyAd'
 import { useWatchAdGate } from './useWatchAdGate'
 import { DEFAULT_MODEL_ID, getModel, type ModelId } from '@/lib/models'
@@ -224,11 +225,12 @@ export default function ChatPage() {
               </div>
             ) : (
               <div ref={inputAreaRef} className="relative shrink-0">
-                <WatchAdGate
-                  open={chatState === 'watch-ad-popup'}
-                  onClose={() => setChatState('active')}
+                {/* Bubble variant mounts INLINE in the input-area slot so it can push the chat stream
+                    up above ChatBar. The sheet variant (modal popup) is mounted at PAGE ROOT below
+                    so its fixed inset-0 scrim covers the full viewport, not just the chat column. */}
+                <WatchAdBubble
+                  open={chatState === 'watch-ad-popup' && flowMode === 'ad-bubble'}
                   onWatchAd={adGate.startWatchAd}
-                  mode={flowMode === 'ad-bubble' ? 'bubble' : 'sheet'}
                 />
                 {showSuggestions && suggestions.length > 0 && (
                   <SuggestedReplies
@@ -280,6 +282,11 @@ export default function ChatPage() {
       />
 
       <BuyCreditsSheet open={buyCreditsOpen} onClose={() => setBuyCreditsOpen(false)} />
+      <WatchAdSheet
+        open={chatState === 'watch-ad-popup' && flowMode === 'ad-sheet'}
+        onClose={() => setChatState('active')}
+        onWatchAd={adGate.startWatchAd}
+      />
       <DummyAd open={adGate.dummyAdOpen} onComplete={() => adGate.completeWatchAd(doActualSend)} />
       <ChatDevPanel open={showToggle} flowMode={flowMode} setFlowMode={handleFlowChange} chatState={chatState} setChatState={setChatState} />
     </div>

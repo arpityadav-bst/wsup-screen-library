@@ -31,7 +31,7 @@ export default function BottomSheet({ open, onClose, title, subtitle, maxHeight 
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-black-55"
+        className="absolute inset-0 bg-black-70"
         style={{ animation: 'fade-in 0.2s ease-out' }}
       />
       {/* Sheet */}

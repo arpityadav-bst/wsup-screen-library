@@ -59,7 +59,7 @@ export const STATE_LABELS: Record<ChatDemoState, string> = {
   'claim-credits-popup': 'Claim free credits',
   'credit-service-popup': 'Out of credits popup',
   'model-deprecated-popup': 'Llama 3 deprecated (mobile only)',
-  'watch-ad-popup': 'Watch ad (mobile only)',
+  'watch-ad-popup': 'Watch ad',
   'safety-self-harm': 'Safety: Self-harm',
   'safety-medical': 'Safety: Medical',
   'safety-financial': 'Safety: Financial',
@@ -75,9 +75,9 @@ export const SAFETY_STATE_TO_VARIANT: Partial<Record<ChatDemoState, SafetyVarian
 // "State" axis. Four flows:
 //   - 'new-user' / 'returning' — login-routing flows (drives post-sign-in destination)
 //   - 'ad-bubble'              — ad-gate flow with AI-chat-bubble UI; gate fires on send
-//   - 'ad-sheet'               — ad-gate flow with BottomSheet UI; gate fires on send
-// Both ad-flows are mobile-only; both gate-on-send (no instant preview). Designer picks which UI
-// treatment to test via the Flow toggler. Send a message to trigger the gate in either flow.
+//   - 'ad-sheet'               — ad-gate flow with BottomSheet (mobile) / CenterPopup (desktop); gate fires on send
+// Both ad-flows render on mobile + desktop; both gate-on-send (no instant preview). Designer picks
+// which UI treatment to test via the Flow toggler. Send a message to trigger the gate in either flow.
 export type FlowMode = 'new-user' | 'returning' | 'ad-bubble' | 'ad-sheet'
 
 export const FLOWS: FlowMode[] = ['new-user', 'returning', 'ad-bubble', 'ad-sheet']
@@ -85,8 +85,8 @@ export const FLOWS: FlowMode[] = ['new-user', 'returning', 'ad-bubble', 'ad-shee
 export const FLOW_LABELS: Record<FlowMode, string> = {
   'new-user': 'New user',
   'returning': 'Returning user',
-  'ad-bubble': 'Ad flow - AI chat bubble (mobile only)',
-  'ad-sheet': 'Ad flow - Bottom sheet (mobile only)',
+  'ad-bubble': 'Ad flow - AI chat bubble',
+  'ad-sheet': 'Ad flow - Bottom sheet',
 }
 
 // What happens after sign-in for each flow. `nextState` opens the corresponding popup.

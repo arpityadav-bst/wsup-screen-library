@@ -60,7 +60,7 @@ export default function OnboardingOverlay({
           - preferences = auto (content-driven; only ~500px of pickers — fixed 880 wasted real estate)
           - deck = min(880px, 94vh) (deck card needs the room for image + overlay content) */}
       <div className="fixed inset-0 hidden md:flex items-center justify-center" style={{ zIndex: 80 }}>
-        <div className="absolute inset-0 bg-black-55" style={{ animation: 'fade-in 0.2s ease-out' }} />
+        <div className="absolute inset-0 bg-black-70" style={{ animation: 'fade-in 0.2s ease-out' }} />
         <div
           className="relative w-full max-w-popup-medium bg-page-bg rounded-popup border border-white-10 shadow-popup overflow-hidden flex flex-col"
           style={{

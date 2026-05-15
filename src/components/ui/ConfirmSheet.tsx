@@ -79,7 +79,7 @@ function DesktopConfirm({ open, onClose, onConfirm, title, description, confirmL
 
   return (
     <div className="fixed inset-0 z-50 hidden md:flex items-center justify-center">
-      <div onClick={onClose} className="absolute inset-0 bg-black-55" style={{ animation: 'fade-in 0.2s ease-out' }} />
+      <div onClick={onClose} className="absolute inset-0 bg-black-70" style={{ animation: 'fade-in 0.2s ease-out' }} />
       <div
         className="relative bg-profile-sheet-bg border border-white-10 rounded-popup shadow-popup w-full max-w-[400px] overflow-hidden"
         style={{ animation: 'slide-up 0.24s cubic-bezier(0.32,0.72,0,1)' }}
