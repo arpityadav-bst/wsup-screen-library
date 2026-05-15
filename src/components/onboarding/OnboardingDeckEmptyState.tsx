@@ -3,12 +3,12 @@
 import Button from '@/components/ui/Button'
 
 interface OnboardingDeckEmptyStateProps {
-  // Two distinct intents, surfaced as two props for dev handoff clarity:
-  //   onShowMore — load the NEXT batch of cards (production: paginate the catalog)
-  //   onSeeAgain — replay the SAME batch the user just went through (regret-a-skip path)
-  // In this demo both wire to the same reset-index action since we re-cycle the 9-card deck.
+  // Two distinct intents:
+  //   onShowMore     — load the NEXT batch of cards (production: paginate the catalog)
+  //   onGoToExplore  — exit the onboarding overlay into /explore (same destination as the header Skip pill)
+  // In this demo onShowMore wires to deck-reset; production splits it into next-batch fetch.
   onShowMore: () => void
-  onSeeAgain: () => void
+  onGoToExplore: () => void
 }
 
 // Two stacked cards — visual metaphor for "the deck." Back card offset up-and-right, front card in foreground.
@@ -24,13 +24,13 @@ function DeckIllustration() {
   )
 }
 
-// Renders when the user has swiped through the entire onboarding deck without liking anyone (every card skipped).
-// Primary = "Show me more" — the user's skips signal "these didn't match"; the most-likely next intent is a fresh batch.
-// Secondary = "See them again" — the regret-a-skip path; descriptive copy chosen over the colloquial "Run it back"
-// because onboarding is exactly when new users have zero context to parse slang.
-// "Open Explore" intentionally omitted — the Skip pill at top-right already serves that escape; duplicating it
-// here would violate the codified taste rule about not duplicating exit affordances at the same trigger semantic.
-export default function OnboardingDeckEmptyState({ onShowMore, onSeeAgain }: OnboardingDeckEmptyStateProps) {
+// Renders when the user has swiped through the entire onboarding deck without liking anyone.
+// Primary  = "Show me more"    — fresh batch; the most-likely next intent for users who skipped every card.
+// Secondary = "Go to Explore"  — exit to the full /explore catalog (same destination as the header Skip pill).
+// The codified "exit-affordance uniqueness" rule applies to ACTIVE decision surfaces; at the end-state moment,
+// surfacing exit as a primary in-flow CTA is correct — the user has finished the decision surface and exit IS
+// the natural forward action. The header Skip pill remains as the universal escape during the active deck.
+export default function OnboardingDeckEmptyState({ onShowMore, onGoToExplore }: OnboardingDeckEmptyStateProps) {
   return (
     <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-l px-l">
       <DeckIllustration />
@@ -42,7 +42,7 @@ export default function OnboardingDeckEmptyState({ onShowMore, onSeeAgain }: Onb
 
       <div className="flex flex-col gap-s w-full max-w-[280px]">
         <Button variant="primary" fullWidth onClick={onShowMore}>Show me more</Button>
-        <Button variant="secondary" fullWidth onClick={onSeeAgain}>See them again</Button>
+        <Button variant="secondary" fullWidth onClick={onGoToExplore}>Go to Explore</Button>
       </div>
     </div>
   )

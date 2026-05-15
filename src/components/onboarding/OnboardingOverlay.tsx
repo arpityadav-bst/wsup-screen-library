@@ -10,9 +10,11 @@ interface OnboardingOverlayProps {
   open: boolean
   stage: OnboardingStage
   deckIndex: number
+  canRewind: boolean
   onContinueFromPreferences: (prefs: { identity: string; age: string; interest: string }) => void
   onSkipCard: () => void
   onLikeCard: () => void
+  onRewindCard: () => void
   onSkipFlow: () => void
   onRestartDeck: () => void
 }
@@ -26,9 +28,11 @@ export default function OnboardingOverlay({
   open,
   stage,
   deckIndex,
+  canRewind,
   onContinueFromPreferences,
   onSkipCard,
   onLikeCard,
+  onRewindCard,
   onSkipFlow,
   onRestartDeck,
 }: OnboardingOverlayProps) {
@@ -43,7 +47,7 @@ export default function OnboardingOverlay({
 
   const body = stage === 'preferences'
     ? <OnboardingPreferencesStep onContinue={onContinueFromPreferences} onSkip={onSkipFlow} />
-    : <OnboardingDeckStep index={deckIndex} onSkipCard={onSkipCard} onLikeCard={onLikeCard} onSkipFlow={onSkipFlow} onRestartDeck={onRestartDeck} />
+    : <OnboardingDeckStep index={deckIndex} canRewind={canRewind} onSkipCard={onSkipCard} onLikeCard={onLikeCard} onRewindCard={onRewindCard} onSkipFlow={onSkipFlow} onRestartDeck={onRestartDeck} />
 
   return (
     <>

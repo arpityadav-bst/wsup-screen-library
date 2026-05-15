@@ -129,9 +129,11 @@ export default function ExplorePage() {
         open={onboarding.open}
         stage={onboarding.stage}
         deckIndex={onboarding.deckIndex}
+        canRewind={onboarding.canRewind}
         onContinueFromPreferences={onboarding.continueFromPreferences}
         onSkipCard={onboarding.skipCard}
         onLikeCard={onboarding.likeCard}
+        onRewindCard={onboarding.rewindCard}
         onSkipFlow={handleSkipFlow}
         onRestartDeck={onboarding.restartDeck}
       />

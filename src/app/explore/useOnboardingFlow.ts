@@ -9,11 +9,13 @@ export interface OnboardingFlowState {
   open: boolean
   stage: OnboardingStage
   deckIndex: number
+  canRewind: boolean
   start: () => void
   closeFlow: () => void
   continueFromPreferences: (prefs: { identity: string; age: string; interest: string }) => void
   skipCard: () => void
   likeCard: () => void
+  rewindCard: () => void
   restartDeck: () => void
 }
 
@@ -50,8 +52,12 @@ export function useOnboardingFlow(): OnboardingFlowState {
 
   const skipCard = () => {
     // No auto-close at end of deck — `index >= deck.length` triggers the empty-state in OnboardingDeckStep,
-    // which offers "Show me more" + "See them again". The empty state replaces "user dropped off into the void."
+    // which offers "Show me more" + "Go to Explore". The empty state replaces "user dropped off into the void."
     setDeckIndex(deckIndex + 1)
+  }
+
+  const rewindCard = () => {
+    if (deckIndex > 0) setDeckIndex(deckIndex - 1)
   }
 
   const restartDeck = () => {
@@ -66,5 +72,5 @@ export function useOnboardingFlow(): OnboardingFlowState {
     router.push('/chat')
   }
 
-  return { open, stage, deckIndex, start, closeFlow, continueFromPreferences, skipCard, likeCard, restartDeck }
+  return { open, stage, deckIndex, canRewind: deckIndex > 0, start, closeFlow, continueFromPreferences, skipCard, likeCard, rewindCard, restartDeck }
 }

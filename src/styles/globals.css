@@ -151,6 +151,14 @@
   50%      { transform: scale(1.08); opacity: 1;   }
 }
 
+/* Deck-rewind-in — mirror of the pass commit fly-off. The rewinding card flies IN from off-screen-left
+   with a left-tilt, settling into the active slot. Mirrors DeckCardSwiper's FLY_DISTANCE/FLY_ROTATION/
+   ANIM_MS (600px / 30deg / 320ms) so forward + backward animations feel symmetric. */
+@keyframes deck-rewind-in {
+  from { transform: translateX(-600px) rotate(-30deg); opacity: 0; }
+  to   { transform: translateX(0) rotate(0deg);        opacity: 1; }
+}
+
 /* ── Style guide token highlight ──────────────────────────────────── */
 @keyframes token-highlight-pulse {
   0%   { box-shadow: 0 0 0 0   rgba(130,161,255,0);    background-color: rgba(130,161,255,0); }
