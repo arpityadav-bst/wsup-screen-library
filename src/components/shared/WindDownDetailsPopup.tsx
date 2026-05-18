@@ -1,8 +1,8 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import BottomSheet from '@/components/ui/BottomSheet'
 import CenterPopup from '@/components/ui/CenterPopup'
-import CloseButton from '@/components/ui/CloseButton'
 import WindDownOtherApps from '@/components/shared/WindDownOtherApps'
 
 interface WindDownDetailsPopupProps {
@@ -13,17 +13,22 @@ interface WindDownDetailsPopupProps {
 // Long-form info popup with the full wind-down context. Triggered from
 // "Read the full update" on the first-exposure popup (the only entry point —
 // the top strip was removed at S35 close, leaving the popup as the sole
-// wind-down chrome on /explore). Structured as info design (title + regulatory
-// reasoning + 3-phase timeline + alternative-apps section + personal note +
-// email contact at the bottom). Parallel mount (BottomSheet + CenterPopup) per
-// the S34 responsive-popup pattern; scrollable body with email contact copy
-// flowing naturally after content (not sticky) — no action CTAs since refund +
-// download requests funnel to email to minimize one-tap query volume.
+// wind-down chrome on /explore). Structured as info design (cost-of-compliance
+// reasoning + 3-phase timeline + refund + data action blocks +
+// alternative-apps section + personal closing note). Parallel mount
+// (BottomSheet + CenterPopup) per the S34 responsive-popup pattern.
+//
+// **Sibling-inheritance from BioSheet** (profile read-more popup) — the title
+// ("wsup is winding down") is passed as the `title` prop to BOTH primitives so
+// the sticky header chrome (title + CloseButton + hairline divider) comes from
+// the primitive, identical to BioSheet. The body is a scrollable region inside
+// the popup card. Refund + data requests funnel to a single support@wsup.ai
+// address to minimize one-tap query volume.
 
 interface TimelineRowProps {
   badge: string
   title: string
-  body: string
+  body: ReactNode
 }
 
 function TimelineRow({ badge, title, body }: TimelineRowProps) {
@@ -39,88 +44,126 @@ function TimelineRow({ badge, title, body }: TimelineRowProps) {
   )
 }
 
-// Contact emails — placeholders, swap to real addresses before launch
-const REFUND_EMAIL = 'refund@wsup.ai'
-const DATA_EMAIL = 'data@wsup.ai'
+// Single contact address — all wind-down requests funnel here.
+const SUPPORT_EMAIL = 'support@wsup.ai'
+
+interface ActionBlockProps {
+  label: string
+  children: ReactNode
+}
+
+// Action block — section label + body paragraph with mailto link. Uses
+// `label-xs text-text-dim` (40%, recedes against 70% body) because this popup's
+// section bodies are plain prose with no structural weight to carry the contrast.
+// Local override only — the global `.label-xs` default stays at 60% for all other
+// consumers (Sidebar, Coachmark, BadgesWidget, etc.) where neighbors with their
+// own visual weight (cards, list rows, numerical values) make 60% read fine.
+// Label-xs (NOT eyebrow-label) because the label IS the section heading; no
+// separate title sits below it. Timeline row badges above use `eyebrow-label`
+// also at 40% (different role — eyebrow above per-row title).
+function ActionBlock({ label, children }: ActionBlockProps) {
+  return (
+    <div className="flex flex-col gap-xs">
+      <span className="label-xs text-text-dim">{label}</span>
+      <p className="text-sm text-text-body leading-relaxed">{children}</p>
+    </div>
+  )
+}
 
 export default function WindDownDetailsPopup({ open, onClose }: WindDownDetailsPopupProps) {
+  const supportLink = (
+    <a href={`mailto:${SUPPORT_EMAIL}`} className="link">{SUPPORT_EMAIL}</a>
+  )
+
   const body = (
-    <div className="flex flex-col">
-      <div className="flex flex-col gap-l px-l pt-l pb-m">
-        {/* Header + reasoning */}
-        <div className="flex flex-col gap-xs">
-          <h2 className="text-xl font-semibold text-text-title">wsup is winding down</h2>
-          <p className="text-sm text-text-body leading-relaxed pt-xxs">
-            The regulatory load on this space grew faster than we could absorb. Every month brought
-            new compliance requirements, new content rules, new legal red lines — and we
-            couldn&apos;t keep building the product while running to stand still on the legal side.
-          </p>
-        </div>
+    <div className="flex-1 min-h-0 overflow-y-auto scroll-hide px-l pt-l pb-l">
+      <div className="flex flex-col gap-l">
+        {/* Opening reasoning */}
+        <p className="text-sm text-text-body leading-relaxed">
+          The cost of staying compliant got too high. Both in engineering effort and in real money,
+          the load grew faster than we could absorb. Every month brought new content rules and new
+          regulatory work that ate into the time and budget we needed to keep building wsup. We
+          couldn&apos;t keep running to stand still.
+        </p>
 
         {/* Timeline */}
         <div className="flex flex-col gap-m relative">
-          <span className="label-xs">What happens and when</span>
+          <span className="label-xs text-text-dim">What happens and when</span>
           <div className="flex flex-col gap-l relative">
             <div className="absolute left-[4px] top-[14px] bottom-[14px] w-px bg-white-10" />
             <TimelineRow
-              badge="Now → Fri May 29"
-              title="Fully open"
-              body="Paid model tiers turn off today — everyone reverts to the free model, so no one is paying for messages while we wind down. Chats, character creation, everything you're used to stays on."
+              badge="Now → Sun May 24"
+              title="Open for chat"
+              body="Paid model tiers turn off today. Everyone reverts to the free model, so no one is paying for messages while we wind down. Chats, character creation, everything you're used to stays on."
             />
             <TimelineRow
-              badge="Fri May 29 → Fri Jun 19"
+              badge="Mon May 25 → Thu Jun 18"
               title="Read-only · goodbye window"
-              body="Your characters and chat history stay here to revisit and download. New messages and new characters are off. Three weeks on purpose — time to come back, re-read what mattered, and pull your data."
+              body={
+                <>
+                  Your characters and chat history stay here to revisit and download. New messages and
+                  new characters are off. Almost four weeks on purpose, time to come back,{' '}
+                  <span className="whitespace-nowrap">re-read</span> what mattered, and pull your data.
+                </>
+              }
             />
             <TimelineRow
-              badge="After Jun 19"
+              badge="From Fri Jun 19"
               title="Landing page mode"
-              body="wsup.ai points you to other AI apps worth your time. The app stays installable for a while longer for refund and export."
+              body="wsup.ai points you to other AI apps worth your time. The app stays installable for a while longer so you can request refunds and download your data."
             />
           </div>
         </div>
 
-        {/* Other apps to try section — shared with WindDownPopup via Gate 3 extraction.
-            Same chrome, same URLs, same anatomy. */}
-        <WindDownOtherApps />
+        {/* Action blocks — REFUNDS + YOUR DATA. Funnel both flows to a single support@wsup.ai
+            so user has one address to remember and we have one inbox to triage. */}
+        <div className="flex flex-col gap-m">
+          <ActionBlock label="Refunds">
+            Bought credits and didn&apos;t use them all? Email {supportLink} from your account
+            address and we&apos;ll refund the unused balance.
+          </ActionBlock>
+          <ActionBlock label="Your data">
+            Want to take your characters and chat history with you? Email {supportLink} from your
+            account address and we&apos;ll send you a download.
+          </ActionBlock>
+        </div>
 
-        {/* Personal note */}
+        {/* Other apps to try section — shared with WindDownPopup via Gate 3 extraction.
+            Same chrome, same URLs, same anatomy. Label receded to 40% (text-text-dim)
+            to match the other peer section labels in this popup; the plain-prose body
+            above + cards below need a clear 30% opacity gap for label-vs-body separation. */}
+        <WindDownOtherApps labelClassName="text-text-dim" />
+
+        {/* Personal closing note — sits below the apps section as the final word. */}
         <p className="text-sm text-text-body leading-relaxed">
           Thank you for trusting us with something as personal as the conversations you had here.
           That&apos;s not a small thing and we won&apos;t pretend otherwise.
         </p>
-
-        {/* Email contact — replaces refund/download action CTAs. Funneling these
-            requests to email reduces one-tap query volume during wind-down. Flows
-            naturally after content (not sticky) so it reads as part of the message. */}
-        <div className="flex flex-col gap-xs pt-xs">
-          <p className="text-sm text-text-body leading-relaxed">
-            For refund inquiries, write to{' '}
-            <a href={`mailto:${REFUND_EMAIL}`} className="link">{REFUND_EMAIL}</a>.
-          </p>
-          <p className="text-sm text-text-body leading-relaxed">
-            To download your data, write to{' '}
-            <a href={`mailto:${DATA_EMAIL}`} className="link">{DATA_EMAIL}</a>.
-          </p>
-        </div>
       </div>
     </div>
   )
 
   return (
     <>
-      <BottomSheet open={open} onClose={onClose} zIndex={80} maxHeight="88%">
-        <div className="relative flex-1 overflow-y-auto scroll-hide">
-          <CloseButton onClose={onClose} className="absolute top-s right-s z-10" />
-          {body}
-        </div>
+      <BottomSheet
+        open={open}
+        onClose={onClose}
+        title="wsup is winding down"
+        maxHeight="88%"
+        fillHeight
+        zIndex={80}
+      >
+        {body}
       </BottomSheet>
 
-      <CenterPopup open={open} onClose={onClose} zIndex={80} maxWidth="520px">
-        <div className="relative">
-          <CloseButton onClose={onClose} className="absolute top-s right-s z-10" />
-          {body}
-        </div>
+      <CenterPopup
+        open={open}
+        onClose={onClose}
+        title="wsup is winding down"
+        maxWidth="520px"
+        zIndex={80}
+      >
+        {body}
       </CenterPopup>
     </>
   )

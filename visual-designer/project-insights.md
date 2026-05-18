@@ -1,30 +1,38 @@
 # Visual Designer — Project Insights
-Last updated: 2026-05-18 (S35 audit — Wind-Down phase added; LowCreditsBanner removed from /explore; new wind-down-phase semantic-consistency rule codified)
+Last updated: 2026-05-18 (S36 audit — Wind-Down phase dates locked + copy refresh + sticky-header sibling-inheritance from BioSheet + action-blocks structure + single support@wsup.ai + recede-direction labels)
 
 WSUP-specific observations and screen-level learnings. Updated as new screens are built.
 
 ---
 
-## Wind-Down phase (S35 — May 22, 2026 onwards)
+## Wind-Down phase (locked dates — S36 audit)
 
-WSUP is winding down. The product enters a 3-phase lifecycle:
-- **Phase 1 (May 22 – May 28):** fully open with paid tiers off; everyone on free model. Wind-down chrome announces the timeline.
-- **Phase 2 (May 29 – Jun 19):** read-only. New messages and new characters are off. Chats and characters remain for review + export.
-- **Phase 3 (post Jun 19):** wsup.ai is a landing page pointing elsewhere. App still installable for refund and data export.
+WSUP is winding down. The product enters a 3-phase lifecycle (locked dates):
+- **Phase 1 (now → Sun May 24, 2026):** fully open with paid tiers off; everyone on free model. Wind-down chrome announces the timeline.
+- **Phase 2 (Mon May 25 → Thu Jun 18, 2026):** read-only · goodbye window. New messages and new characters are off. Chats and characters remain for review + export.
+- **Phase 3 (from Fri Jun 19, 2026):** wsup.ai becomes a landing page pointing to other AI apps. App still installable for a while longer so users can request refunds + download their data.
 
-### Wind-Down Notice surface family (added S35 — REVISED at S35 close)
+Phase computation lives in `WindDownNotice.computePhase()` (orchestrator-owned single source of truth). Boundary constants: `PHASE_2_START = new Date('2026-05-25T00:00:00').getTime()`, `PHASE_3_START = new Date('2026-06-19T00:00:00').getTime()`. `WindDownPopup` receives `phase: 1 | 2 | 3` and swaps body copy. SSR-safe init: phase starts at 1 on first render, useEffect post-hydrate updates to the real phase.
+
+### Wind-Down Notice surface family (S36 final architecture)
 
 | Surface | Trigger | Mount | Z-index | Notes |
 |---|---|---|---|---|
-| **WindDownNotice** | global — mounted in `app/layout.tsx` | layout root | (orchestrator, no chrome) | Decides what to show based on localStorage `wsup:winddown-popup-seen`. Hosts global `DownloadDataSheet` mount listening for `wsup:open-download-data` event |
-| **WindDownPopup** | first exposure on BOTH viewports (localStorage `wsup:winddown-popup-seen`) | BottomSheet + CenterPopup parallel mount | 80 | 64px alert hero (status-warning chrome) + title + body + "Other apps to try" (Polybuzz + Talkie via AppCard primitive) + primary acknowledgment CTA + tertiary "Read more" link. **No close X, no scrim-dismiss, no Esc-dismiss** — `onClose={() => {}}` passed to both primitives, forcing the "Okay, I understand" CTA as the only exit. Once acknowledged, never shows again per device |
-| **WindDownDetailsPopup** | "Read the full update" from popup | BottomSheet + CenterPopup parallel mount | 80 | Scrollable body: exaggerated reasoning + 3-phase timeline + "Other apps to try" + personal note + email contact (refund@wsup.ai + data@wsup.ai placeholders, flowing naturally after content). NO action CTAs — refund/download routes via email |
+| **WindDownNotice** | global — mounted in `app/layout.tsx` | layout root | (orchestrator, no chrome) | Uses `usePathname()` to scope display to `/explore`. Computes `phase` from `Date.now()` against codified boundaries (passes to WindDownPopup). Hosts global `DownloadDataSheet` mount listening for `wsup:open-download-data` event |
+| **WindDownPopup** | every `/explore` load (NO localStorage; in-memory dismissal resets on navigation away) | BottomSheet + CenterPopup parallel mount | 80 | 64px alert hero (status-warning chrome) + title + **phase-aware body** (Phase 1: timeline statement / Phase 2: read-only + email hint) + tertiary "Read full update" link (info group, mb-l) + primary acknowledgment CTA + flanked-label divider + side-by-side AppLinkButton off-ramp. **No close X, no scrim-dismiss, no Esc-dismiss** — `onClose={() => {}}` passed to both primitives, forcing the "Okay, I understand" CTA as the only exit. Dates ("Sun May 24" / "Jun 19") + mailto ("support@wsup.ai") wrapped in `whitespace-nowrap` per the multi-word-compound-unit rule |
+| **WindDownDetailsPopup** | "Read the full update" from popup | BottomSheet + CenterPopup parallel mount, `title="wsup is winding down"` passed to both | 80 | **Sticky header via primitive `title` prop (BioSheet sibling-inheritance)** — title + CloseButton + bottom hairline come from BottomSheet/CenterPopup. Scrollable body: cost-of-compliance reasoning + 3-phase timeline (label-xs text-text-dim heading) + 2 action blocks (Refunds + Your data, both with label-xs text-text-dim + paragraph with mailto to single support@wsup.ai) + Other apps section (plain label, no flanked divider — peer labels exist) + personal closing note at the bottom. NO action CTAs — refund + data flows funnel to one email |
 
-**Single CTA across both surfaces:** [Okay, I understand] (popup primary, dismisses) + [Read the full update] (tertiary link, opens details popup). No refund / download in-app action buttons — these route to email contact (`refund@wsup.ai` / `data@wsup.ai` placeholders) in the details popup to minimize one-tap query volume.
+**Single CTA across both surfaces:** [Okay, I understand] (popup primary, dismisses) + [Read the full update] (tertiary link, opens details popup). No in-app refund / download buttons — both flows funnel to a single `support@wsup.ai` address to minimize one-tap query volume + give us a single inbox to triage.
 
 **No layout offset plumbing — Header/Sidebar/pages run on standard `top-0 z-50` / `top-[60px]` / `pt-header` (where `header = 60px`).** A top strip earlier in S35 used a CSS-var-driven dynamic offset; designer removed the strip at S35 close, plumbing reverted to static.
 
-**REVISION NOTE:** Earlier in S35 the surface family had 3 surfaces (popup + persistent yellow strip + details popup) with sessionStorage-per-session strip dismissal AND localStorage-permanent popup acknowledgment. Designer simplified to 2 surfaces with single-exposure-forced-acknowledgment at S35 close. Earlier scratchpad rows + decisions.md entries reflect the 3-surface system before this revision.
+**Label brightness in details popup is RECEDE direction (`label-xs text-text-dim`, 40%)** — peer section labels sit above plain-prose body, recede gives the 30% opacity gap needed for clear label-vs-body contrast. Local override only — global `.label-xs` default stays at 60% for all other consumers. First-exposure popup keeps default 60% on its single section label (flanked divider chrome carries separation).
+
+**REVISION NOTES (chronological):**
+- S35 early: 3 surfaces (popup + persistent yellow strip + details popup) with sessionStorage-per-session strip dismissal AND localStorage-permanent popup acknowledgment.
+- S35 close: simplified to 2 surfaces, single-exposure-forced-acknowledgment, localStorage-permanent.
+- S35 second audit: pivoted to per-visit /explore-scoped, in-memory dismissal (no localStorage).
+- S36 audit (today): added phase-aware popup body; refreshed all copy with locked dates; rebuilt details popup chrome via BioSheet primitive-title-prop sibling-inheritance; added Refunds + Your data action blocks; single support@wsup.ai replaces refund@/data@; closing note moved to bottom; peer section labels receded to text-text-dim.
 
 ### Wind-Down phase rule — hide acquisition/upsell surfaces during wind-down
 

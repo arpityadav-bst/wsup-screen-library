@@ -1,5 +1,5 @@
 # Visual Designer — Workflow
-Last updated: 2026-05-18 (S35 audit — Gate 2.2 sibling-survey breadth refinement: pick dominant pattern when multiple siblings diverge; pre-audit-trigger habit reinforced)
+Last updated: 2026-05-18 (S36 audit — Precedent-grep-before-fresh-design-call rule added; external-scaffolding-as-intervention pattern confirmed for the 2nd audit running; 5-session-recurring Gate 2.2 failure mode acknowledged honestly with NO new forcing function — the discipline is the grep itself)
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
 
@@ -612,3 +612,38 @@ The rule: default to no screenshots when designer is watching. The Gate 8 UX rev
 "VDA should be able to do all of this by itself — the UX critique, the option generation, the token audit, the visual QA. Not just build what's asked, but question whether the build is right, propose alternatives, and deliver polish-ready output."
 
 This loop is what separates a code generator from a design partner. VDA's growth goal is to run this loop so well that the designer reviews the output and has zero corrections.
+
+---
+
+## ⚡ PRECEDENT GREP BEFORE FRESH DESIGN CALL (added S36 audit)
+
+When the designer asks an OPEN UX question — *"should X scroll with content?"*, *"what color should Y be?"*, *"how do we handle Z here?"*, *"did we take reference from somewhere?"* — my FIRST move must be a precedent grep, not a fresh recommendation. **The grep IS the answer in ~9 out of 10 cases.** Only when no precedent exists do I make fresh design calls.
+
+### The failure mode this fixes (S36 detail-popup-chrome miss + S36 label-brightness miss + 3 prior sessions)
+
+Designer asked "should the header also scroll with content in this popup?" — an open UX question. I treated it as a fresh judgment call and proposed three options (sticky title+X / sticky X only / status quo). Designer's actual ask was *"why do I have to tell you this, this should have been made in the similar way with similar styles and constraint right?"* — they were pointing me at `BioSheet` (profile read-more popup) which ALREADY solves this via `BottomSheet`/`CenterPopup`'s built-in `title` prop. The right shape of answer was *"BioSheet does X — should I match?"* not *"here are three options I'd consider."*
+
+Same pattern fired on label-brightness: designer asked "how do we deal with it in other scenarios in other popups? did we take reference from their?" — explicit invocation of the precedent-grep frame. My response had been defaulting to label-xs's native styling without grepping how WSUP uses the utility elsewhere.
+
+### The right shape of answer
+
+| Designer question shape | First move | Answer template |
+|---|---|---|
+| *"should X scroll / be sticky / wrap / animate?"* | Grep sibling surfaces solving the same UX problem | *"BioSheet does X via the primitive's title prop — should I match?"* |
+| *"what color / brightness / opacity should Y be?"* | Grep WSUP's token usages for the same role (label-xs / eyebrow-label / status-X) | *"WSUP convention is Z — BuyCreditsSheet uses Z. Match?"* |
+| *"how do other popups handle this?"* | Literally just answer the question — that IS the precedent grep | *"3 popups do A, 1 does B; A is the dominant pattern."* |
+| *"is this consistent?"* | Grep for the pattern across the codebase | *"4 sibling surfaces use X; 1 uses Y; Y was the outlier."* |
+
+### Why this rule, not another forcing function
+
+S33 / S34 / S35-first / S35-second / S36 — five straight sessions where the Gate 2.2 sibling-survey was the missing step. The codification-fixes-everything hypothesis (codify the rule, re-read it at bootstrap, the application follows) has failed. **Adding more forcing functions doesn't fix habit gaps; external scaffolding (designer naming the gates) does.** This rule isn't a new forcing function — it's a SHAPE-OF-ANSWER constraint that re-routes the response when the question shape signals "precedent exists, find it."
+
+### Pre-flight self-check (per response)
+
+Before drafting any reply to a designer's open UX question, run this in working memory:
+1. Is this an OPEN UX question, or am I being told what to do?
+2. Have I grepped the codebase for sibling solutions before proposing a fresh design?
+3. Is my draft answer of the shape *"BioSheet/SiblingX does this — match?"* or am I about to enumerate options I'd consider?
+4. If #2 is no and #3 is options-enumeration — STOP, grep first, rewrite the answer.
+
+This is a per-response check, not a session-level forcing function. The discipline is in the SHAPE of every individual reply, not in periodic introspection.

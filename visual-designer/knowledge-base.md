@@ -1,23 +1,64 @@
 # Visual Designer — Knowledge Base
-Last updated: 2026-05-18 (S35 SECOND audit — Wind-Down Notice entry re-revised for per-visit cadence + AppLinkButton primitive + flanked-label divider + side-by-side off-ramp pattern; total 4 KB entries touched today across 2 audits)
+Last updated: 2026-05-18 (S36 audit — Wind-Down Notice entry re-revised for phase-aware body, BioSheet sibling-inheritance for sticky-header details popup, action-blocks structure, single support@wsup.ai, recede-direction labels; new entries on phase-aware orchestrator + long-content-popup primitive-title pattern)
 
-### Wind-Down Notice — per-visit forced-acknowledgment popup + details popup (REVISED S35 second audit)
+### Wind-Down Notice — per-visit forced-acknowledgment popup + details popup (REVISED S36 audit)
 For load-bearing product-state announcements (product wind-down, mandatory upgrade, terms-of-service hard change), use a **2-surface** pattern hosted by a single orchestrator mounted in `app/layout.tsx`:
 
-- **Surface 1 — wind-down popup (BOTH viewports, parallel mount):** `<BottomSheet>` + `<CenterPopup>` rendered as siblings per S34 responsive-popup pattern. 64px alert hero icon at top-center (sibling-inheritance from `StatusResultIcon` chrome — `size-[64px] rounded-full bg-status-X/[0.15] border border-status-X/[0.30]` + colored glyph), title + body + tertiary "Read more" link (tight under body, info-group) + primary acknowledgment CTA + flanked-label divider + side-by-side AppLinkButton off-ramp options at the bottom. **Forced acknowledgment:** no close X, no scrim-dismiss, no Esc-dismiss — `onClose={() => {}}` passed to both BottomSheet and CenterPopup primitives. The "Okay, I understand" primary CTA is the ONLY exit path. **Per-visit cadence:** orchestrator uses `usePathname()` to scope display to a specific page (`/explore` for WSUP), and dismissal is in-memory state only — resets when user navigates away. The popup shows on EVERY page load on the scoped path. (Earlier S35 codified per-device permanent localStorage flag instead; designer pivoted to per-visit re-surfacing for higher acknowledgment volume. Cadence is a designer-call parameter — see taste.md "Forced per-visit acknowledgment".)
-- **Surface 2 — details popup (BOTH viewports, parallel mount):** same parallel-mount pattern. Long-form scrollable info (reasoning + 3-phase timeline + flanked-label-divider + side-by-side AppLinkButtons + personal note + email contact lines). NO action CTAs — refund + download requests funnel to email (placeholders: refund@wsup.ai / data@wsup.ai) to minimize one-tap query volume. Email contact flows naturally after content (not sticky). Reachable from "Read the full update" on the first-exposure popup.
+- **Surface 1 — wind-down popup (BOTH viewports, parallel mount):** `<BottomSheet>` + `<CenterPopup>` rendered as siblings per S34 responsive-popup pattern. 64px alert hero icon at top-center (sibling-inheritance from `StatusResultIcon` chrome — `size-[64px] rounded-full bg-status-X/[0.15] border border-status-X/[0.30]` + colored glyph), title + **phase-aware body** + tertiary "Read full update" link (tight under body, info-group) + primary acknowledgment CTA + flanked-label divider + side-by-side AppLinkButton off-ramp options at the bottom. **Forced acknowledgment:** no close X, no scrim-dismiss, no Esc-dismiss — `onClose={() => {}}` passed to both BottomSheet and CenterPopup primitives. The "Okay, I understand" primary CTA is the ONLY exit path. **Per-visit cadence:** orchestrator uses `usePathname()` to scope display to a specific page (`/explore` for WSUP), and dismissal is in-memory state only — resets when user navigates away. The popup shows on EVERY page load on the scoped path.
+- **Surface 2 — details popup (BOTH viewports, parallel mount):** same parallel-mount pattern, **but the sticky header comes from the primitive's `title` prop** (BioSheet sibling-inheritance — see separate entry below). Body is `flex-1 min-h-0 overflow-y-auto scroll-hide` so it scrolls inside the popup card with the header pinned. Content: cost-of-compliance reasoning + 3-phase timeline (label-xs section heading, recede 40%) + 2 action blocks (Refunds + Your data, label-xs text-text-dim + paragraph with mailto to a single contact address) + Other apps section (plain label, no flanked divider — peer section labels exist) + personal closing note as the final word. NO action CTAs — refund + data flows funnel to one email address (`support@wsup.ai`) to minimize one-tap query volume + give us a single inbox to triage. Reachable from "Read the full update" on the first-exposure popup.
 
 **AppLinkButton primitive (`src/components/shared/AppLinkButton.tsx`):** clickable anchor (`target="_blank"`) with 32px logo + name (flex-1) + ExternalLinkIcon (size 14). Used for external off-ramp suggestions where the click leaves the current app (Polybuzz / Talkie now.gg pages). The arrow icon is the leave-app signal. Replaces an earlier 48px static AppCard pattern. **Side-by-side pairing:** when 2 co-equal off-ramp options exist, wrap each AppLinkButton in `flex-1 min-w-0` and put them in a `flex-row gap-xs` container. The `min-w-0` is load-bearing — without it the 32px shrink-0 logo forces overflow.
 
-**Flanked-label divider:** for the "Other apps to try" section header, use a `─── LABEL ───` divider where the label sits BETWEEN two flex-1 horizontal lines. Implementation: `flex items-center gap-s` with two `flex-1 border-t border-white-10` children flanking a `shrink-0 label-xs` middle.
+**Flanked-label divider — scope clause (S36 amendment):** for an "Other apps to try" section header (or any single section label on a surface), use a `─── LABEL ───` divider where the label sits BETWEEN two flex-1 horizontal lines. **Apply ONLY when it's the only section divider on the surface** — when peer section labels exist on the same surface (e.g., the details popup has "What happens and when" / "Refunds" / "Your data" all as label-xs), switch to plain `label-xs` so all peers read as visually equal. Implementation: shared `WindDownOtherApps` component takes a `flanked` boolean prop (default false) — first-exposure popup passes `flanked={true}`, details popup uses plain default.
 
 **Why forced acknowledgment regardless of cadence:** trade-off is friction for users vs reduced "I didn't see this" support volume. Once enforced, user has explicitly acknowledged.
 
 **Global event-mounted shared sheets:** if the announcement's CTAs trigger features already mounted elsewhere (e.g. `DownloadDataSheet` from profile), the orchestrator can host a global mount + window event listener (`wsup:open-download-data`) so all CTAs route there without prop drilling. Matches existing WSUP pattern from Header's `wsup:open-buy-credits` / `wsup:open-credit-sidebar`.
 
-**Codified by:** WindDownNotice + WindDownPopup + WindDownDetailsPopup + AppLinkButton (S35). **Pre-flight check before building any new system-wide announcement:** ask *"once-acknowledged-forever, or re-surface-every-visit?"* Once-forever → localStorage. Re-surface → usePathname + in-memory dismissal. Both behaviors share the same forced-acknowledgment popup chrome — only the persistence layer differs.
+**Codified by:** WindDownNotice + WindDownPopup + WindDownDetailsPopup + WindDownOtherApps + AppLinkButton (S35 + S36). **Pre-flight check before building any new system-wide announcement:** ask *"once-acknowledged-forever, or re-surface-every-visit?"* Once-forever → localStorage. Re-surface → usePathname + in-memory dismissal. Both behaviors share the same forced-acknowledgment popup chrome — only the persistence layer differs.
 
-**REVISION HISTORY (S35 same-day, 3 invalidations):** morning = 3-surface popup→strip degradation; afternoon = 2-surface single-exposure-localStorage; late afternoon = per-visit /explore-scoped (current). Each pivot was a designer call. Note for future: when fundamental cadence/scope of an announcement system shifts twice in one session, lift the abstraction level so the rule survives the next pivot — the current rule treats cadence as a parameter rather than a constant.
+**REVISION HISTORY:** S35 morning = 3-surface popup→strip degradation; S35 afternoon = 2-surface single-exposure-localStorage; S35 late afternoon = per-visit /explore-scoped; S36 = phase-aware body + BioSheet primitive-title-prop sticky header + action blocks + single support@wsup.ai + recede labels. Each pivot was a designer call. **Note for future:** when fundamental cadence/scope of an announcement system shifts twice in one session, lift the abstraction level so the rule survives the next pivot — the current rule treats cadence + body-content as parameters rather than constants.
+
+### Phase-aware popup body via orchestrator-computed phase prop (S36)
+For multi-phase product lifecycles where surface copy needs to swap at codified date boundaries (wind-down phases, feature-flag rollouts, season changes), centralize phase computation in the ORCHESTRATOR (single source of truth) and pass `phase` as a prop to consumer surfaces. **Pattern:**
+
+```ts
+// In orchestrator (WindDownNotice.tsx):
+const PHASE_2_START = new Date('2026-05-25T00:00:00').getTime()
+const PHASE_3_START = new Date('2026-06-19T00:00:00').getTime()
+
+function computePhase(): 1 | 2 | 3 {
+  const now = Date.now()
+  if (now >= PHASE_3_START) return 3
+  if (now >= PHASE_2_START) return 2
+  return 1
+}
+
+// SSR-safe init: phase=1 on first render (both server and client agree); useEffect updates post-hydrate.
+const [phase, setPhase] = useState<1 | 2 | 3>(1)
+useEffect(() => { setPhase(computePhase()) }, [])
+```
+
+Consumer surfaces render body content conditional on `phase`. **Why centralized:** future surfaces (read-only chat gating, send-button disable, hide-acquisition rules) all need the same phase value; if it's computed per-surface, the boundary constants get duplicated and drift. **Why SSR-safe init at phase 1:** Next.js SSR renders client components on the server with whatever date the server has — useState lazy-init from Date.now() would cause hydration mismatch. Defaulting to phase 1 + post-mount update keeps initial render deterministic.
+
+**Pre-flight check before adding phase-dependent copy to a new surface:** does the orchestrator already compute the phase? Yes → consume via prop. No → add the computation there first; don't duplicate the date constants.
+
+### Long-content popup sticky header via primitive `title` prop — BioSheet sibling-inheritance (S36)
+When a popup needs scrollable body content WITH a sticky header (title + close X), inherit the BioSheet pattern (profile read-more popup). **Both BottomSheet and CenterPopup primitives expose `title` + `subtitle` props that render the standardized sticky header — text-base font-semibold title + CloseButton on the right + bottom hairline `border-b border-white-10`.** Pass `title="..."` to both primitives; the popup body is a scrollable `flex-1 min-h-0 overflow-y-auto scroll-hide` region inside.
+
+```tsx
+<BottomSheet open={open} onClose={onClose} title="..." maxHeight="88%" fillHeight zIndex={80}>
+  <ScrollableBody />
+</BottomSheet>
+
+<CenterPopup open={open} onClose={onClose} title="..." maxWidth="520px" zIndex={80}>
+  <ScrollableBody />
+</CenterPopup>
+```
+
+`BottomSheet` requires `fillHeight` + a `maxHeight` so the popup gets a defined height for the body to scroll within. `CenterPopup` uses its built-in `maxHeight: 80vh` and wraps children in `overflow-y-auto scroll-hide` automatically.
+
+**NEVER build a custom `<h2>` title inside the body + a custom absolute-positioned `CloseButton` for a long-content popup** — that's reinventing what the primitives already do, and the custom CloseButton scrolls away with content because it lives INSIDE the scroll container. **Pre-flight check before building any new long-content popup:** grep `title=` usages on BottomSheet/CenterPopup to find the sibling pattern (BioSheet is canonical). The grep IS the change. **Consumers using this pattern:** BioSheet (profile read-more), WindDownDetailsPopup (S36).
 
 ### CloseButton position — WSUP majority convention is `top-s right-s` (12px), not `top-xs right-xs` (8px)
 For custom-body popups using the `<CloseButton>` primitive at absolute position, the WSUP majority is **`top-s right-s`** (12px from popup top + right edges) — used by LoginSheet, CreditServicePopup, ModelDeprecatedSheet, DownloadDataSheet, WatchAdSheet (5 popups). The minority `top-xs right-xs` (8px) appears only in StreakClaimPopup. **Visual reason:** 12px reads centered against `text-xl` titles with `pt-l` (20px) wrapper padding — close-button-to-title-baseline gap is 8px. At 8px close inset, the gap drops to 4px and the close button visually crowds the title's top edge. **Pre-flight grep before placing any custom-body popup's CloseButton:** check 3+ sibling popups for their position — don't pattern-match on the first hit. Single-sibling sample is not a precedent. **Codified by S35** after a position-inconsistency catch (WindDownPopup + WindDownDetailsPopup initially shipped at `top-xs right-xs` inherited from StreakClaim — fixed to majority). **Override exceptions** exist for built-in `<BottomSheet>` / `<CenterPopup>` primitive titles (those use their own header layout) and for banner-style components (LowCreditsBanner's CloseButton sits inline in the flex row, not absolute).
