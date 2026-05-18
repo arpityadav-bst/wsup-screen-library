@@ -3,11 +3,7 @@
 import BottomSheet from '@/components/ui/BottomSheet'
 import CenterPopup from '@/components/ui/CenterPopup'
 import Button from '@/components/ui/Button'
-import AppLinkButton from '@/components/shared/AppLinkButton'
-
-// External-app URLs — confirmed by designer S35
-const POLYBUZZ_URL = 'https://now.gg/apps/cloud-whale-interactive-technology-llc/10386/polybuzz.html'
-const TALKIE_URL = 'https://now.gg/apps/subsup123/5772/talkie-creative-ai-community.html'
+import WindDownOtherApps from '@/components/shared/WindDownOtherApps'
 
 interface WindDownPopupProps {
   open: boolean
@@ -17,13 +13,14 @@ interface WindDownPopupProps {
   onReadMore: () => void
 }
 
-// First-exposure wind-down popup — renders on BOTH viewports (mobile BottomSheet +
-// desktop CenterPopup parallel mount per S34 responsive-popup pattern). Once
-// acknowledged via the primary CTA, the localStorage flag flips permanently.
+// Wind-down popup — renders on BOTH viewports (mobile BottomSheet + desktop
+// CenterPopup parallel mount per S34 responsive-popup pattern). Scoped to
+// /explore by the orchestrator; shows on every page load there (no localStorage
+// persistence — dismissal is in-memory only and resets on navigation away).
 //
 // **No close X, no scrim-dismiss, no Esc-dismiss.** The only exit is the primary
-// CTA so the user must consciously acknowledge the message — minimizes
-// "I didn't see this" support queries during wind-down.
+// CTA so the user must consciously acknowledge the message every visit —
+// minimizes "I didn't see this" support queries during wind-down.
 export default function WindDownPopup({ open, onAcknowledge, onReadMore }: WindDownPopupProps) {
   const body = (
     <div className="relative flex flex-col items-center text-center px-l pt-l pb-l">
@@ -61,25 +58,9 @@ export default function WindDownPopup({ open, onAcknowledge, onReadMore }: WindD
 
       <Button variant="primary" fullWidth onClick={onAcknowledge}>Okay, I understand</Button>
 
-      {/* Other apps to try — at the bottom of the popup. The label sits between two
-          horizontal lines (flanked-label divider) so the divider visually "belongs"
-          to the section it introduces. Polybuzz + Talkie sit side-by-side (flex-1 each)
-          since both are co-equal alternative-app suggestions. */}
-      <div className="flex flex-col w-full mt-l text-left">
-        <div className="flex items-center gap-s w-full mb-s">
-          <div className="flex-1 border-t border-white-10" />
-          <span className="label-xs shrink-0">Other apps to try</span>
-          <div className="flex-1 border-t border-white-10" />
-        </div>
-        <div className="flex flex-row gap-xs w-full">
-          <div className="flex-1 min-w-0">
-            <AppLinkButton href={POLYBUZZ_URL} logo="/external/polybuzz.png" name="Polybuzz" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <AppLinkButton href={TALKIE_URL} logo="/external/talkie.png" name="Talkie" />
-          </div>
-        </div>
-      </div>
+      {/* Other apps to try section — extracted at Gate 3 (2 consumers).
+          text-left override needed because the popup body is items-center. */}
+      <WindDownOtherApps className="mt-l text-left" />
     </div>
   )
 

@@ -10,7 +10,7 @@ type Tab = typeof TABS[number]
 
 const NAV: Record<Tab, string[]> = {
   Tokens:     ['Colors', 'Typography', 'Spacing', 'Radius', 'Shadows', 'Blur', 'Utilities'],
-  Components: ['Buttons', 'Forms', 'Auth Primitives', 'Tags & Cards', 'Coachmark', 'Character Card', 'Widgets', 'Category Tabs', 'Tabs', 'Filter Pills', 'Overlays', 'Menu Popover', 'Toast', 'Credits Balance Pill', 'Variant Switcher Pills', 'Status Result Icon', 'Lifecycle', 'Bottom Nav', 'Profile Cards', 'Profile Overlays', 'Reward Cards', 'UI Utilities'],
+  Components: ['Buttons', 'Forms', 'Auth Primitives', 'Tags & Cards', 'Coachmark', 'Character Card', 'Widgets', 'Category Tabs', 'Tabs', 'Filter Pills', 'Overlays', 'Menu Popover', 'Toast', 'Credits Balance Pill', 'Variant Switcher Pills', 'Status Result Icon', 'App Link Button', 'Lifecycle', 'Bottom Nav', 'Profile Cards', 'Profile Overlays', 'Reward Cards', 'UI Utilities'],
   Patterns:   ['Header', 'Sidebar', 'Explore Description', 'FAQ Accordion', 'What is wsup.ai', 'Footer', 'Mobile Footer', 'Chat Header', 'Chat Header Menu', 'Chat Messages', 'Chat Bar', 'Suggested Replies', 'Chat Style Sheet', 'Credit Service Popup', 'Model Deprecated Sheet', 'Watch Ad Gate', 'Chat Right Sidebar', 'Dormancy Banner', 'Onboarding Overlay', 'Safety Banner', 'Low Credits Banner', 'Memory Limit Popup', 'Login Sheet', 'Streak Claim', 'Blocked List', 'Download Data Sheet', 'Wind-Down Notice'],
   Icons:      ['Size Scale', 'Navigation', 'Actions', 'Social', 'Status & Utility', 'Nav (Sidebar & BottomNav)', 'Chat Bar & Messages', 'Image Assets', 'Color Rules'],
 }

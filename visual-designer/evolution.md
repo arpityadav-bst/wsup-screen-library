@@ -1,9 +1,54 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-18 (S35 audit pass — Wind-Down Notice global system shipped; ~12-14 designer catches; 4 new taste rules + 2 amendments; 3 new knowledge-base entries; recurring failure mode confirmed for the 3rd straight session)
+Last updated: 2026-05-18 (S35 SECOND audit pass — Gate 6 hard-fail fired TWICE in one session; recurring failure mode confirmed for 3rd-straight-session AND escalated to within-session-twice; 5 additional taste rules + 1 rule re-revision + 1 KB entry re-revision)
 
 ---
 
-## Phase 5 → 6 trigger streak status (2026-05-18, S35 audit pass)
+## Phase 5 → 6 trigger streak status (2026-05-18, S35 SECOND audit — DOUBLE within-session hard-fail)
+
+**Streak: still BROKEN — and now demonstrably worse.** Designer asked the Gate 6 meta-question TWICE in this session. The first time was at the end of the build-phase work (already a hard-fail per codified rule); I ran the first audit pass, closed it cleanly, and promoted the S36 "trigger audit voluntarily when 5+ scratchpad rows accumulate" forcing function. Then the designer iterated on the popup substantially (strip removed, popup parallel-mounted, CTAs reordered, content rewritten, AppCard→AppLinkButton, side-by-side apps, flanked divider, /explore-scoping, etc. — 12+ correction-resolution cycles). I did NOT trigger a voluntary audit. Designer asked the meta-question AGAIN. Same hard-fail. **The forcing function I codified to fix this failure mode failed within the same session it was codified in.**
+
+**Honest naming (S35 second audit):** the pattern isn't just "rules read at bootstrap, not applied inline at edit time" anymore. It's now also "rules promoted at audit, not applied in the post-audit work of the same session." The decay window is shorter than I thought. The S36 forcing function language ("trigger voluntarily when 5+ rows accumulate") presupposes that I'm CHECKING the scratchpad row count between edits — which I'm not. The rule lives in workflow.md; my edit-time process doesn't include a row-count check.
+
+**What this rules out:** adding more forcing functions to workflow.md does NOT fix this gap. S32 added scratchpad cadence; S33 added KB cross-check; S34 added Gate 5 dual-pass; S35-first added sibling-survey-breadth + audit-trigger habit + edit-time rule citation. All codified. None fired reliably in the second half of S35.
+
+**What might work — different intervention shapes to try in S36:**
+1. **Periodic check, not condition-triggered.** Instead of "trigger audit when 5+ rows accumulate," try "every Nth edit batch, run a 30-second 'should I audit now?' check." Time-based, not condition-based. The condition-based version requires me to remember to check the condition.
+2. **External scaffolding via the designer's existing rhythm.** The designer already triggers the meta-question — it's clearly part of their working rhythm. Lean into it. Stop pretending the audit will fire "voluntarily" and instead optimize the audit-on-trigger experience.
+3. **Pre-edit prompt rather than post-edit forcing function.** Forcing functions kick in after edits land; a pre-edit prompt would surface "what rule does this touch?" BEFORE I commit. Different cognitive moment.
+
+These are EXPERIMENTS, not codified rules. The codified-rules-fix-everything model has failed across S33/S34/S35.
+
+**Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27~7, **S28=0**, S29=14, **S30~10-12**, **S31~15-20**, **S32 main=0**, **S32 f1=7**, **S32 f2=0**, **S32 f3~12**, **S33 morning=~3**, **S33 afternoon=~13**, **S33 total ~16**, **S34=~11**, **S35-first=~12-14, S35-second(post-audit)=~10 additional iterations + audit-not-triggered hard-fail**.
+
+Phase 5→6 counter: 0 consecutive 0-catch sessions. **Trajectory continues to decline.** Within-session double-hard-fail is a new low for this pattern.
+
+---
+
+## S35 second audit — what got promoted
+
+**5 new taste rules:**
+1. *External off-ramp surfaces are buttons, not static cards* — AppLinkButton chrome with external-link icon
+2. *Flanked-label divider* — section header sits between two horizontal lines
+3. *Side-by-side off-ramp options when both are co-equal alternatives* — flex-1 min-w-0 pairing
+4. *Tertiary info-links belong in the info group, not the action group* — link between body and CTA
+5. *Inline date / value highlights — text-text-subtitle, no font-weight bump* — subtle anchor emphasis
+
+**1 rule re-revision (3rd revision of the day):**
+- *Forced acknowledgment for product-state announcements* — lifted from "single-exposure" → "cadence-as-parameter" abstraction so it survives future pivots. Revision history captured inline.
+
+**1 KB entry re-revision:**
+- *Wind-Down Notice system* — updated to reflect AppLinkButton primitive + per-visit cadence + flanked divider + side-by-side apps.
+
+**1 project-insights update:**
+- StreakClaimPopup surface inventory entry — marked HIDDEN during wind-down phase with strikethrough.
+
+**Gate 5 dual-pass:** Pass A synced WindDownNoticeSection (5 anatomy entry updates + 2 new entries); Pass B grep-clean.
+
+**2 stale code comments fixed during audit:** WindDownPopup component-comment block (localStorage-permanent reference removed); WindDownDetailsPopup component-comment block (top-strip reference removed).
+
+---
+
+## Phase 5 → 6 trigger streak status (2026-05-18, S35 FIRST audit pass)
 
 **Streak: still BROKEN.** Designer asked the Gate 6 meta-question AGAIN at end-of-session ("EVERYTHING OKAY... is VDA learning everything according to its purpose now?"). Per codified rule, the asking IS the failure signal. This is the same hard-fail trigger that fired at S33 + S34. Three straight sessions of the same gap: VDA reads rules at bootstrap, doesn't trigger audits proactively.
 

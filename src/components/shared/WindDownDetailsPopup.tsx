@@ -3,11 +3,7 @@
 import BottomSheet from '@/components/ui/BottomSheet'
 import CenterPopup from '@/components/ui/CenterPopup'
 import CloseButton from '@/components/ui/CloseButton'
-import AppLinkButton from '@/components/shared/AppLinkButton'
-
-// External-app URLs — confirmed by designer S35
-const POLYBUZZ_URL = 'https://now.gg/apps/cloud-whale-interactive-technology-llc/10386/polybuzz.html'
-const TALKIE_URL = 'https://now.gg/apps/subsup123/5772/talkie-creative-ai-community.html'
+import WindDownOtherApps from '@/components/shared/WindDownOtherApps'
 
 interface WindDownDetailsPopupProps {
   open: boolean
@@ -15,12 +11,14 @@ interface WindDownDetailsPopupProps {
 }
 
 // Long-form info popup with the full wind-down context. Triggered from
-// "Read the full update" on the top strip and the first-exposure popup.
-// Structured as info design (title + reasoning + 3-phase timeline + refunds/data
-// email contact + alternative-apps section). Parallel mount (BottomSheet +
-// CenterPopup) per the S34 responsive-popup pattern; scrollable body with email
-// contact copy at the bottom (no action CTAs — refund + download requests funnel
-// to email to minimize one-tap query volume during wind-down).
+// "Read the full update" on the first-exposure popup (the only entry point —
+// the top strip was removed at S35 close, leaving the popup as the sole
+// wind-down chrome on /explore). Structured as info design (title + regulatory
+// reasoning + 3-phase timeline + alternative-apps section + personal note +
+// email contact at the bottom). Parallel mount (BottomSheet + CenterPopup) per
+// the S34 responsive-popup pattern; scrollable body with email contact copy
+// flowing naturally after content (not sticky) — no action CTAs since refund +
+// download requests funnel to email to minimize one-tap query volume.
 
 interface TimelineRowProps {
   badge: string
@@ -82,23 +80,9 @@ export default function WindDownDetailsPopup({ open, onClose }: WindDownDetailsP
           </div>
         </div>
 
-        {/* Other apps to try — same flanked-label divider + side-by-side button layout
-            as WindDownPopup for cross-surface consistency. */}
-        <div className="flex flex-col w-full">
-          <div className="flex items-center gap-s w-full mb-s">
-            <div className="flex-1 border-t border-white-10" />
-            <span className="label-xs shrink-0">Other apps to try</span>
-            <div className="flex-1 border-t border-white-10" />
-          </div>
-          <div className="flex flex-row gap-xs w-full">
-            <div className="flex-1 min-w-0">
-              <AppLinkButton href={POLYBUZZ_URL} logo="/external/polybuzz.png" name="Polybuzz" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <AppLinkButton href={TALKIE_URL} logo="/external/talkie.png" name="Talkie" />
-            </div>
-          </div>
-        </div>
+        {/* Other apps to try section — shared with WindDownPopup via Gate 3 extraction.
+            Same chrome, same URLs, same anatomy. */}
+        <WindDownOtherApps />
 
         {/* Personal note */}
         <p className="text-sm text-text-body leading-relaxed">
