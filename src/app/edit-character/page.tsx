@@ -40,7 +40,7 @@ export default function EditCharacterPage() {
       <Header />
       <div className="hidden md:block"><Sidebar /></div>
 
-      <main className="flex-1 md:ml-[365px] mt-[60px] flex flex-col overflow-hidden">
+      <main className="flex-1 md:ml-[365px] mt-header flex flex-col overflow-hidden">
 
         {/* Mobile header — matches profile header style */}
         <div className="flex md:hidden items-center h-3xxxl px-xs shrink-0 bg-page-bg border-b border-white-10">

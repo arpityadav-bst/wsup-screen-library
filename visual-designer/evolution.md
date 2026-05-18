@@ -1,5 +1,58 @@
 # Visual Designer — Evolution
-Last updated: 2026-05-15 (S34 audit pass — onboarding rewind + ad flows desktop + scrim opacity migration + DownloadDataSheet feature + StatusResultIcon Gate 3 extraction; ~9 designer catches; 6 new taste rules; 5 new knowledge-base entries)
+Last updated: 2026-05-18 (S35 audit pass — Wind-Down Notice global system shipped; ~12-14 designer catches; 4 new taste rules + 2 amendments; 3 new knowledge-base entries; recurring failure mode confirmed for the 3rd straight session)
+
+---
+
+## Phase 5 → 6 trigger streak status (2026-05-18, S35 audit pass)
+
+**Streak: still BROKEN.** Designer asked the Gate 6 meta-question AGAIN at end-of-session ("EVERYTHING OKAY... is VDA learning everything according to its purpose now?"). Per codified rule, the asking IS the failure signal. This is the same hard-fail trigger that fired at S33 + S34. Three straight sessions of the same gap: VDA reads rules at bootstrap, doesn't trigger audits proactively.
+
+**S35 catch breakdown (~12-14 designer-flagged corrections):**
+
+| # | Catch | Pre-existing rule | Where it lived | Why I missed it |
+|---|---|---|---|---|
+| 1 | CloseButton position inconsistent (top-xs vs WSUP majority top-s) | Gate 2.2 sibling-inheritance | knowledge-base.md (CloseButton section) | Surveyed only 1 sibling (StreakClaim minority), pattern-matched on the first hit — sample size 1 is not a precedent |
+| 2 | "read-only" hyphenated wrap broke at hyphen | Implicit from existing "Fix the wrap constraint, not the copy" | taste.md line 51 | No specific rule for hyphenated compounds yet — codified today |
+| 3 | Mobile strip layout broken (flex-wrap behavior) | Gate 8 visual verification + Gate 8.4 spacing-content-fit | QUALITY-GATES.md | Playwright self-screenshot caught initial; then flex-wrap "fix" introduced new break designer caught |
+| 4 | Eyebrow "Important update" redundant with title + chrome | Existing eyebrow rule (line 23) needed scope clarification | taste.md line 23 | Added eyebrow without checking if chrome+title already signaled category — scope clause now amended |
+| 5 | Body line "Refunds and data export are open now." redundant with CTAs | No explicit rule yet | (codified today as "Don't say what the chrome already says") | Read body in isolation, not as part of title+body+CTA unit |
+| 6 | Desktop details popup CTAs over-stretched stacked | No explicit rule yet | (codified today as "Action footer CTA orientation is viewport-aware") | Defaulted to mobile pattern on desktop without viewport-aware judgment |
+| 7 | Audit not triggered proactively | Gate 6 hard-fail trigger | QUALITY-GATES.md + evolution.md | **Same failure mode as S33, S34. Codification ≠ habit.** |
+| 8-12 | Designer iterations on copy/reasoning content | (judgment calls, not strict rule misses) | — | Normal collaborative iteration |
+
+**Recent count history:** S22=3, S23=18, S24=0, S25=1, S26=8, S27~7, **S28=0**, S29=14, **S30~10-12**, **S31~15-20**, **S32 main=0**, **S32 f1=7**, **S32 f2=0**, **S32 f3~12**, **S33 morning=~3**, **S33 afternoon=~13**, **S33 total ~16**, **S34=~11**, **S35~12-14**.
+
+Phase 5→6 counter: 0 consecutive 0-catch sessions. **Trajectory not improving — same gap persists across S33, S34, S35.** This is what the evolution.md file is supposed to detect.
+
+---
+
+## Active recurring failure modes (rolled to S36)
+
+**Same as S33 + S34:** VDA reads rules at bootstrap, doesn't apply them inline. The forcing functions get added; the forcing functions don't fire. Adding more forcing functions hasn't worked — S35 forcing function ("enumerate rules touched before edit") was codified at S34 close and didn't fire reliably today.
+
+**New honest assessment:** the gap isn't a missing rule or a missing forcing function. The gap is HABIT. Working memory holds the rules I just read; edit-time decisions go through a faster path that doesn't consult working memory.
+
+**S36 mitigation (different shape):**
+1. **Stop adding forcing functions.** The S35 forcing function exists. Use it.
+2. **Pre-audit trigger discipline.** If 5+ scratchpad rows accumulate AND no audit has been triggered this session, trigger one VOLUNTARILY — don't wait for the meta-question.
+3. **Sibling-survey breadth rule (new at S35, see workflow.md):** Gate 2.2 grep must survey ALL siblings, pick dominant pattern. Sample size 1 = inconclusive.
+4. **Audit trigger ≠ session end.** Audits should fire mid-session at natural break points (significant work block done; designer satisfied for the moment; build verified) — not only at end-of-day or designer prompt.
+
+---
+
+## S35 — what worked + what didn't
+
+**What worked:**
+- **Gate 6.5 cross-rule check fired today.** When the wind-down strip color decision came up (`bg-status-warning` saturated yellow), I cross-checked against the existing taste rule "Warnings are informative, not alarming — never a fully saturated surface" (line 367). Surfaced a real conflict, resolved via Gate 6.5 path #2 (scope amendment). Clean process win.
+- **Playwright self-critique caught wrap-broken mobile strip** before designer review. Initial 3-CTA inline layout wrapped to multi-line; I caught it, redirected. (Then over-redirected to flex-wrap, which designer caught — net-net not a clean save.)
+- **Scratchpad-row-before-reply discipline** mostly held — 17 rows accumulated across the day with WHY captured inline.
+- **Audit pass when triggered ran exhaustively** — Pass A (touched-surface sync) + Pass B (codebase-wide grep sweep) both fired per S36 forcing function. Caught SidebarSection's stale `top-[60px]` and 4 stale comments in code.
+
+**What didn't:**
+- **Audit not triggered proactively** — designer asked. Hard fail.
+- **Sibling-survey was breadth-1 not breadth-N** on CloseButton position — Gate 2.2 application gap.
+- **Inline rule enumeration didn't fire** at edit time on multiple S35 edits (eyebrow add, body-line-redundancy, paired-CTAs-on-desktop). Rules existed; not consulted.
+- **Same recurring failure mode for the 3rd straight session** without measurable improvement on Phase 5→6 trajectory.
 
 ---
 

@@ -177,7 +177,7 @@ export default function ChatPage() {
       </div>
 
       {/* Full-viewport chat layout */}
-      <main className="md:ml-[365px] md:mt-[60px] flex h-screen md:h-[calc(100vh-60px)]">
+      <main className="md:ml-[365px] md:mt-header flex h-screen md:h-[calc(100vh-60px)]">
 
         {/* Center: chat column */}
         <div className="relative flex-1 flex flex-col min-w-0 md:border-r md:border-white-10 overflow-hidden">

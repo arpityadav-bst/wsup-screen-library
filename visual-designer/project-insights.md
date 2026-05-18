@@ -1,7 +1,44 @@
 # Visual Designer — Project Insights
-Last updated: 2026-05-13 (S32 + follow-ups close — onboarding surface inventory added; chat-side OnboardingDeckBanner removal noted)
+Last updated: 2026-05-18 (S35 audit — Wind-Down phase added; LowCreditsBanner removed from /explore; new wind-down-phase semantic-consistency rule codified)
 
 WSUP-specific observations and screen-level learnings. Updated as new screens are built.
+
+---
+
+## Wind-Down phase (S35 — May 22, 2026 onwards)
+
+WSUP is winding down. The product enters a 3-phase lifecycle:
+- **Phase 1 (May 22 – May 28):** fully open with paid tiers off; everyone on free model. Wind-down chrome announces the timeline.
+- **Phase 2 (May 29 – Jun 19):** read-only. New messages and new characters are off. Chats and characters remain for review + export.
+- **Phase 3 (post Jun 19):** wsup.ai is a landing page pointing elsewhere. App still installable for refund and data export.
+
+### Wind-Down Notice surface family (added S35 — REVISED at S35 close)
+
+| Surface | Trigger | Mount | Z-index | Notes |
+|---|---|---|---|---|
+| **WindDownNotice** | global — mounted in `app/layout.tsx` | layout root | (orchestrator, no chrome) | Decides what to show based on localStorage `wsup:winddown-popup-seen`. Hosts global `DownloadDataSheet` mount listening for `wsup:open-download-data` event |
+| **WindDownPopup** | first exposure on BOTH viewports (localStorage `wsup:winddown-popup-seen`) | BottomSheet + CenterPopup parallel mount | 80 | 64px alert hero (status-warning chrome) + title + body + "Other apps to try" (Polybuzz + Talkie via AppCard primitive) + primary acknowledgment CTA + tertiary "Read more" link. **No close X, no scrim-dismiss, no Esc-dismiss** — `onClose={() => {}}` passed to both primitives, forcing the "Okay, I understand" CTA as the only exit. Once acknowledged, never shows again per device |
+| **WindDownDetailsPopup** | "Read the full update" from popup | BottomSheet + CenterPopup parallel mount | 80 | Scrollable body: exaggerated reasoning + 3-phase timeline + "Other apps to try" + personal note + email contact (refund@wsup.ai + data@wsup.ai placeholders, flowing naturally after content). NO action CTAs — refund/download routes via email |
+
+**Single CTA across both surfaces:** [Okay, I understand] (popup primary, dismisses) + [Read the full update] (tertiary link, opens details popup). No refund / download in-app action buttons — these route to email contact (`refund@wsup.ai` / `data@wsup.ai` placeholders) in the details popup to minimize one-tap query volume.
+
+**No layout offset plumbing — Header/Sidebar/pages run on standard `top-0 z-50` / `top-[60px]` / `pt-header` (where `header = 60px`).** A top strip earlier in S35 used a CSS-var-driven dynamic offset; designer removed the strip at S35 close, plumbing reverted to static.
+
+**REVISION NOTE:** Earlier in S35 the surface family had 3 surfaces (popup + persistent yellow strip + details popup) with sessionStorage-per-session strip dismissal AND localStorage-permanent popup acknowledgment. Designer simplified to 2 surfaces with single-exposure-forced-acknowledgment at S35 close. Earlier scratchpad rows + decisions.md entries reflect the 3-surface system before this revision.
+
+### Wind-Down phase rule — hide acquisition/upsell surfaces during wind-down
+
+During product wind-down phases, surfaces that promote acquisition / upsell / engagement-amplification semantically contradict the shutdown message even if technically still functional. **Hide them.** Applied at S35:
+- ✅ **`LowCreditsBanner` removed from `/explore` mount** — prompting "Add credits" during a shutdown contradicts the wind-down chrome on screen. Component file + style guide section retained for reference + potential post-wind-down restoration.
+
+**Sweep progress (added end of S35):**
+- ✅ **`StreakClaimPopup` removed from `/explore` mount** (added end of S35, designer call). Component file + style guide section retained for reference + potential post-wind-down restoration. Auto-opening daily-check-in earnings push during shutdown was semantically dissonant — credits have nowhere useful to go (paid tiers off, app winding down).
+
+**Next-candidate sweep (still pending designer confirmation):**
+- **Buy Credits CTAs** in Header (credit pill button) + Sidebar (Generate Images card promo) — same semantic conflict; users buying credits during wind-down is bad UX.
+- **Generate Images card** with promo positioning — feature promotion during shutdown is dissonant.
+
+**Generalizable rule (also promoted to taste.md):** *"During product wind-down phases, hide acquisition / upsell / engagement-amplification surfaces — they semantically contradict the wind-down message even if technically still functional."*
 
 ---
 

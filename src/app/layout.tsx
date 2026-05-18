@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
 import '@/styles/globals.css'
 import { AuthProvider } from '@/lib/AuthContext'
+import WindDownNotice from '@/components/shared/WindDownNotice'
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -23,7 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={rubik.variable} suppressHydrationWarning>
       <body className={rubik.className} suppressHydrationWarning>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <WindDownNotice />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )

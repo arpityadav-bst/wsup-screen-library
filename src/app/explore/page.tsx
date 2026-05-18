@@ -5,7 +5,6 @@ import Button from '@/components/ui/Button'
 import Header from '@/components/shared/Header'
 import Sidebar from '@/components/shared/Sidebar'
 import { useAuth } from '@/lib/AuthContext'
-import StreakClaimPopup, { type StreakLoginVariant } from '@/components/ui/StreakClaimPopup'
 import CategoryTabs from '@/components/shared/CategoryTabs'
 import CharacterCard from '@/components/shared/CharacterCard'
 import WhatIsWsup from '@/components/shared/WhatIsWsup'
@@ -16,7 +15,6 @@ import FooterMobile from '@/components/shared/FooterMobile'
 import BottomNav from '@/components/shared/BottomNav'
 import MobileSearchBar from '@/components/shared/MobileSearchBar'
 import GenerateImagesCard from '@/components/shared/GenerateImagesCard'
-import LowCreditsBanner from '@/components/shared/LowCreditsBanner'
 import ExploreDevPanel, { type DemoFlow } from '@/components/shared/ExploreDevPanel'
 import OnboardingOverlay from '@/components/onboarding/OnboardingOverlay'
 import { useOnboardingFlow } from './useOnboardingFlow'
@@ -38,8 +36,6 @@ export default function ExplorePage() {
   const { isLoggedIn, setIsLoggedIn } = useAuth()
   const [showDevPanel, setShowDevPanel] = useState(false)
   const [demoFlow, setDemoFlow] = useState<DemoFlow>('default')
-  const [streakPopupOpen, setStreakPopupOpen] = useState(true)
-  const [streakLoginVariant, setStreakLoginVariant] = useState<StreakLoginVariant>('standard')
   const onboarding = useOnboardingFlow()
 
   useEffect(() => {
@@ -69,10 +65,9 @@ export default function ExplorePage() {
       <Header />
       <div className="hidden md:block"><Sidebar /></div>
 
-      <main className="md:ml-[365px] pt-[60px] min-h-screen">
+      <main className="md:ml-[365px] pt-header min-h-screen">
         <div className="px-m md:px-xl py-l">
           <MobileSearchBar />
-          <div className="mb-m"><LowCreditsBanner credits={10} estimatedReplies={3} /></div>
           <GenerateImagesCard uid="mobile" className="md:hidden mb-m" />
           <div className="flex items-center justify-between mb-m">
             <div className="flex items-center gap-xxs">
@@ -108,21 +103,6 @@ export default function ExplorePage() {
         setIsLoggedIn={setIsLoggedIn}
         demoFlow={demoFlow}
         setDemoFlow={handleSetDemoFlow}
-      />
-
-      <StreakClaimPopup
-        open={streakPopupOpen}
-        onClose={() => setStreakPopupOpen(false)}
-        balance={10}
-        streakDay={3}
-        tomorrowReward={15}
-        dailyCheckInEarn={15}
-        loginVariant={streakLoginVariant}
-        onLoginVariantChange={setStreakLoginVariant}
-        onExploreEarn={() => {
-          setStreakPopupOpen(false)
-          window.dispatchEvent(new CustomEvent('wsup:open-credit-sidebar'))
-        }}
       />
 
       <OnboardingOverlay

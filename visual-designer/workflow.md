@@ -1,7 +1,36 @@
 # Visual Designer — Workflow
-Last updated: 2026-05-13 (S32 follow-up #3 audit — dual-cadence model: inline scratchpad + designer-triggered audit pass; clarifying-Q protocol for ambiguous instructions)
+Last updated: 2026-05-18 (S35 audit — Gate 2.2 sibling-survey breadth refinement: pick dominant pattern when multiple siblings diverge; pre-audit-trigger habit reinforced)
 
 How the VDA operates session-to-session. The lifecycle, self-update protocol, and rules of engagement.
+
+---
+
+## ⚡ GATE 2.2 SIBLING-SURVEY BREADTH RULE (added S35 — refines existing Gate 2.2)
+
+The codified Gate 2.2 says *"grep for sibling surfaces and inherit their anatomy."* That's necessary but not sufficient. **S35 catch:** I grepped sibling popups for CloseButton position, found StreakClaimPopup's `top-xs right-xs` (8px), pattern-matched on the first hit, shipped 3 instances at the wrong position. The WSUP majority is `top-s right-s` (12px) across 5 sibling popups (LoginSheet, CreditServicePopup, ModelDeprecatedSheet, DownloadDataSheet, WatchAdSheet). Sample size of 1 is not a precedent.
+
+**The refinement:**
+1. Gate 2.2 grep must surface ALL siblings in the relevant component family, not stop at the first match.
+2. If siblings diverge on a convention, **pick the dominant pattern** unless the deviation is intentional and documented in the same scratchpad row.
+3. Single-sibling sample = treat as inconclusive; widen the grep before adopting.
+4. KB IS part of the precedent — grep `knowledge-base.md` for the same component-family entry alongside the source-file grep (this rule existed from S33 — still load-bearing).
+
+**Pre-flight check (refined for S36):** before adopting a sibling pattern, ask *"how many siblings did I check? If <3 in a populous family, am I confident this is the dominant convention?"* If unsure, grep more siblings before committing.
+
+---
+
+## ⚡ AUDIT-TRIGGER HABIT (S35 — same gap as S33/S34, codified harder)
+
+**The recurring failure mode (S33 → S34 → S35):** designer asks the Gate 6 meta-question ("is VDA learning?" / "is everything okay?" / "EVERY LITTLE THING tokenized and componentized?"). Per the codified rule, *the asking IS the failure*. VDA should have triggered the audit pass proactively, before the designer needed to ask.
+
+**S35 status:** same failure mode as S33 + S34. Audit was not triggered until the designer asked at end-of-session. The S35 forcing function ("trigger audit BEFORE designer asks meta-question") was codified at S34 close and didn't fire today.
+
+**S36 forcing function — harder enforcement:**
+1. **Voluntary audit trigger after any non-trivial work block** (multiple components shipped, build verified, designer satisfied for the moment). Don't wait for the meta-question. If 5+ scratchpad rows accumulate AND no audit has run in this session, trigger one preemptively.
+2. **At session start AND every 30 min mid-session**: produce a one-line "rules I'm watching for THIS session" pre-flight list from the most recent taste.md additions (the S34 forcing function — never actually applied). Make the just-codified rules load-bearing in working memory.
+3. **The S35 forcing function (enumerate rules touched before each edit) works WHEN applied** — confirmed at the LowCreditsBanner removal (clean scratchpad row + rule citation, shipped clean). The gap is habit, not knowledge. For S36: BEFORE writing ANY change (including 1-line copy tweaks), ask *"what rule could this touch?"* and cite it in the scratchpad row inline.
+
+This gap has rolled across S26 → S33 → S34 → S35 without sticking. Honest assessment: **knowledge files capture rules; habit is what applies them.** No more forcing-function additions until the existing ones actually fire reliably.
 
 ---
 

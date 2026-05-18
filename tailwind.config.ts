@@ -36,6 +36,9 @@ const config: Config = {
         '4xl':  '64px',
         '5xl':  '72px',
         '6xl':  '80px',
+        // Fixed-chrome offset above page content (the Header height). Use as
+        // `pt-header` / `mt-header` instead of raw `60px` for semantic clarity.
+        'header': '60px',
       },
 
       // ─── Border Radius ─────────────────────────────────────

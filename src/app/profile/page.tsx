@@ -106,7 +106,7 @@ export default function ProfilePage() {
       <div className="hidden md:block"><Sidebar /></div>
 
       {/* Main content area */}
-      <main className="md:ml-[365px] pt-[60px] md:pt-0 md:mt-[60px] min-h-screen md:min-h-0 md:h-[calc(100vh-60px)] md:flex md:overflow-hidden">
+      <main className="md:ml-[365px] pt-header md:pt-0 md:mt-header min-h-screen md:min-h-0 md:h-[calc(100vh-60px)] md:flex md:overflow-hidden">
 
         {/* Center content */}
         <div className="flex-1 min-w-0 md:border-r md:border-white-10 md:h-full md:flex md:flex-col">

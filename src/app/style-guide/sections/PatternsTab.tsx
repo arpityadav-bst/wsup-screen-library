@@ -26,6 +26,7 @@ import LoginSheetSection from './patterns/LoginSheetSection'
 import StreakClaimSection from './patterns/StreakClaimSection'
 import BlockedListSection from './patterns/BlockedListSection'
 import DownloadDataSheetSection from './patterns/DownloadDataSheetSection'
+import WindDownNoticeSection from './patterns/WindDownNoticeSection'
 
 export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (id: string) => void }) {
   return (
@@ -56,6 +57,7 @@ export default function PatternsTab({ onSectionVisible }: { onSectionVisible: (i
       <StreakClaimSection onSectionVisible={onSectionVisible} />
       <BlockedListSection onSectionVisible={onSectionVisible} />
       <DownloadDataSheetSection onSectionVisible={onSectionVisible} />
+      <WindDownNoticeSection onSectionVisible={onSectionVisible} />
     </>
   )
 }
